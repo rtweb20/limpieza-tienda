@@ -1,4 +1,4 @@
-# 🚀 Despliegue en Render — Limpieza El Barrio
+# 🚀 Despliegue en Render — Aroma a Limpio
 
 Guía paso a paso para publicar el servicio (Spring Boot, vía **Docker**) y la
 base de datos PostgreSQL en [Render](https://render.com).

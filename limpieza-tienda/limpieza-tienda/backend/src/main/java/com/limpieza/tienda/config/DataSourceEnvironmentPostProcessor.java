@@ -10,17 +10,46 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Normaliza la config de la base de datos ANTES de crear los beans.
- * Render entrega la URL como: postgresql://usuario:clave@host:puerto/db
- * El driver JDBC necesita: jdbc:postgresql://host:puerto/db + user/pass aparte.
+ * Normaliza la configuración de la base de datos ANTES de que se cree ningún
+ * bean, para que el despliegue en Render funcione sin fricción.
+ *
+ * <p>Render entrega la "Internal Database URL" con este formato:
+ * {@code postgresql://usuario:clave@host:puerto/nombrebd}
+ *
+ * <p>El driver JDBC de PostgreSQL NO acepta ese formato tal cual: necesita
+ * {@code jdbc:postgresql://host:puerto/nombrebd} con usuario y clave por
+ * separado. Este postprocessor se encarga de:
+ * <ul>
+ *   <li>Anteponer {@code jdbc:} si falta.</li>
+ *   <li>Separar usuario/clave de la URL (si vienen incrustados) y exponerlos
+ *       como {@code spring.datasource.username/password} cuando
+ *       {@code DB_USER}/{@code DB_PASSWORD} no están definidos.</li>
+ *   <li>Reconstruir la URL limpia (sin credenciales incrustadas).</li>
+ * </ul>
+ *
+ * <p>Si {@code DB_URL} está vacía o ausente, falla rápido con un mensaje
+ * claro (en lugar del confuso "Failed to configure a DataSource").
+ *
+ * <p>Se registra en {@code META-INF/spring.factories}.
  */
 public class DataSourceEnvironmentPostProcessor implements EnvironmentPostProcessor {
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
         String dbUrl = environment.getProperty("DB_URL");
+
+        // Fallback: Render inyecta automáticamente DATABASE_URL al vincular la base.
         if (dbUrl == null || dbUrl.isBlank()) {
-            return; // sin DB_URL se usa el default de application.yml (desarrollo local)
+            dbUrl = environment.getProperty("DATABASE_URL");
+        }
+
+        if (dbUrl == null || dbUrl.isBlank()) {
+            System.out.println("[BD] ❌ DB_URL está vacía o no definida.");
+            throw new IllegalStateException(
+                    "Falta la variable de entorno DB_URL. En Render: abre tu Web Service → "
+                    + "pestaña Environment → agregá DB_URL con la \"Internal Database URL\" "
+                    + "de tu base PostgreSQL (se copia desde la página de la base). "
+                    + "Localmente: export DB_URL=jdbc:postgresql://localhost:5432/limpieza_tienda");
         }
 
         String user = environment.getProperty("DB_USER");
@@ -29,6 +58,7 @@ public class DataSourceEnvironmentPostProcessor implements EnvironmentPostProces
         Map<String, Object> overrides = new HashMap<>();
         try {
             Normalizada n = normalizar(dbUrl.trim());
+
             overrides.put("spring.datasource.url", n.url);
             if ((user == null || user.isBlank()) && n.username != null) {
                 overrides.put("spring.datasource.username", n.username);
@@ -36,7 +66,12 @@ public class DataSourceEnvironmentPostProcessor implements EnvironmentPostProces
             if ((pass == null || pass.isBlank()) && n.password != null) {
                 overrides.put("spring.datasource.password", n.password);
             }
+
+            // Log de diagnóstico (sin exponer la contraseña)
+            System.out.println("[BD] ✔ DB_URL detectada → " + n.url);
+            System.out.println("[BD] ✔ Usuario: " + (user != null && !user.isBlank() ? user : n.username));
         } catch (Exception e) {
+            System.out.println("[BD] ⚠ No se pudo parsear DB_URL, se usa tal cual: " + dbUrl);
             overrides.put("spring.datasource.url", dbUrl.trim());
         }
 
@@ -44,8 +79,10 @@ public class DataSourceEnvironmentPostProcessor implements EnvironmentPostProces
                 .addFirst(new MapPropertySource("datasource-normalizer", overrides));
     }
 
+    /** URL JDBC limpia + credenciales extraídas. */
     private Normalizada normalizar(String url) throws Exception {
         String sinJdbc = url.startsWith("jdbc:") ? url.substring("jdbc:".length()) : url;
+        // Ahora algo como: postgresql://user:pass@host:5432/db
         URI uri = new URI(sinJdbc);
 
         String host = uri.getHost();

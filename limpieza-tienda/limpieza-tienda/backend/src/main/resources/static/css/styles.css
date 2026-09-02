@@ -1,23 +1,26 @@
 /* ============================================================================
-   LIMPIEZA EL BARRIO — Estilos de la tienda (mobile-first)
+   AROMA A LIMPIO — Estilos de la tienda (mobile-first)
    ========================================================================== */
 
 :root {
-  --verde: #0ea36a;
-  --verde-osc: #0a7d51;
-  --verde-suave: #e7f7f0;
+  /* Paleta de marca "Aroma a Limpio" (beige/crema + negro cálido + terracota) */
+  --verde: #2a251e;            /* negro cálido (logo) — header, botones, chips */
+  --verde-osc: #171310;
+  --verde-suave: #efe6d4;      /* crema — fondos suaves */
+  --acento: #b4541f;           /* terracota — ofertas y precios destacados */
+  --acento-suave: #f7e7dc;
   --azul: #1f6feb;
-  --rojo: #e53935;
-  --ambar: #f59e0b;
-  --ambar-suave: #fdf1dc;
-  --bg: #f5f7f9;
+  --rojo: #c93a2b;
+  --ambar: #d98a2b;
+  --ambar-suave: #f7e7dc;
+  --bg: #f4eee2;               /* crema — fondo de página */
   --card: #ffffff;
-  --texto: #1c2b33;
-  --texto-suave: #64757d;
-  --borde: #e4eaef;
+  --texto: #231f18;            /* negro cálido */
+  --texto-suave: #7a7160;
+  --borde: #e4d9c4;            /* arena */
   --radio: 14px;
-  --sombra: 0 2px 12px rgba(18, 42, 58, .07);
-  --sombra-fuerte: 0 12px 40px rgba(18, 42, 58, .22);
+  --sombra: 0 2px 12px rgba(60, 46, 25, .08);
+  --sombra-fuerte: 0 12px 40px rgba(60, 46, 25, .22);
 }
 
 * { box-sizing: border-box; }
@@ -148,7 +151,7 @@ a { color: inherit; text-decoration: none; }
 .suggestions button:hover, .suggestions button:focus { background: var(--verde-suave); }
 .suggestions img { width: 34px; height: 34px; border-radius: 8px; object-fit: cover; }
 .suggestions .s-name { font-weight: 600; }
-.suggestions .s-price { margin-left: auto; color: var(--verde-osc); font-weight: 700; }
+.suggestions .s-price { margin-left: auto; color: var(--acento); font-weight: 700; }
 
 .cart-btn {
   position: relative;
@@ -298,8 +301,8 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 14px 120px; }
 .card .cat {
   font-size: 11px;
   font-weight: 700;
-  color: var(--azul);
-  background: rgba(31, 111, 235, .08);
+  color: var(--acento);
+  background: var(--acento-suave);
   padding: 3px 8px;
   border-radius: 999px;
   align-self: flex-start;
@@ -311,13 +314,13 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 14px 120px; }
 .price-row { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
 .price { font-weight: 800; font-size: 17px; color: var(--texto); }
 .price.old { font-size: 13px; color: var(--texto-suave); text-decoration: line-through; font-weight: 600; }
-.price.oferta { color: var(--verde-osc); }
+.price.oferta { color: var(--acento); }
 
 .oferta-pill {
   font-size: 10.5px;
   font-weight: 800;
-  color: #b42318;
-  background: #fdecea;
+  color: #9c4518;
+  background: var(--acento-suave);
   padding: 2px 7px;
   border-radius: 999px;
 }
@@ -382,7 +385,7 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 14px 120px; }
 
 .fab:active { transform: scale(.94); }
 .fab-whatsapp { background: #25d366; bottom: 18px; right: 16px; }
-.fab-cart { background: var(--azul); bottom: 86px; right: 16px; }
+.fab-cart { background: var(--verde); bottom: 86px; right: 16px; }
 
 .fab-cart .badge {
   position: absolute;
@@ -456,7 +459,7 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 14px 120px; }
 .cart-item .ci-info { flex: 1; min-width: 0; }
 .cart-item .ci-name { font-weight: 700; font-size: 14px; }
 .cart-item .ci-var { font-size: 12px; color: var(--texto-suave); }
-.cart-item .ci-price { font-weight: 700; color: var(--verde-osc); font-size: 14px; }
+.cart-item .ci-price { font-weight: 700; color: var(--acento); font-size: 14px; }
 
 .qty { display: inline-flex; align-items: center; gap: 8px; margin-top: 6px; }
 .qty button {
@@ -478,7 +481,7 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 14px 120px; }
   margin-bottom: 12px;
 }
 
-.total-row .total { color: var(--verde-osc); font-size: 20px; }
+.total-row .total { color: var(--acento); font-size: 20px; }
 
 .btn {
   display: block;
@@ -575,7 +578,7 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 14px 120px; }
 .resumen h4 { margin: 0 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: .5px; color: var(--texto-suave); }
 .resumen .line { display: flex; justify-content: space-between; font-size: 13.5px; padding: 3px 0; }
 .resumen .line.grand { font-weight: 800; font-size: 16px; border-top: 1px dashed var(--borde); margin-top: 6px; padding-top: 8px; }
-.resumen .line.grand span:last-child { color: var(--verde-osc); }
+.resumen .line.grand span:last-child { color: var(--acento); }
 
 .btn-whatsapp {
   background: #25d366;
@@ -613,15 +616,15 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 14px 120px; }
 /* ============================== FOOTER =================================== */
 
 footer {
-  background: #16212a;
-  color: #c9d4da;
+  background: #221d17;
+  color: #d9cfbc;
   padding: 28px 16px 90px;
   font-size: 13.5px;
   line-height: 1.7;
   text-align: center;
 }
 
-footer a { color: #7fe0b3; }
+footer a { color: #e9dfc8; }
 
 footer .admin-link {
   display: inline-block;

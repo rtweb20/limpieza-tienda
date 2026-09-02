@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 /**
- * Punto de entrada de la tienda "Limpieza El Barrio".
+ * Punto de entrada de la tienda "Aroma a Limpio".
  *
  * <p>Arranque local:
  * <pre>

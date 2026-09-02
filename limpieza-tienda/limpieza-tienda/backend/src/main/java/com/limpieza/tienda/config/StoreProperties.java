@@ -65,7 +65,7 @@ public class StoreProperties {
     }
 
     public static class Store {
-        private String name = "Limpieza El Barrio";
+        private String name = "Aroma a Limpio";
 
         public String getName() {
             return name;

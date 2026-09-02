@@ -44,6 +44,10 @@ public class Producto {
     @Column(name = "imagen_url", nullable = false, columnDefinition = "text")
     private String imagenUrl;
 
+    /** Código de barras leído con lector USB/Bluetooth (único). */
+    @Column(name = "codigo_barras", length = 64)
+    private String codigoBarras;
+
     @Column(nullable = false)
     private Boolean destacado = false;
 
@@ -109,6 +113,14 @@ public class Producto {
 
     public void setImagenUrl(String imagenUrl) {
         this.imagenUrl = imagenUrl;
+    }
+
+    public String getCodigoBarras() {
+        return codigoBarras;
+    }
+
+    public void setCodigoBarras(String codigoBarras) {
+        this.codigoBarras = codigoBarras;
     }
 
     public Boolean getDestacado() {

@@ -1,4 +1,4 @@
-# 🫧 Limpieza El Barrio — Tienda de productos de limpieza con pedidos por WhatsApp
+# 🫧 Aroma a Limpio — Tienda de productos de limpieza con pedidos por WhatsApp
 
 Tienda web completa para un comercio minorista de barrio. Los clientes arman su
 pedido (con variantes por producto), completan un formulario de checkout y el
@@ -8,7 +8,7 @@ pedido se envía directo al **WhatsApp del local** con un mensaje ya formateado.
 
 | Módulo | Detalle |
 | --- | --- |
-| Catálogo | Categorías por uso cotidiano (Cocina, Ropa, Baño, Accesorios) + banner de **Combos y Ofertas** |
+| Catálogo | Categorías por uso cotidiano (Ropa, Baño, Accesorios) + banner de **Combos y Ofertas** |
 | Buscador | Búsqueda en tiempo real con autocompletado (endpoint `/api/buscar`) |
 | Variantes | Un mismo producto con varias presentaciones/aromas y **una única imagen** (URL externa) |
 | Carrito | Persistido en `localStorage`, con control de stock y cantidades |
@@ -16,6 +16,7 @@ pedido se envía directo al **WhatsApp del local** con un mensaje ya formateado.
 | Integración WhatsApp | Genera `https://wa.me/<numero>?text=<mensaje codificado>` con el resumen del pedido y el total |
 | Botón flotante | Acceso directo a WhatsApp para consultas |
 | Backoffice | Panel protegido por credenciales para editar precios, variantes, productos, categorías y gestionar pedidos |
+| Carga con lector | Alta/inventario por **código de barras** (USB/Bluetooth): escaneo → Enter sin recarga → alta o actualización + suma de stock, con subida de foto |
 
 ## 🧱 Stack
 
@@ -49,7 +50,8 @@ limpieza-tienda/
 │           ├── application.yml
 │           └── static/      # index.html, admin.html, css/, js/
 └── docs/
-    └── DEPLOY-RENDER.md     # Guía de despliegue en Render (Docker + PostgreSQL)
+    ├── DEPLOY-RENDER.md             # Guía de despliegue en Render (Docker + PostgreSQL)
+    └── CARGA-CODIGO-BARRAS.md       # Carga de productos con lector de código de barras
 ```
 
 ## 🚀 Ejecución local
@@ -101,6 +103,8 @@ limpieza-tienda/
 | PUT/DELETE | `/api/admin/categorias/{id}` | Editar / eliminar |
 | GET/POST | `/api/admin/productos` | Listar / crear (con variantes) |
 | PUT/DELETE | `/api/admin/productos/{id}` | Editar / eliminar |
+| POST | `/api/admin/carga` | Alta/actualización por código de barras (`multipart/form-data`, sube foto) |
+| GET | `/api/admin/productos/barcode/{codigo}` | Buscar producto por código de barras |
 | GET | `/api/admin/pedidos` | Pedidos recibidos |
 | PATCH | `/api/admin/pedidos/{id}/estado` | Cambiar estado |
 
@@ -112,7 +116,7 @@ limpieza-tienda/
 | `DB_USER` / `DB_PASSWORD` | `postgres` | Credenciales de la BD |
 | `ADMIN_USERNAME` / `ADMIN_PASSWORD` | `admin` / `admin123` | Credenciales del backoffice |
 | `WHATSAPP_NUMBER` | `5492612578860` | WhatsApp destino (sin `+`, espacios ni guiones) |
-| `STORE_NAME` | `Limpieza El Barrio` | Nombre comercial en los mensajes |
+| `STORE_NAME` | `Aroma a Limpio` | Nombre comercial en los mensajes |
 | `PORT` | `8080` | Puerto (Render lo inyecta) |
 | `CORS_ALLOWED_ORIGINS` | `*` | Orígenes permitidos |
 

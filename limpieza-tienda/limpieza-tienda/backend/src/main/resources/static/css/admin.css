@@ -1,5 +1,5 @@
 /* ============================================================================
-   LIMPIEZA EL BARRIO — Estilos del panel de administración
+   AROMA A LIMPIO — Estilos del panel de administración
    (se usa junto con styles.css para heredar botones, modales y toasts)
    ========================================================================== */
 
@@ -43,7 +43,7 @@ body.admin { background: #eef1f4; }
 /* ------------------------------ Topbar admin ---------------------------- */
 
 .admin-bar {
-  background: #16212a;
+  background: #221d17;
   color: #fff;
   display: flex;
   align-items: center;

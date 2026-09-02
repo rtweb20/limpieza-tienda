@@ -1,5 +1,5 @@
 /* ============================================================================
-   LIMPIEZA EL BARRIO — Panel de administración
+   AROMA A LIMPIO — Panel de administración
    ========================================================================== */
 (function () {
   'use strict';
@@ -227,6 +227,7 @@
           <ul class="var-list">${(p.variantes || []).map((v) =>
             `<li>${v.presentacion} — ${money(v.precioVenta)}</li>`).join('')}</ul>
         </td>
+        <td>${p.codigoBarras || '—'}</td>
         <td>${p.categoriaNombre || '—'}</td>
         <td>${money(p.precioDesde)}</td>
         <td>

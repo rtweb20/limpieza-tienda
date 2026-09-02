@@ -1,5 +1,5 @@
 /* ============================================================================
-   LIMPIEZA EL BARRIO — Lógica de la tienda (catálogo, buscador, carrito, checkout)
+   AROMA A LIMPIO — Lógica de la tienda (catálogo, buscador, carrito, checkout)
    ========================================================================== */
 (function () {
   'use strict';

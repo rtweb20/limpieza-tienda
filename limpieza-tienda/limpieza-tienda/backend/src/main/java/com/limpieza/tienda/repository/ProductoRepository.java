@@ -54,6 +54,8 @@ public interface ProductoRepository extends JpaRepository<Producto, Long> {
 
     Optional<Producto> findBySlug(String slug);
 
+    Optional<Producto> findByCodigoBarras(String codigoBarras);
+
     boolean existsBySlug(String slug);
 
     long countByCategoriaId(Long categoriaId);

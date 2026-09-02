@@ -1,5 +1,5 @@
 # ============================================================================
-#  LIMPIEZA EL BARRIO — Configuración del backend (Spring Boot)
+#  AROMA A LIMPIO — Configuración del backend (Spring Boot)
 # ============================================================================
 #  Todas las variables sensibles se leen de variables de entorno.
 #  En Render se configuran desde "Environment" del servicio web.
@@ -29,6 +29,11 @@ spring:
   jackson:
     default-property-inclusion: non_null
 
+  servlet:
+    multipart:
+      max-file-size: 8MB     # tamaño máximo por foto
+      max-request-size: 10MB # tamaño máximo total del formulario
+
 server:
   port: ${PORT:8080}
   # Necesario para los health checks y proxies de Render
@@ -50,7 +55,10 @@ app:
     # Argentina: 54 + 9 + código de área + número.
     number: ${WHATSAPP_NUMBER:5492612578860}
   store:
-    name: ${STORE_NAME:Limpieza El Barrio}
+    name: ${STORE_NAME:Aroma a Limpio}
+  uploads:
+    # Carpeta donde se guardan las fotos subidas (con nombre único UUID).
+    dir: ${UPLOADS_DIR:uploads}
 
 logging:
   level:
