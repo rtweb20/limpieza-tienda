@@ -44,8 +44,6 @@
       "<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><rect width='100%' height='100%' fill='#e0f2fe'/><text x='50' y='60' font-size='40' text-anchor='middle'>🫧</text></svg>");
   }
 
-  // ----------------------------- Estado / Auth -----------------------------
-
   let token = localStorage.getItem('admin-token-limpieza') || null;
   let modoDemo = false;
 
@@ -174,8 +172,6 @@
     activarTab('productos');
   }
 
-  // ----------------------------- Métricas Generales -------------------------
-
   async function actualizarMetricas() {
     try {
       const [prods, cats, pedidos] = await Promise.all([
@@ -188,18 +184,15 @@
       cacheCategorias = cats || [];
       cachePedidos = pedidos || [];
 
-      // Stat cards
       $('#statProds').textContent = cacheProductos.length;
       $('#statCats').textContent = cacheCategorias.length;
       $('#statPedidos').textContent = cachePedidos.length;
       $('#statOfertas').textContent = cacheProductos.filter(p => p.destacado).length;
 
-      // Tab badges
       $('#tabCountProds').textContent = cacheProductos.length;
       $('#tabCountCats').textContent = cacheCategorias.length;
       $('#tabCountPedidos').textContent = cachePedidos.length;
 
-      // Populate category filter in toolbar
       poblarFiltroCategorias(cacheCategorias);
     } catch (_) {}
   }
@@ -213,8 +206,6 @@
     if (currentVal) sel.value = currentVal;
   }
 
-  // ----------------------------- Tabs --------------------------------------
-
   function activarTab(tab) {
     $$('.tab-btn').forEach((t) => t.classList.toggle('active', t.dataset.tab === tab));
     $$('.panel-section').forEach((p) => p.style.display = 'none');
@@ -226,8 +217,6 @@
     if (tab === 'categorias') cargarCategorias();
     if (tab === 'pedidos') cargarPedidos();
   }
-
-  // ----------------------------- Categorías --------------------------------
 
   async function cargarCategorias() {
     const cats = await api('GET', '/api/admin/categorias');
@@ -294,8 +283,6 @@
     }
   }
 
-  // ----------------------------- Productos ---------------------------------
-
   async function comprimirImagen(file) {
     try {
       if (!file || !file.type || !file.type.startsWith('image/')) return file;
@@ -325,7 +312,6 @@
     }
   }
 
-  // Dropzone de Fotografía
   const adminDropzone = $('#adminDropzone');
   const adminDropEmpty = $('#adminDropEmpty');
   const adminDropPreview = $('#adminDropPreview');
@@ -387,7 +373,6 @@
     try {
       const fotoComprimida = await comprimirImagen(file);
 
-      // Subida al backend mediante endpoint POST /api/admin/imagen
       if (!modoDemo && token) {
         const formData = new FormData();
         formData.append('imagen', fotoComprimida);
@@ -412,7 +397,6 @@
         }
       }
 
-      // Fallback local en modo demostración
       const reader = new FileReader();
       reader.onload = () => {
         const dataUrl = reader.result;
@@ -489,7 +473,6 @@
     });
   }
 
-  // Pegar foto con Ctrl+V cuando el modal está abierto
   document.addEventListener('paste', (e) => {
     const modal = $('#prodModal');
     if (!modal || !modal.classList.contains('open')) return;
@@ -508,7 +491,6 @@
     }
   });
 
-  // Renderizado y filtrado de productos
   function renderProductosFiltrados() {
     const searchVal = ($('#prodSearch').value || '').trim().toLowerCase();
     const catVal = $('#prodFilterCat').value;
@@ -517,22 +499,16 @@
     $('#clearSearch').style.display = searchVal ? 'block' : 'none';
 
     const filtrados = cacheProductos.filter((p) => {
-      // Búsqueda
       if (searchVal) {
         const matchNombre = (p.nombre || '').toLowerCase().includes(searchVal);
         const matchCodigo = (p.codigoBarras || '').toLowerCase().includes(searchVal);
         const matchVars = (p.variantes || []).some(v => (v.presentacion || '').toLowerCase().includes(searchVal));
         if (!matchNombre && !matchCodigo && !matchVars) return false;
       }
-      // Categoría
-      if (catVal && String(p.categoriaId) !== String(catVal)) {
-        return false;
-      }
-      // Estado
+      if (catVal && String(p.categoriaId) !== String(catVal)) return false;
       if (statusVal === 'activo' && !p.activo) return false;
       if (statusVal === 'inactivo' && p.activo) return false;
       if (statusVal === 'oferta' && !p.destacado) return false;
-
       return true;
     });
 
@@ -701,8 +677,6 @@
     }
   }
 
-  // ----------------------------- Pedidos -----------------------------------
-
   async function cargarPedidos() {
     const pedidos = await api('GET', '/api/admin/pedidos');
     cachePedidos = pedidos || [];
@@ -769,8 +743,6 @@
     }
   }
 
-  // ----------------------------- Inicialización -----------------------------
-
   function init() {
     window.__fallbackImg = fallbackImg;
 
@@ -785,7 +757,6 @@
 
     $$('.tab-btn').forEach((t) => t.addEventListener('click', () => activarTab(t.dataset.tab)));
 
-    // Buscador y filtros de productos
     $('#prodSearch').addEventListener('input', renderProductosFiltrados);
     $('#clearSearch').addEventListener('click', () => {
       $('#prodSearch').value = '';
@@ -795,7 +766,6 @@
     $('#prodFilterCat').addEventListener('change', renderProductosFiltrados);
     $('#prodFilterStatus').addEventListener('change', renderProductosFiltrados);
 
-    // Categorías
     $('#nuevaCat').addEventListener('click', () => abrirCatModal(null));
     $('#catList').addEventListener('click', async (e) => {
       const ed = e.target.closest('[data-editar-cat]');
@@ -806,7 +776,7 @@
         abrirCatModal(cat);
       }
       if (bo) {
-        if (!confirm('¿Eliminar esta categoría?\n\nLos productos asignados a ella no se borrarán pero quedarán sin categoría.')) return;
+        if (!confirm('¿Eliminar esta categoría?')) return;
         try {
           await api('DELETE', '/api/admin/categorias/' + bo.dataset.borrarCat);
           cargarCategorias();
@@ -818,9 +788,8 @@
     $('#catOverlay').addEventListener('click', cerrarCatModal);
     $('#catForm').addEventListener('submit', guardarCategoria);
 
-    // Productos
     $('#vaciarProd').addEventListener('click', async () => {
-      const ok = confirm('⚠️ ¿Eliminar TODOS los productos del catálogo?\n\nEsta acción borrará todos los productos cargados para que puedas cargar la lista limpia de nuevo. Las categorías se conservarán.\n\n¿Estás seguro de continuar?');
+      const ok = confirm('⚠️ ¿Eliminar TODOS los productos del catálogo?\n\nEsta acción borrará todos los productos cargados para que puedas cargar la lista limpia de nuevo.');
       if (!ok) return;
       try {
         const r = await api('DELETE', '/api/admin/productos');
@@ -864,7 +833,6 @@
 
     $('#prodForm').addEventListener('submit', guardarProducto);
 
-    // Pedidos
     $('#pedList').addEventListener('change', (e) => {
       const sel = e.target.closest('.estado-select');
       if (sel) cambiarEstado(Number(sel.dataset.pedido), sel.value, sel);
