@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Aroma a Limpio — Artículos de limpieza, cuidado personal y aromas. Armá tu pedido y envialo por WhatsApp.">
+  <title>Aroma a Limpio — Artículos de limpieza</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🫧</text></svg>">
+</head>
+<body>
+
+  <!-- ============================= TOPBAR ============================== -->
+  <header class="topbar">
+    <div class="topbar-row">
+      <a class="brand" href="/" aria-label="Ir al inicio">
+        <span class="logo">🫧</span>
+        <span>Aroma a Limpio</span>
+      </a>
+      <div class="search" role="search">
+        <input id="searchInput" type="search" placeholder="Buscar producto…"
+               autocomplete="off" aria-label="Buscar productos" aria-controls="suggestions">
+        <button type="button" aria-label="Buscar">🔍</button>
+        <div id="suggestions" class="suggestions" role="listbox"></div>
+      </div>
+      <button id="cartBtn" class="cart-btn" aria-label="Abrir carrito">
+        🛒
+        <span id="cartBadge" class="badge" style="display:none">0</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- =========================== CATEGORÍAS ============================ -->
+  <nav id="cats" class="cats" aria-label="Categorías"></nav>
+
+  <!-- ============================= BANNER ============================== -->
+  <div class="banner-wrap">
+    <h2 class="section-title">🔥 Combos y Ofertas</h2>
+    <div id="banner" style="display:none">
+      <div id="bannerList" class="banner"></div>
+    </div>
+  </div>
+
+  <!-- ============================ CATÁLOGO ============================= -->
+  <main>
+    <h2 id="sectionTitle" class="section-title">Todos los productos</h2>
+    <div id="productGrid" class="grid"></div>
+  </main>
+
+  <!-- ============================== FOOTER ============================= -->
+  <footer>
+    <strong>🫧 Aroma a Limpio</strong><br>
+    Artículos de limpieza · Cuidado personal · Aromas<br>
+    Perito Moreno 329, Godoy Cruz, Mendoza<br>
+    Consultas por WhatsApp: <a id="footerWhatsapp" href="#" target="_blank" rel="noopener">escribinos acá</a><br><br>
+    <a class="admin-link" href="admin.html">🔐 Panel de administración</a>
+  </footer>
+
+  <!-- ============================ FABs ================================= -->
+  <button id="cartFab" class="fab fab-cart" aria-label="Abrir carrito">
+    🛒
+    <span id="fabBadge" class="badge" style="display:none">0</span>
+  </button>
+  <a id="whatsappFab" class="fab fab-whatsapp" href="#" target="_blank" rel="noopener"
+     aria-label="Consultar por WhatsApp">💬</a>
+
+  <!-- ========================== CART DRAWER ============================ -->
+  <div id="overlay" class="overlay"></div>
+  <aside id="cartDrawer" class="drawer" aria-label="Carrito de compras" aria-hidden="true">
+    <div class="drawer-head">
+      <h2>🛒 Tu pedido</h2>
+      <button id="closeDrawer" class="icon-btn" aria-label="Cerrar carrito">✕</button>
+    </div>
+    <div id="cartItems" class="drawer-body"></div>
+    <div class="drawer-foot">
+      <div class="total-row">
+        <span>Total</span>
+        <span id="cartTotal" class="total">$ 0</span>
+      </div>
+      <button id="goCheckout" class="btn btn-primary">Finalizar pedido →</button>
+    </div>
+  </aside>
+
+  <!-- ========================= CHECKOUT MODAL ========================== -->
+  <div id="checkoutOverlay" class="overlay"></div>
+  <div id="checkoutModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="checkoutTitle">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h2 id="checkoutTitle">📋 Confirmá tu pedido</h2>
+        <button id="closeCheckout" class="icon-btn" aria-label="Cerrar">✕</button>
+      </div>
+
+      <div class="resumen">
+        <h4>Resumen del pedido</h4>
+        <div id="resumenItems"></div>
+        <div class="line grand"><span>Total</span><span id="resumenTotal">$ 0</span></div>
+      </div>
+
+      <form id="checkoutForm" novalidate>
+        <div class="field">
+          <label for="nombre">Nombre completo <span class="req">*</span></label>
+          <input id="nombre" type="text" maxlength="120" autocomplete="name" required
+                 placeholder="Ej.: María González">
+        </div>
+        <div class="field">
+          <label for="telefono">Teléfono (opcional)</label>
+          <input id="telefono" type="tel" maxlength="30" autocomplete="tel" placeholder="261 555 1234">
+        </div>
+
+        <div class="field">
+          <label>Modalidad de entrega <span class="req">*</span></label>
+          <div class="seg">
+            <input type="radio" id="retiro" name="modalidad" value="RETIRO_LOCAL" checked>
+            <label for="retiro">🏪 Retiro en local</label>
+            <input type="radio" id="envio" name="modalidad" value="ENVIO_DOMICILIO">
+            <label for="envio">🛵 Envío a domicilio</label>
+          </div>
+        </div>
+
+        <div id="fieldDireccion" class="field" style="display:none">
+          <label for="direccion">Dirección <span class="req">*</span></label>
+          <input id="direccion" type="text" maxlength="255" autocomplete="street-address"
+                 placeholder="Calle y número">
+        </div>
+
+        <div class="field">
+          <label for="barrio">Barrio</label>
+          <input id="barrio" type="text" maxlength="120" placeholder="Ej.: Centro, Benegas…">
+        </div>
+
+        <div class="field">
+          <label>Medio de pago <span class="req">*</span></label>
+          <div class="seg" style="grid-template-columns:repeat(3,1fr)">
+            <input type="radio" id="pagoEfectivo" name="medioPago" value="EFECTIVO" checked>
+            <label for="pagoEfectivo">💵 Efectivo</label>
+            <input type="radio" id="pagoTransferencia" name="medioPago" value="TRANSFERENCIA">
+            <label for="pagoTransferencia">🏦 Transferencia</label>
+            <input type="radio" id="pagoMP" name="medioPago" value="MERCADO_PAGO">
+            <label for="pagoMP">💳 Mercado Pago</label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="notas">Notas (opcional)</label>
+          <textarea id="notas" rows="2" maxlength="500" placeholder="Ej.: pedido para retirar mañana a la tarde"></textarea>
+        </div>
+
+        <button id="btnEnviar" type="submit" class="btn btn-whatsapp">
+          💬 Enviar pedido por WhatsApp
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================== TOAST =============================== -->
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <script src="js/api.js"></script>
+  <script src="js/demo-data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

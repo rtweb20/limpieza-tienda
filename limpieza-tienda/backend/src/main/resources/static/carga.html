@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>Carga con lector — Aroma a Limpio</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/admin.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📷</text></svg>">
+  <style>
+    /* Estilos específicos de la pantalla de carga */
+    .carga-card { max-width: 640px; margin: 20px auto; background: #fff; border-radius: 16px; padding: 22px; box-shadow: var(--sombra); }
+    .carga-card h1 { margin: 0 0 4px; font-size: 20px; }
+    .carga-card .sub { color: var(--texto-suave); font-size: 13.5px; margin: 0 0 18px; }
+    .codigo-field input {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-align: center;
+      border: 2px solid var(--verde);
+    }
+    .codigo-field input:focus { border-color: var(--acento); }
+    .preview-wrap { display: flex; align-items: center; gap: 14px; }
+    #imgPreview { width: 84px; height: 84px; border-radius: 12px; object-fit: cover; background: var(--bg); border: 1px solid var(--borde); display: none; }
+    .file-btn {
+      display: inline-block;
+      background: #fff; border: 1.5px dashed var(--borde); border-radius: 12px;
+      padding: 12px 16px; font-size: 14px; font-weight: 600; color: var(--texto-suave); cursor: pointer;
+    }
+    .file-btn:hover { border-color: var(--verde); color: var(--verde-osc); }
+    #resultado { display: none; margin-top: 16px; padding: 14px 16px; border-radius: 12px; font-size: 14px; line-height: 1.5; }
+    #resultado.creado { background: var(--verde-suave); border: 1px solid #c9e4d8; color: var(--verde-osc); display: block; }
+    #resultado.actualizado { background: var(--ambar-suave); border: 1px solid #ecd3ae; color: #8a5b00; display: block; }
+    #resultado.info { background: #e8f0fe; border: 1px solid #c4d7f6; color: var(--azul); display: block; }
+    .hint { font-size: 12px; color: var(--texto-suave); margin-top: 4px; }
+    .big-icon { font-size: 44px; }
+    .top-actions { display: flex; gap: 8px; }
+  </style>
+</head>
+<body class="admin">
+
+  <!-- ============================ TOPBAR ================================ -->
+  <div class="admin-bar">
+    <span class="brand">📷 Aroma a Limpio — Carga con lector</span>
+    <span class="spacer"></span>
+    <a href="admin.html">⚙️ Panel</a>
+    <a href="index.html" target="_blank" rel="noopener">🌐 Tienda</a>
+  </div>
+
+  <main>
+    <div class="carga-card">
+      <h1>🛒 Carga de productos por código de barras</h1>
+      <p class="sub">Escanear el código → se completa y pasa solo al nombre. Si el código ya existe, se actualizan los datos y se <strong>suma</strong> el stock.</p>
+
+      <!-- Área de resultado (se muestra al guardar) -->
+      <div id="resultado" role="status"></div>
+
+      <form id="cargaForm" novalidate>
+        <!-- 1. Código de barras (autofocus; Enter NO recarga la página) -->
+        <div class="field codigo-field">
+          <label for="codigoBarras">Código de barras <span class="req">*</span></label>
+          <input id="codigoBarras" type="text" autofocus autocomplete="off"
+                 inputmode="numeric" maxlength="64" placeholder="Escanear aquí…" required>
+          <div class="hint">El lector envía el valor + Enter automáticamente.</div>
+        </div>
+
+        <!-- 2. Nombre -->
+        <div class="field">
+          <label for="nombre">Nombre del producto <span class="req">*</span></label>
+          <input id="nombre" type="text" maxlength="120" required placeholder="Ej.: Detergente 750 ml">
+        </div>
+
+        <!-- 3. Precio -->
+        <div class="field">
+          <label for="precio">Precio ($) <span class="req">*</span></label>
+          <input id="precio" type="number" step="0.01" min="0" required placeholder="Ej.: 2150">
+        </div>
+
+        <!-- 4. Descripción -->
+        <div class="field">
+          <label for="descripcion">Descripción</label>
+          <textarea id="descripcion" rows="2" maxlength="500" placeholder="Detalle del producto (opcional)"></textarea>
+        </div>
+
+        <!-- 5. Fotografía -->
+        <div class="field">
+          <label for="imagen">Fotografía</label>
+          <div class="preview-wrap">
+            <img id="imgPreview" alt="Vista previa">
+            <label class="file-btn" for="imagen">📷 Elegir foto…</label>
+            <input id="imagen" type="file" accept="image/*" style="display:none">
+          </div>
+        </div>
+
+        <!-- 6. Stock inicial -->
+        <div class="field">
+          <label for="stock">Stock inicial <span class="req">*</span></label>
+          <input id="stock" type="number" min="0" required placeholder="Ej.: 12">
+          <div class="hint">Si el producto ya existe, este número se <strong>suma</strong> al stock actual.</div>
+        </div>
+
+        <!-- 7. Categoría -->
+        <div class="field">
+          <label for="categoriaId">Categoría <span class="req">*</span></label>
+          <select id="categoriaId" required></select>
+        </div>
+
+        <button id="btnGuardar" type="submit" class="btn btn-primary" style="font-size:16px">
+          💾 Guardar producto
+        </button>
+      </form>
+    </div>
+  </main>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <script src="js/api.js"></script>
+  <script src="js/demo-data.js"></script>
+  <script src="js/carga.js"></script>
+</body>
+</html>
