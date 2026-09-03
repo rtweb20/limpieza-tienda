@@ -1,177 +1,170 @@
-/* ============================================================================
-   AROMA A LIMPIO — Estilos del panel de administración
-   (se usa junto con styles.css para heredar botones, modales y toasts)
-   ========================================================================== */
+/* ------------------------------ Dropzone Drag & Drop -------------------- */
 
-body.admin { background: #edf6fb; }
-
-/* ------------------------------ Login ----------------------------------- */
-
-.login-wrap {
-  min-height: 100vh;
-  display: grid;
-  place-items: center;
-  padding: 20px;
-}
-
-.login-card {
-  width: 100%;
-  max-width: 380px;
-  background: #fff;
-  border-radius: 18px;
-  padding: 28px 24px;
-  box-shadow: var(--sombra-fuerte);
+.dropzone {
+  border: 2px dashed var(--borde);
+  border-radius: 14px;
+  background: #fbfcfd;
+  padding: 22px 18px;
   text-align: center;
+  transition: all .2s ease-in-out;
+  cursor: pointer;
+  position: relative;
+  outline: none;
+  user-select: none;
 }
 
-.login-card .logo {
-  font-size: 42px;
-  width: 72px;
-  height: 72px;
-  margin: 0 auto 12px;
-  border-radius: 20px;
+.dropzone:hover, .dropzone:focus-visible {
+  border-color: var(--celeste);
+  background: #f4fafe;
+}
+
+.dropzone.dragover {
+  border-color: var(--celeste);
+  border-style: solid;
   background: var(--celeste-suave);
-  display: grid;
-  place-items: center;
+  box-shadow: 0 0 0 4px rgba(29, 158, 216, 0.22);
+  transform: scale(1.01);
 }
 
-.login-card h1 { font-size: 20px; margin: 0 0 4px; }
-.login-card p { color: var(--texto-suave); font-size: 13.5px; margin: 0 0 18px; }
-.login-card .field { text-align: left; }
-.login-error { color: var(--rojo); font-size: 13px; min-height: 18px; margin-top: 8px; }
+.dropzone.dragover .dropzone-icon {
+  transform: scale(1.25) rotate(-6deg);
+}
 
-/* ------------------------------ Topbar admin ---------------------------- */
+.dropzone.dragover .dropzone-title {
+  color: var(--celeste-profundo);
+}
 
-.admin-bar {
-  background: linear-gradient(135deg, #24abe9 0%, var(--celeste) 55%, var(--celeste-osc) 100%);
+.dropzone-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  pointer-events: none;
+}
+
+.dropzone-icon {
+  font-size: 38px;
+  line-height: 1;
+  margin-bottom: 2px;
+  transition: transform 0.2s ease;
+}
+
+.dropzone-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--texto);
+  margin: 0;
+}
+
+.dropzone-sub {
+  font-size: 12.5px;
+  color: var(--texto-suave);
+  margin: 0 0 4px;
+  line-height: 1.4;
+}
+
+.dropzone-sub strong {
+  color: var(--celeste-osc);
+}
+
+.btn-dropzone {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #fff;
+  border: 1.5px solid var(--celeste);
+  color: var(--celeste-osc);
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-dropzone:hover {
+  background: var(--celeste);
   color: #fff;
+}
+
+.dropzone-formats {
+  font-size: 11px;
+  color: var(--texto-suave);
+  margin-top: 4px;
+}
+
+.dropzone-preview {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  position: sticky;
-  top: 0;
-  z-index: 40;
-  box-shadow: 0 2px 12px rgba(12, 92, 130, .22);
+  gap: 16px;
+  text-align: left;
+  cursor: default;
 }
 
-.admin-bar .brand { font-weight: 800; font-size: 16px; display: flex; align-items: center; gap: 8px; }
-.admin-bar .spacer { flex: 1; }
-.admin-bar a, .admin-bar button {
-  color: #cfe0e8;
-  background: none;
-  border: 1px solid rgba(255,255,255,.22);
-  border-radius: 10px;
-  padding: 8px 12px;
-  font-size: 13px;
-  text-decoration: none;
-}
-.admin-bar button:hover { background: rgba(255,255,255,.08); }
-
-.tabs {
-  display: flex;
-  gap: 6px;
-  max-width: 1080px;
-  margin: 16px auto 0;
-  padding: 0 16px;
-  flex-wrap: wrap;
-}
-
-.tab {
+.preview-thumb-wrap {
+  width: 90px;
+  height: 90px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #eef2f5;
   border: 1px solid var(--borde);
-  background: #fff;
+  box-shadow: 0 2px 10px rgba(12, 92, 130, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.preview-thumb-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.preview-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.preview-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 800;
+  background: var(--celeste-suave);
+  color: var(--celeste-profundo);
+  padding: 3px 9px;
   border-radius: 999px;
-  padding: 9px 18px;
+  margin-bottom: 4px;
+}
+
+.preview-tag.actual {
+  background: #fbf1d4;
+  color: #8a6409;
+}
+
+.preview-filename {
   font-size: 14px;
   font-weight: 700;
   color: var(--texto);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 2px;
 }
 
-.tab.active { background: var(--celeste); border-color: var(--celeste); color: #fff; }
-
-.wrap { max-width: 1080px; margin: 16px auto 60px; padding: 0 16px; }
-
-.panel-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 18px 0 12px;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.panel-head h2 { margin: 0; font-size: 18px; }
-
-/* ------------------------------ Tablas ---------------------------------- */
-
-.table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 14px; overflow: hidden; box-shadow: var(--sombra); }
-
-.table th, .table td { padding: 12px 14px; text-align: left; font-size: 14px; border-bottom: 1px solid var(--borde); vertical-align: middle; }
-.table th { background: #f2f5f7; font-size: 12px; text-transform: uppercase; letter-spacing: .5px; color: var(--texto-suave); }
-.table tr:last-child td { border-bottom: none; }
-
-.thumb { width: 44px; height: 44px; border-radius: 10px; object-fit: cover; background: #eef2f5; }
-
-.badge { display: inline-block; font-size: 11px; font-weight: 800; padding: 3px 9px; border-radius: 999px; }
-.badge.ok { background: var(--celeste-suave); color: var(--celeste-osc); }
-.badge.no { background: #fdecea; color: var(--rojo); }
-.badge.oferta { background: var(--acento-suave); color: #0a6b93; }
-.badge.pedido { background: #e8f0fe; color: var(--azul); }
-
-.row-actions { display: flex; gap: 6px; }
-.mini-btn {
-  border: 1px solid var(--borde);
-  background: #fff;
-  border-radius: 8px;
-  padding: 6px 10px;
-  font-size: 13px;
-}
-.mini-btn.danger { color: var(--rojo); border-color: #f5c6c3; }
-.mini-btn:hover { background: var(--bg); }
-
-/* Variantes en la tabla de productos */
-.var-list { margin: 4px 0 0; padding: 0; list-style: none; font-size: 12.5px; color: var(--texto-suave); }
-.var-list li { display: inline; }
-.var-list li::after { content: ' · '; color: var(--borde); }
-.var-list li:last-child::after { content: ''; }
-
-/* ------------------------------ Editor de variantes ---------------------- */
-
-.variant-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 70px auto;
-  gap: 8px;
-  align-items: center;
+.preview-filesize {
+  font-size: 12px;
+  color: var(--texto-suave);
   margin-bottom: 8px;
 }
 
-.variant-row input {
-  width: 100%;
-  padding: 10px;
-  border-radius: 9px;
-  border: 1px solid var(--borde);
-  font-size: 14px;
+.preview-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
 }
-
-.variant-row .rm { background: none; border: none; color: var(--rojo); font-size: 18px; }
-
-.switch-row { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
-.switch-row label { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; }
-.switch-row input { width: 18px; height: 18px; accent-color: var(--celeste); }
-
-/* Estado del pedido */
-.estado-select {
-  padding: 8px 10px;
-  border-radius: 9px;
-  border: 1px solid var(--borde);
-  font-size: 13px;
-  background: #fff;
-}
-
-.pedido-item { font-size: 13px; color: var(--texto-suave); padding: 2px 0; }
-
-.empty { text-align: center; color: var(--texto-suave); padding: 40px 10px; background: #fff; border-radius: 14px; }
-
 /* Responsive */
 @media (max-width: 640px) {
   .variant-row { grid-template-columns: 1fr 1fr; }
