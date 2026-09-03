@@ -4,15 +4,31 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex">
-  <title>Carga con lector — Aroma a Limpio</title>
+  <title>Carga de productos — Aroma a Limpio</title>
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/admin.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📷</text></svg>">
   <style>
     /* Estilos específicos de la pantalla de carga */
-    .carga-card { max-width: 640px; margin: 20px auto; background: #fff; border-radius: 16px; padding: 22px; box-shadow: var(--sombra); }
-    .carga-card h1 { margin: 0 0 4px; font-size: 20px; }
-    .carga-card .sub { color: var(--texto-suave); font-size: 13.5px; margin: 0 0 18px; }
+    .carga-card {
+      max-width: 660px;
+      margin: 20px auto;
+      background: #fff;
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: var(--sombra);
+    }
+    .carga-card h1 {
+      margin: 0 0 6px;
+      font-size: 21px;
+      color: var(--celeste-profundo);
+    }
+    .carga-card .sub {
+      color: var(--texto-suave);
+      font-size: 13.5px;
+      margin: 0 0 18px;
+      line-height: 1.45;
+    }
     .codigo-field input {
       font-size: 20px;
       font-weight: 700;
@@ -21,24 +37,28 @@
       border: 2px solid var(--celeste);
     }
     .codigo-field input:focus { border-color: var(--acento); }
-    .preview-wrap { display: flex; align-items: center; gap: 14px; }
-    #imgPreview { width: 84px; height: 84px; border-radius: 12px; object-fit: cover; background: var(--bg); border: 1px solid var(--borde); display: none; }
-    .file-btn {
-      display: inline-block;
-      background: #fff; border: 1.5px dashed var(--borde); border-radius: 12px;
-      padding: 12px 16px; font-size: 14px; font-weight: 600; color: var(--texto-suave); cursor: pointer;
+    
+    #resultado {
+      display: none;
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      font-size: 14px;
+      line-height: 1.5;
     }
-    .file-btn:hover { border-color: var(--celeste); color: var(--celeste-osc); }
-    #resultado { display: none; margin-top: 16px; padding: 14px 16px; border-radius: 12px; font-size: 14px; line-height: 1.5; }
     #resultado.creado { background: var(--celeste-suave); border: 1px solid #bcdff0; color: var(--celeste-profundo); display: block; }
     #resultado.actualizado { background: #eef7fc; border: 1px solid #cfe7f2; color: #0a6b93; display: block; }
     #resultado.info { background: #e8f4fb; border: 1px solid #c4def0; color: var(--azul); display: block; }
-    #resultado.nuevo { background: #e3f4fc; border: 2px solid var(--celeste); color: var(--celeste-profundo); display: block; font-size: 16px; font-weight: 700; }
-    #resultado.duplicado { background: #fdecea; border: 2px solid var(--rojo); color: #b3261e; display: block; font-size: 16px; font-weight: 700; animation: latido 0.5s ease; }
-    @keyframes latido { 0% { transform: scale(0.94); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+    #resultado.nuevo { background: #e3f4fc; border: 2px solid var(--celeste); color: var(--celeste-profundo); display: block; font-size: 15.5px; font-weight: 700; }
+    #resultado.duplicado { background: #fdecea; border: 2px solid var(--rojo); color: #b3261e; display: block; font-size: 15.5px; font-weight: 700; animation: latido 0.5s ease; }
+    
+    @keyframes latido {
+      0% { transform: scale(0.96); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
     .hint { font-size: 12px; color: var(--texto-suave); margin-top: 4px; }
-    .big-icon { font-size: 44px; }
-    .top-actions { display: flex; gap: 8px; }
+    
     /* Escáner por cámara */
     #scanArea { margin-top: 10px; text-align: center; }
     #qr-reader { width: 100%; max-width: 320px; margin: 0 auto; border-radius: 12px; overflow: hidden; }
@@ -60,11 +80,11 @@
       <h1>🛒 Carga de productos por código de barras</h1>
       <p class="sub">Escanear el código → se completa y pasa solo al nombre. Si el código <strong>ya está cargado</strong>, te avisa como en la caja del supermercado y podés sumar stock.</p>
 
-      <!-- Área de resultado (se muestra al guardar) -->
+      <!-- Área de resultado -->
       <div id="resultado" role="status"></div>
 
       <form id="cargaForm" novalidate>
-        <!-- 1. Código de barras (autofocus; Enter NO recarga la página) -->
+        <!-- 1. Código de barras -->
         <div class="field codigo-field">
           <label for="codigoBarras">Código de barras <span class="req">*</span></label>
           <input id="codigoBarras" type="text" autofocus autocomplete="off"
@@ -96,14 +116,38 @@
           <textarea id="descripcion" rows="2" maxlength="500" placeholder="Detalle del producto (opcional)"></textarea>
         </div>
 
-        <!-- 5. Fotografía -->
+        <!-- 5. Fotografía con Drag & Drop -->
         <div class="field">
-          <label for="imagen">Fotografía</label>
-          <div class="preview-wrap">
-            <img id="imgPreview" alt="Vista previa">
-            <label class="file-btn" for="imagen">📷 Elegir foto…</label>
+          <label>Fotografía del producto</label>
+          <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="Arrastrá una imagen o haz clic para subir foto">
             <input id="imagen" type="file" accept="image/*" style="display:none">
+            
+            <!-- Estado 1: Vacío / Esperando imagen -->
+            <div id="dropEmpty" class="dropzone-empty">
+              <div class="dropzone-icon">📸</div>
+              <p class="dropzone-title">Arrastrá y soltá una foto aquí</p>
+              <p class="dropzone-sub">o hacé clic para explorar · también podés pegar con <strong>Ctrl + V</strong></p>
+              <button type="button" class="btn-dropzone" id="btnExplorar">📁 Elegir foto…</button>
+              <div class="dropzone-formats">Formatos: JPG, PNG, WEBP, GIF (optimización automática)</div>
+            </div>
+
+            <!-- Estado 2: Con imagen cargada (Vista previa) -->
+            <div id="dropPreview" class="dropzone-preview" style="display:none">
+              <div class="preview-thumb-wrap">
+                <img id="imgPreview" alt="Vista previa de la imagen">
+              </div>
+              <div class="preview-details">
+                <span id="previewTag" class="preview-tag">✅ Foto lista</span>
+                <div id="previewFilename" class="preview-filename">foto.jpg</div>
+                <div id="previewFilesize" class="preview-filesize">0 KB</div>
+                <div class="preview-actions">
+                  <button type="button" class="btn-mini btn-change" id="btnCambiarImagen">🔄 Cambiar</button>
+                  <button type="button" class="btn-mini btn-remove" id="btnQuitarImagen">🗑️ Quitar</button>
+                </div>
+              </div>
+            </div>
           </div>
+          <div class="hint">La foto se comprime y redimensiona automáticamente en el navegador para un guardado óptimo.</div>
         </div>
 
         <!-- 6. Stock inicial -->
