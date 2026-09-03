@@ -106,6 +106,14 @@ public class AdminController {
         adminService.eliminarProducto(id);
     }
 
+    /** Vacía el catálogo: borra todos los productos (y sus variantes). */
+    @DeleteMapping("/productos")
+    public Map<String, Object> vaciarProductos() {
+        long eliminados = adminService.vaciarProductos();
+        return Map.of("eliminados", eliminados,
+                "mensaje", "Se eliminaron " + eliminados + " productos.");
+    }
+
     // ---------------- Carga con lector de código de barras ----------------
 
     /**

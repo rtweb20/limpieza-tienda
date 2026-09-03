@@ -33,7 +33,7 @@ limpieza-tienda/
 ├── .dockerignore
 ├── database/
 │   ├── schema.sql          # DDL: categorias, productos, variantes, pedidos, pedido_items
-│   └── data.sql            # Carga masiva inicial de productos + variantes
+│   └── data.sql            # Carga inicial: solo las categorías (el catálogo arranca vacío)
 ├── backend/                # Proyecto Spring Boot (Maven)
 │   ├── pom.xml
 │   ├── mvnw / mvnw.cmd     # Maven Wrapper (opcional, para compilar sin Maven instalado)
@@ -58,9 +58,10 @@ limpieza-tienda/
 
 **Requisitos:** Java 17+ y Maven 3.6+ (o usar el wrapper `mvnw`), PostgreSQL 14+.
 
-> ⭐ Al arrancar, la app **crea las tablas y carga los productos automáticamente**
-> (scripts `schema.sql` / `data.sql` del classpath, idempotentes). Solo hace
-> falta que la base de datos exista.
+> ⭐ Al arrancar, la app **crea las tablas y las categorías automáticamente**
+> (scripts `schema.sql` / `data.sql` del classpath, idempotentes). El catálogo
+> de productos arranca **vacío**: se carga escaneando códigos de barras desde
+> el panel. Solo hace falta que la base de datos exista.
 
 1. Crear la base (vacía):
 

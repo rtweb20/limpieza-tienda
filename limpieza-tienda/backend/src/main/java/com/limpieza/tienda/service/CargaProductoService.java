@@ -74,7 +74,7 @@ public class CargaProductoService {
             throw new PeticionInvalidaException("El stock debe ser un número mayor o igual a 0.");
         }
 
-        codigoBarras = codigoBarras.trim();
+        codigoBarras = normalizarCodigo(codigoBarras.trim());
         Categoria categoria = categoriaRepository.findById(categoriaId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Categoría no encontrada: " + categoriaId));
 
@@ -162,10 +162,24 @@ public class CargaProductoService {
     /** Busca un producto por código de barras (para precargar el formulario). */
     @Transactional(readOnly = true)
     public ProductoDto buscarPorCodigo(String codigoBarras) {
-        Producto producto = productoRepository.findByCodigoBarras(codigoBarras.trim())
+        String codigo = normalizarCodigo(codigoBarras == null ? "" : codigoBarras.trim());
+        Producto producto = productoRepository.findByCodigoBarras(codigo)
                 .orElseThrow(() -> new RecursoNoEncontradoException(
-                        "No existe un producto con el código: " + codigoBarras));
+                        "No existe un producto con el código: " + codigo));
         return ProductoDto.from(producto);
+    }
+
+    /**
+     * Normaliza el código de barras leído. Algunos lectores/cámaras devuelven el
+     * UPC-A (12 dígitos) y otros el EAN-13 (13 dígitos) para el mismo producto.
+     * Un UPC-A de 12 dígitos equivale al EAN-13 con un 0 delante, así que lo
+     * convertimos para que ambos celulares registren el MISMO código.
+     */
+    private String normalizarCodigo(String codigo) {
+        if (codigo != null && codigo.matches("\\d{12}")) {
+            return "0" + codigo;
+        }
+        return codigo;
     }
 
     /** Genera un slug único para la URL del producto. */

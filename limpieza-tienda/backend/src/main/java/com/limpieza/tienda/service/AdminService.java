@@ -136,6 +136,17 @@ public class AdminService {
         productoRepository.delete(producto);
     }
 
+    /**
+     * Vacía el catálogo completo (todos los productos y sus variantes).
+     * Las categorías se conservan. Devuelve la cantidad de productos eliminados.
+     */
+    public long vaciarProductos() {
+        long total = productoRepository.count();
+        varianteRepository.deleteAll();
+        productoRepository.deleteAll();
+        return total;
+    }
+
     private void aplicarProducto(Producto p, ProductoUpsertRequest r, Long id) {
         Categoria categoria = categoriaRepository.findById(r.categoriaId())
                 .orElseThrow(() -> new RecursoNoEncontradoException("Categoría no encontrada: " + r.categoriaId()));

@@ -89,6 +89,11 @@
       demoDB.productos = demoDB.productos.filter((p) => p.id !== id);
       return r(null);
     }
+    if (method === 'DELETE' && path.endsWith('/productos')) {
+      const n = demoDB.productos.length;
+      demoDB.productos = [];
+      return r({ eliminados: n, mensaje: 'Se eliminaron ' + n + ' productos.' });
+    }
     if (method === 'PATCH' && /\/pedidos\/\d+\/estado$/.test(path)) {
       const id = Number(path.split('/').pop().split('/')[0]);
       const p = demoDB.pedidos.find((x) => x.id === id);
@@ -397,6 +402,15 @@
     $('#catForm').addEventListener('submit', guardarCategoria);
 
     // Productos
+    $('#vaciarProd').addEventListener('click', async () => {
+      const ok = confirm('⚠️ ¿Eliminar TODOS los productos?\n\nSe borra todo el catálogo para empezar de cero (las categorías se conservan). Esta acción no se puede deshacer.');
+      if (!ok) return;
+      try {
+        const r = await api('DELETE', '/api/admin/productos');
+        cargarProductos();
+        toast('🗑️ ' + (r && r.mensaje ? r.mensaje : 'Productos eliminados'));
+      } catch (err) { toast('⚠️ ' + err.message); }
+    });
     $('#nuevoProd').addEventListener('click', () => abrirProdModal(null));
     $('#prodList').addEventListener('click', (e) => {
       const ed = e.target.closest('[data-editar-prod]');

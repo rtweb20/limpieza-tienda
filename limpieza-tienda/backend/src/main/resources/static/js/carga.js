@@ -44,6 +44,42 @@
     toast._t = setTimeout(() => el.classList.remove('show'), 2800);
   }
 
+  /** Pitido tipo caja de supermercado: ok = agudo simple; error = doble grave. */
+  function beep(ok) {
+    try {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return;
+      beep._ctx = beep._ctx || new Ctx();
+      const ctx = beep._ctx;
+      if (ctx.state === 'suspended') ctx.resume();
+      const tonos = ok ? [880] : [330, 262];
+      tonos.forEach((f, i) => {
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.type = 'square';
+        o.frequency.value = f;
+        o.connect(g);
+        g.connect(ctx.destination);
+        const t = ctx.currentTime + i * 0.18;
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(0.18, t + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.12);
+        o.start(t);
+        o.stop(t + 0.14);
+      });
+    } catch (_) { /* sin audio disponible */ }
+  }
+
+  /**
+   * Normaliza el código leído: si un lector/cámara da UPC-A (12 dígitos) y otro
+   * EAN-13 (13 dígitos) para el MISMO producto, los unificamos anteponiendo un 0.
+   */
+  function normalizarCodigo(codigo) {
+    codigo = (codigo || '').trim();
+    if (/^\d{12}$/.test(codigo)) return '0' + codigo;
+    return codigo;
+  }
+
   /** Petición autenticada con el token del panel. */
   async function apiAutenticada(method, path, body) {
     const options = { method, headers: { 'X-Admin-Token': token } };
@@ -82,18 +118,28 @@
 
   // ---------- Comportamiento clave del lector (Enter no recarga) -----------
 
+  let codigoExiste = false;   // ¿el código escaneado ya está cargado?
+
   /**
    * Procesa un código de barras (venga del lector USB, del teclado o de la
    * cámara): consulta si ya existe y precarga el formulario, o lo deja limpio.
    */
   async function procesarCodigo(codigo) {
-    codigo = (codigo || '').trim();
+    codigo = normalizarCodigo(codigo);
     if (!codigo) { nombreInput.focus(); return; }
+    codigoInput.value = codigo;
 
     try {
       // ¿Ya existe este código?
       const producto = await apiAutenticada('GET',
         '/api/admin/productos/barcode/' + encodeURIComponent(codigo));
+
+      // ============ YA ESTÁ CARGADO (como la caja del supermercado) ==========
+      codigoExiste = true;
+      beep(false);
+      const stockActual = (producto.variantes && producto.variantes[0])
+        ? producto.variantes[0].stock : 0;
+
       // Precargamos los datos existentes para que solo haga falta confirmar.
       nombreInput.value = producto.nombre || '';
       precioInput.value = (producto.variantes && producto.variantes[0])
@@ -102,18 +148,24 @@
       if (producto.categoriaId) categoriaSelect.value = String(producto.categoriaId);
       stockInput.value = '';
       stockInput.placeholder = 'Se suma al stock actual';
-      mostrarResultado('info',
-        `🏷️ Código ya cargado: <strong>${producto.nombre}</strong>.<br>` +
-        `Se actualizarán los datos y se sumará stock.`);
+      btnGuardar.textContent = '➕ Sumar stock';
+      mostrarResultado('duplicado',
+        `⛔ YA CARGADO: <strong>${producto.nombre}</strong><br>` +
+        `<span style="font-weight:400;font-size:14px">Stock actual: ${stockActual} · ` +
+        `si es reposición, poné la cantidad y tocá «➕ Sumar stock».</span>`);
+      toast('⛔ Este producto ya está cargado');
     } catch (err) {
       if (err.status === 404) {
-        // Código nuevo: dejamos el formulario limpio y solo pasamos al nombre.
+        // ============ CÓDIGO NUEVO ============
+        codigoExiste = false;
+        beep(true);
         nombreInput.value = '';
         precioInput.value = '';
         descripcionInput.value = '';
         stockInput.value = '';
         stockInput.placeholder = 'Ej.: 12';
-        mostrarResultado('info', '🆕 Código nuevo: completá los datos del producto.');
+        btnGuardar.textContent = '💾 Guardar producto';
+        mostrarResultado('nuevo', '✅ CÓDIGO NUEVO — completá los datos del producto.');
       } else {
         toast('⚠️ ' + err.message);
       }
@@ -321,7 +373,8 @@
   form.addEventListener('submit', async (e) => {
     e.preventDefault();          // nunca recargamos la página
 
-    const codigo = codigoInput.value.trim();
+    const codigo = normalizarCodigo(codigoInput.value);
+    codigoInput.value = codigo;
     const nombre = nombreInput.value.trim();
     const precio = parseFloat(precioInput.value);
     const stock = parseInt(stockInput.value, 10);
@@ -364,6 +417,7 @@
       // Feedback visual según el resultado
       const tipo = r.accion === 'CREADO' ? 'creado' : 'actualizado';
       const icono = r.accion === 'CREADO' ? '✅' : '🔄';
+      beep(true);
       mostrarResultado(tipo,
         `${icono} <strong>${r.nombre}</strong> — ${r.accion === 'CREADO' ? 'creado' : 'actualizado'}.<br>` +
         `Código: ${r.codigoBarras} · Precio: $${r.precio} · Stock total: ${r.stock}`);
@@ -373,6 +427,8 @@
       form.reset();
       imgPreview.style.display = 'none';
       stockInput.placeholder = 'Ej.: 12';
+      codigoExiste = false;
+      btnGuardar.textContent = '💾 Guardar producto';
       codigoInput.focus();
     } catch (err) {
       toast('⚠️ ' + err.message);
