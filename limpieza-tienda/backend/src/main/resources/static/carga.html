@@ -3,174 +3,398 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="noindex">
-  <title>Carga de productos — Aroma a Limpio</title>
+  <meta name="robots" content="noindex, nofollow">
+  <title>Carga con Lector — Aroma a Limpio</title>
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/admin.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📷</text></svg>">
   <style>
-    /* Estilos específicos de la pantalla de carga */
+    .carga-page-container {
+      max-width: 720px;
+      margin: 28px auto 80px;
+      padding: 0 16px;
+    }
+
     .carga-card {
-      max-width: 660px;
-      margin: 20px auto;
-      background: #fff;
-      border-radius: 18px;
-      padding: 24px;
-      box-shadow: var(--sombra);
+      background: #ffffff;
+      border-radius: var(--admin-radius-lg);
+      border: 1px solid var(--admin-border);
+      box-shadow: var(--admin-shadow-lg);
+      padding: 32px 28px;
     }
-    .carga-card h1 {
-      margin: 0 0 6px;
-      font-size: 21px;
-      color: var(--celeste-profundo);
-    }
-    .carga-card .sub {
-      color: var(--texto-suave);
-      font-size: 13.5px;
-      margin: 0 0 18px;
-      line-height: 1.45;
-    }
-    .codigo-field input {
-      font-size: 20px;
-      font-weight: 700;
-      letter-spacing: 1px;
+
+    .carga-header {
       text-align: center;
-      border: 2px solid var(--celeste);
+      margin-bottom: 22px;
     }
-    .codigo-field input:focus { border-color: var(--acento); }
-    
-    #resultado {
-      display: none;
-      margin-top: 16px;
-      padding: 14px 16px;
-      border-radius: 12px;
-      font-size: 14px;
+
+    .carga-header-icon {
+      font-size: 34px;
+      width: 64px;
+      height: 64px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 12px;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.15);
+    }
+
+    .carga-header h1 {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--admin-dark);
+      margin: 0 0 6px;
+      letter-spacing: -0.3px;
+    }
+
+    .carga-header p {
+      font-size: 13.5px;
+      color: var(--admin-text-muted);
+      margin: 0;
       line-height: 1.5;
     }
-    #resultado.creado { background: var(--celeste-suave); border: 1px solid #bcdff0; color: var(--celeste-profundo); display: block; }
-    #resultado.actualizado { background: #eef7fc; border: 1px solid #cfe7f2; color: #0a6b93; display: block; }
-    #resultado.info { background: #e8f4fb; border: 1px solid #c4def0; color: var(--azul); display: block; }
-    #resultado.nuevo { background: #e3f4fc; border: 2px solid var(--celeste); color: var(--celeste-profundo); display: block; font-size: 15.5px; font-weight: 700; }
-    #resultado.duplicado { background: #fdecea; border: 2px solid var(--rojo); color: #b3261e; display: block; font-size: 15.5px; font-weight: 700; animation: latido 0.5s ease; }
-    
-    @keyframes latido {
-      0% { transform: scale(0.96); }
-      50% { transform: scale(1.02); }
-      100% { transform: scale(1); }
+
+    .barcode-input-container {
+      background: #f8fafc;
+      border: 2px solid #bae6fd;
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 20px;
+      text-align: center;
+      transition: all 0.2s ease;
     }
-    .hint { font-size: 12px; color: var(--texto-suave); margin-top: 4px; }
-    
-    /* Escáner por cámara */
-    #scanArea { margin-top: 10px; text-align: center; }
-    #qr-reader { width: 100%; max-width: 320px; margin: 0 auto; border-radius: 12px; overflow: hidden; }
-    #qr-reader video { border-radius: 12px; }
+
+    .barcode-input-container:focus-within {
+      border-color: var(--admin-primary);
+      background: #f0f9ff;
+      box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.15);
+    }
+
+    .barcode-input-container label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--admin-dark);
+      margin-bottom: 8px;
+    }
+
+    .barcode-input-container input {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-align: center;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1.5px solid var(--admin-border);
+      background: #ffffff;
+      color: #0369a1;
+      width: 100%;
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+
+    .barcode-input-container input:focus {
+      border-color: var(--admin-primary);
+    }
+
+    .barcode-help-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 10px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .barcode-hint {
+      font-size: 12px;
+      color: var(--admin-text-muted);
+      text-align: left;
+    }
+
+    .btn-camera-scan {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #ffffff;
+      color: #0369a1;
+      border: 1.5px solid #bae6fd;
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-camera-scan:hover {
+      background: #e0f2fe;
+      border-color: var(--admin-primary);
+    }
+
+    #scanArea {
+      margin-top: 14px;
+      background: #0f2438;
+      border-radius: 14px;
+      padding: 16px;
+      text-align: center;
+      color: #ffffff;
+    }
+
+    #qr-reader {
+      width: 100%;
+      max-width: 320px;
+      margin: 0 auto;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    #qr-reader video {
+      border-radius: 10px;
+    }
+
+    #resultado {
+      display: none;
+      margin-bottom: 20px;
+      padding: 14px 18px;
+      border-radius: 12px;
+      font-size: 13.5px;
+      line-height: 1.5;
+      animation: fadeIn 0.2s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    #resultado.nuevo {
+      background: #ecfdf5;
+      border: 1.5px solid #a7f3d0;
+      color: #065f46;
+      display: block;
+    }
+
+    #resultado.duplicado {
+      background: #fffbeb;
+      border: 1.5px solid #fde68a;
+      color: #92400e;
+      display: block;
+    }
+
+    #resultado.creado, #resultado.actualizado {
+      background: #e0f2fe;
+      border: 1.5px solid #bae6fd;
+      color: #0369a1;
+      display: block;
+    }
+
+    .callout-title {
+      font-size: 14.5px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 2px;
+    }
+
+    .carga-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .btn-submit-large {
+      margin-top: 10px;
+      width: 100%;
+      padding: 14px 20px;
+      font-size: 15px;
+      font-weight: 800;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+      color: #ffffff;
+      border: none;
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.3);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.15s ease;
+    }
+
+    .btn-submit-large:hover {
+      background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(2, 132, 199, 0.4);
+    }
+
+    .btn-submit-large:disabled {
+      background: #cbd5e1;
+      box-shadow: none;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .quick-tips-box {
+      margin-top: 24px;
+      background: #f8fafc;
+      border-radius: 12px;
+      border: 1px solid var(--admin-border);
+      padding: 14px 16px;
+      font-size: 12.5px;
+      color: var(--admin-text-muted);
+      line-height: 1.5;
+    }
+
+    .quick-tips-box strong {
+      color: var(--admin-dark);
+    }
+
+    @media (max-width: 600px) {
+      .carga-card { padding: 24px 18px; }
+      .form-grid-2 { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
-<body class="admin">
+<body class="admin-body">
 
-  <!-- ============================ TOPBAR ================================ -->
-  <div class="admin-bar">
-    <span class="brand">📷 Aroma a Limpio — Carga con lector</span>
-    <span class="spacer"></span>
-    <a href="admin.html">⚙️ Panel</a>
-    <a href="index.html" target="_blank" rel="noopener">🌐 Tienda</a>
-  </div>
+  <header class="admin-header">
+    <div class="admin-header-container">
+      <div class="admin-brand">
+        <span class="brand-icon">📷</span>
+        <div class="brand-text">
+          <span class="brand-name">Aroma a Limpio</span>
+          <span class="brand-tag">Carga con Lector</span>
+        </div>
+      </div>
 
-  <main>
+      <div class="admin-header-actions">
+        <a href="admin.html" class="header-link-btn highlight">
+          <span class="btn-icon">⚙️</span>
+          <span class="btn-text">Panel Admin</span>
+        </a>
+        <a href="index.html" target="_blank" rel="noopener" class="header-link-btn">
+          <span class="btn-icon">🌐</span>
+          <span class="btn-text">Ver tienda</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="carga-page-container">
     <div class="carga-card">
-      <h1>🛒 Carga de productos por código de barras</h1>
-      <p class="sub">Escanear el código → se completa y pasa solo al nombre. Si el código <strong>ya está cargado</strong>, te avisa como en la caja del supermercado y podés sumar stock.</p>
+      <div class="carga-header">
+        <div class="carga-header-icon">🛒</div>
+        <h1>Carga Rápida de Productos</h1>
+        <p>Pistoleá el código de barras o ingresalo manualmente. El sistema detecta si es nuevo o existente en tiempo real.</p>
+      </div>
 
-      <!-- Área de resultado -->
       <div id="resultado" role="status"></div>
 
-      <form id="cargaForm" novalidate>
-        <!-- 1. Código de barras -->
-        <div class="field codigo-field">
-          <label for="codigoBarras">Código de barras <span class="req">*</span></label>
+      <form id="cargaForm" class="carga-form" novalidate>
+        <div class="barcode-input-container">
+          <label for="codigoBarras">Código de Barras <span class="req" style="color:var(--admin-danger)">*</span></label>
           <input id="codigoBarras" type="text" autofocus autocomplete="off"
                  inputmode="numeric" maxlength="64" placeholder="Escanear aquí…" required>
-          <div class="hint">El lector USB/Bluetooth envía el valor + Enter. O usá la cámara del celular 👇</div>
-          <button type="button" id="btnEscanear" class="btn btn-outline" style="margin-top:8px">📷 Escanear con la cámara</button>
+          
+          <div class="barcode-help-row">
+            <span class="barcode-hint">💡 El lector USB o Bluetooth envía el código y pulsa Enter automáticamente.</span>
+            <button type="button" id="btnEscanear" class="btn-camera-scan">
+              📷 Usar cámara
+            </button>
+          </div>
+
           <div id="scanArea" style="display:none">
             <div id="qr-reader"></div>
-            <div id="scanStatus" class="hint" style="margin:8px 0;font-size:13px">📷 Preparando cámara…</div>
-            <button type="button" id="btnCancelarScan" class="btn btn-outline" style="margin-top:4px">✖ Cancelar escaneo</button>
+            <div id="scanStatus" style="margin:10px 0;font-size:13px;color:#bae6fd;">📷 Preparando cámara…</div>
+            <button type="button" id="btnCancelarScan" class="btn-cancel" style="padding:6px 14px;font-size:12px;">✖ Cancelar escaneo</button>
           </div>
         </div>
 
-        <!-- 2. Nombre -->
-        <div class="field">
-          <label for="nombre">Nombre del producto <span class="req">*</span></label>
-          <input id="nombre" type="text" maxlength="120" required placeholder="Ej.: Detergente 750 ml">
+        <div class="form-group">
+          <label for="nombre">Nombre del producto <span class="req" style="color:var(--admin-danger)">*</span></label>
+          <input id="nombre" type="text" maxlength="120" placeholder="Ej.: Jabón Líquido Skip 3 L" required>
         </div>
 
-        <!-- 3. Precio -->
-        <div class="field">
-          <label for="precio">Precio ($) <span class="req">*</span></label>
-          <input id="precio" type="number" step="0.01" min="0" required placeholder="Ej.: 2150">
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label for="categoriaId">Categoría <span class="req" style="color:var(--admin-danger)">*</span></label>
+            <select id="categoriaId" required></select>
+          </div>
+          <div class="form-group">
+            <label for="precio">Precio ($) <span class="req" style="color:var(--admin-danger)">*</span></label>
+            <input id="precio" type="number" step="0.01" min="0" placeholder="Ej.: 4500" required>
+          </div>
         </div>
 
-        <!-- 4. Descripción -->
-        <div class="field">
-          <label for="descripcion">Descripción</label>
-          <textarea id="descripcion" rows="2" maxlength="500" placeholder="Detalle del producto (opcional)"></textarea>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label for="stock">Stock <span class="req" style="color:var(--admin-danger)">*</span></label>
+            <input id="stock" type="number" min="0" placeholder="Ej.: 24" required>
+          </div>
+          <div class="form-group">
+            <label for="descripcion">Descripción (opcional)</label>
+            <input id="descripcion" type="text" maxlength="500" placeholder="Fragancia, aroma o detalles">
+          </div>
         </div>
 
-        <!-- 5. Fotografía con Drag & Drop -->
-        <div class="field">
+        <div class="form-group">
           <label>Fotografía del producto</label>
-          <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="Arrastrá una imagen o haz clic para subir foto">
-            <input id="imagen" type="file" accept="image/*" style="display:none">
-            
-            <!-- Estado 1: Vacío / Esperando imagen -->
-            <div id="dropEmpty" class="dropzone-empty">
-              <div class="dropzone-icon">📸</div>
-              <p class="dropzone-title">Arrastrá y soltá una foto aquí</p>
-              <p class="dropzone-sub">o hacé clic para explorar · también podés pegar con <strong>Ctrl + V</strong></p>
-              <button type="button" class="btn-dropzone" id="btnExplorar">📁 Elegir foto…</button>
-              <div class="dropzone-formats">Formatos: JPG, PNG, WEBP, GIF (optimización automática)</div>
-            </div>
-
-            <!-- Estado 2: Con imagen cargada (Vista previa) -->
-            <div id="dropPreview" class="dropzone-preview" style="display:none">
-              <div class="preview-thumb-wrap">
-                <img id="imgPreview" alt="Vista previa de la imagen">
+          <div class="dropzone-container">
+            <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="Arrastrá una imagen o hacé clic para subir foto">
+              <input id="imagen" type="file" accept="image/*" style="display:none">
+              
+              <div id="dropEmpty" class="dropzone-empty">
+                <div class="dropzone-icon">📸</div>
+                <p class="dropzone-title">Arrastrá y soltá una foto acá</p>
+                <p class="dropzone-sub">o hacé clic para explorar · podés pegar con <strong>Ctrl + V</strong></p>
+                <button type="button" class="btn-dropzone" id="btnExplorar">📁 Elegir foto…</button>
               </div>
-              <div class="preview-details">
-                <span id="previewTag" class="preview-tag">✅ Foto lista</span>
-                <div id="previewFilename" class="preview-filename">foto.jpg</div>
-                <div id="previewFilesize" class="preview-filesize">0 KB</div>
-                <div class="preview-actions">
-                  <button type="button" class="btn-mini btn-change" id="btnCambiarImagen">🔄 Cambiar</button>
-                  <button type="button" class="btn-mini btn-remove" id="btnQuitarImagen">🗑️ Quitar</button>
+
+              <div id="dropPreview" class="dropzone-preview" style="display:none">
+                <div class="preview-thumb-wrap">
+                  <img id="imgPreview" alt="Vista previa de foto">
+                </div>
+                <div class="preview-details">
+                  <span id="previewTag" class="preview-tag">✅ Foto lista</span>
+                  <div id="previewFilename" class="preview-filename">foto.jpg</div>
+                  <div id="previewFilesize" class="preview-filesize">0 KB</div>
+                  <div class="preview-actions">
+                    <button type="button" class="btn-mini btn-change" id="btnCambiarImagen">🔄 Cambiar</button>
+                    <button type="button" class="btn-mini btn-remove" id="btnQuitarImagen">🗑️ Quitar</button>
+                  </div>
+                </div>
+                <div class="drop-overlay-hint">
+                  <span>✨ ¡Soltá la foto para cambiar!</span>
                 </div>
               </div>
             </div>
           </div>
-          <div class="hint">La foto se comprime y redimensiona automáticamente en el navegador para un guardado óptimo.</div>
         </div>
 
-        <!-- 6. Stock inicial -->
-        <div class="field">
-          <label for="stock">Stock inicial <span class="req">*</span></label>
-          <input id="stock" type="number" min="0" required placeholder="Ej.: 12">
-          <div class="hint">Si el producto ya existe, este número se <strong>suma</strong> al stock actual.</div>
-        </div>
-
-        <!-- 7. Categoría -->
-        <div class="field">
-          <label for="categoriaId">Categoría <span class="req">*</span></label>
-          <select id="categoriaId" required></select>
-        </div>
-
-        <button id="btnGuardar" type="submit" class="btn btn-primary" style="font-size:16px">
-          💾 Guardar producto
+        <button id="btnGuardar" type="submit" class="btn-submit-large">
+          💾 Guardar Producto y Continuar
         </button>
       </form>
+
+      <div class="quick-tips-box">
+        <strong>💡 Flujo de trabajo rápido:</strong>
+        Pasa el lector por el código de barras → El foco avanza automáticamente al Nombre → Completá los datos y presioná Guardar. La pantalla se limpia y queda lista para el próximo producto sin recargar.
+      </div>
     </div>
   </main>
 
-  <div id="toast" role="status" aria-live="polite"></div>
+  <div id="toast" class="admin-toast" role="status" aria-live="polite"></div>
 
   <script src="js/api.js"></script>
   <script src="js/demo-data.js"></script>
