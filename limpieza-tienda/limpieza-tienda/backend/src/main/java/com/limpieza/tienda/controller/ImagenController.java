@@ -12,10 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Duration;
 
-/**
- * Sirve las fotos de producto guardadas en la base de datos.
- * Endpoint PÚBLICO (sin autenticación): la tienda lo usa como {@code <img src>}.
- */
 @RestController
 public class ImagenController {
 
@@ -40,11 +36,8 @@ public class ImagenController {
                 .body(imagen.getDatos());
     }
 
-    /** Convierte el content-type guardado a un MediaType seguro. */
     private MediaType parseMediaType(String contentType) {
-        if (contentType == null) {
-            return MediaType.IMAGE_JPEG;
-        }
+        if (contentType == null) return MediaType.IMAGE_JPEG;
         try {
             return MediaType.parseMediaType(contentType);
         } catch (Exception e) {
