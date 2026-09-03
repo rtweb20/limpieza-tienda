@@ -1,13 +1,5 @@
 /* ============================================================================
    AROMA A LIMPIO — Carga de productos con lector de código de barras
-   ----------------------------------------------------------------------------
-   Flujo:
-   1. El lector USB/Bluetooth "escribe" el código y pulsa Enter.
-   2. El Enter NO recarga la página: se consulta si el código ya existe y el
-      foco pasa automáticamente al campo "Nombre".
-   3. Al guardar: si el código es nuevo se crea el producto; si existe, se
-      actualizan los datos y se SUMA el stock.
-   4. Soporte completo Drag & Drop, selección manual y pegado (Ctrl+V) de fotos.
    ========================================================================== */
 (function () {
   'use strict';
@@ -33,7 +25,6 @@
   const resultado = $('#resultado');
   const btnGuardar = $('#btnGuardar');
 
-  // Elementos de la Dropzone (Drag and Drop)
   const dropzone = $('#dropzone');
   const dropEmpty = $('#dropEmpty');
   const dropPreview = $('#dropPreview');
@@ -48,14 +39,13 @@
   let archivoFotoSeleccionado = null;
   let fotoUrlActual = null;
 
-  // ----------------------------- Utilidades --------------------------------
-
   function toast(msg) {
     const el = $('#toast');
+    if (!el) return;
     el.textContent = msg;
     el.classList.add('show');
     clearTimeout(toast._t);
-    toast._t = setTimeout(() => el.classList.remove('show'), 2800);
+    toast._t = setTimeout(() => el.classList.remove('show'), 3000);
   }
 
   function beep(ok) {
@@ -148,8 +138,6 @@
     }
     return res.status === 204 ? null : res.json();
   }
-
-  // ----------------- Gestión de la Dropzone (Drag & Drop) -------------------
 
   function mostrarFotoSeleccionada(file) {
     if (!validarEsImagen(file)) {
@@ -246,53 +234,17 @@
     e.preventDefault();
     e.stopPropagation();
     dropzone.classList.remove('dragover');
-
     const dt = e.dataTransfer;
     if (dt && dt.files && dt.files.length > 0) {
       mostrarFotoSeleccionada(dt.files[0]);
       toast('🖼️ Foto cargada');
       beep(true);
-      return;
-    }
-
-    if (dt) {
-      const html = dt.getData('text/html');
-      if (html) {
-        const match = html.match(/src=["'](.*?)["']/i);
-        if (match && match[1]) {
-          fetchImagenWeb(match[1]);
-          return;
-        }
-      }
-      const uri = dt.getData('text/uri-list') || dt.getData('text/plain');
-      if (uri && /\.(jpe?g|png|webp|gif|bmp)(\?.*)?$/i.test(uri)) {
-        fetchImagenWeb(uri);
-        return;
-      }
     }
   });
 
-  async function fetchImagenWeb(url) {
-    try {
-      const res = await fetch(url);
-      const blob = await res.blob();
-      if (blob.type && blob.type.startsWith('image/')) {
-        const ext = blob.type.split('/')[1] || 'jpg';
-        const file = new File([blob], 'foto-web.' + ext, { type: blob.type });
-        mostrarFotoSeleccionada(file);
-        toast('🖼️ Foto cargada desde la web');
-        beep(true);
-      }
-    } catch (_) {
-      toast('⚠️ No se pudo obtener la imagen externa por restricciones de seguridad');
-    }
-  }
-
-  // Pegar con Ctrl+V desde el portapapeles
   document.addEventListener('paste', (e) => {
     const items = (e.clipboardData || window.clipboardData)?.items;
     if (!items) return;
-
     for (let i = 0; i < items.length; i++) {
       if (items[i].type && items[i].type.startsWith('image/')) {
         const file = items[i].getAsFile();
@@ -305,11 +257,6 @@
       }
     }
   });
-
-  window.addEventListener('dragover', (e) => e.preventDefault(), false);
-  window.addEventListener('drop', (e) => e.preventDefault(), false);
-
-  // ----------------------- Carga de categorías -----------------------------
 
   async function cargarCategorias() {
     try {
@@ -326,8 +273,6 @@
     }
   }
 
-  // ---------- Comportamiento del lector (Enter no recarga) -----------
-
   let codigoExiste = false;
 
   async function procesarCodigo(codigo) {
@@ -339,7 +284,6 @@
       const producto = await apiAutenticada('GET',
         '/api/admin/productos/barcode/' + encodeURIComponent(codigo));
 
-      // YA ESTÁ CARGADO
       codigoExiste = true;
       beep(false);
       const stockActual = (producto.variantes && producto.variantes[0])
@@ -351,8 +295,8 @@
       descripcionInput.value = producto.descripcion || '';
       if (producto.categoriaId) categoriaSelect.value = String(producto.categoriaId);
       stockInput.value = '';
-      stockInput.placeholder = 'Se suma al stock actual';
-      btnGuardar.textContent = '➕ Sumar stock';
+      stockInput.placeholder = 'Cantidad a sumar al stock actual';
+      btnGuardar.textContent = '➕ Sumar al Stock';
 
       if (producto.imagenUrl && !producto.imagenUrl.includes('placehold.co')) {
         mostrarFotoExistente(producto.imagenUrl, producto.nombre);
@@ -361,23 +305,23 @@
       }
 
       mostrarResultado('duplicado',
-        `⛔ YA CARGADO: <strong>${producto.nombre}</strong><br>` +
-        `<span style="font-weight:400;font-size:14px">Stock actual: ${stockActual} · ` +
-        `si es reposición, poné la cantidad y tocá «➕ Sumar stock».</span>`);
-      toast('⛔ Este producto ya está cargado');
+        `<div class="callout-title">⚠️ PRODUCTO REGISTRADO: ${producto.nombre}</div>` +
+        `<span>Stock actual en depósito: <strong>${stockActual} unidades</strong>. Ingresá la cantidad para sumar reposición y tocá «➕ Sumar al Stock».</span>`);
+      toast('⚠️ Producto existente cargado');
     } catch (err) {
       if (err.status === 404) {
-        // CÓDIGO NUEVO
         codigoExiste = false;
         beep(true);
         nombreInput.value = '';
         precioInput.value = '';
         descripcionInput.value = '';
         stockInput.value = '';
-        stockInput.placeholder = 'Ej.: 12';
-        btnGuardar.textContent = '💾 Guardar producto';
+        stockInput.placeholder = 'Ej.: 24';
+        btnGuardar.textContent = '💾 Guardar Producto y Continuar';
         resetearFoto();
-        mostrarResultado('nuevo', '✅ CÓDIGO NUEVO — completá los datos del producto.');
+        mostrarResultado('nuevo',
+          `<div class="callout-title">✨ CÓDIGO NUEVO LISTO</div>` +
+          `<span>Completá el nombre, precio y stock inicial para guardarlo en la tienda.</span>`);
       } else {
         toast('⚠️ ' + err.message);
       }
@@ -390,8 +334,6 @@
     e.preventDefault();
     await procesarCodigo(codigoInput.value);
   });
-
-  // --------------------- Escáner con la cámara -----------------
 
   const btnEscanear = $('#btnEscanear');
   const btnCancelarScan = $('#btnCancelarScan');
@@ -416,9 +358,7 @@
       const soportados = await window.BarcodeDetector.getSupportedFormats();
       const usar = FORMATOS_1D.filter((f) => soportados.includes(f));
       return usar.length ? new window.BarcodeDetector({ formats: usar }) : null;
-    } catch (_) {
-      return null;
-    }
+    } catch (_) { return null; }
   }
 
   async function iniciarEscaneo() {
@@ -432,7 +372,6 @@
       const ok = await iniciarEscaneoNativo(nativo);
       if (ok) return;
     }
-
     iniciarEscaneoHtml5();
   }
 
@@ -481,20 +420,13 @@
       return true;
     } catch (err) {
       detenerEscaneo();
-      const detalle = (err && err.message) ? err.message : String(err);
-      if (/permission|NotAllowedError|denied/i.test(detalle)) {
-        setScanStatus('⚠️ Permití el acceso a la cámara y volvé a intentar.');
-        toast('⚠️ Permití el acceso a la cámara');
-        return true;
-      }
       return false;
     }
   }
 
   function iniciarEscaneoHtml5() {
     if (typeof Html5Qrcode === 'undefined') {
-      setScanStatus('⚠️ Este navegador no soporta el escáner.');
-      toast('⚠️ El escáner de cámara no está disponible');
+      setScanStatus('⚠️ Escáner no disponible en este navegador.');
       detenerEscaneo();
       return;
     }
@@ -502,28 +434,11 @@
       const contenedor = $('#qr-reader');
       contenedor.innerHTML = '';
       scanner = new Html5Qrcode('qr-reader');
-      setScanStatus('🔍 Apuntá al código. Si hay poca luz, usá la linterna 💡.');
+      setScanStatus('🔍 Apuntá al código de barras.');
 
       scanner.start(
         { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } },
-        {
-          fps: 10,
-          qrbox: { width: 280, height: 130 },
-          aspectRatio: 1.7777,
-          showTorchButtonIfSupported: true,
-          rememberLastUsedCamera: true,
-          formatsToSupport: [
-            Html5QrcodeSupportedFormats.EAN_13,
-            Html5QrcodeSupportedFormats.EAN_8,
-            Html5QrcodeSupportedFormats.UPC_A,
-            Html5QrcodeSupportedFormats.UPC_E,
-            Html5QrcodeSupportedFormats.CODE_128,
-            Html5QrcodeSupportedFormats.CODE_39,
-            Html5QrcodeSupportedFormats.CODABAR,
-            Html5QrcodeSupportedFormats.ITF,
-            Html5QrcodeSupportedFormats.QR_CODE,
-          ],
-        },
+        { fps: 10, qrbox: { width: 280, height: 130 }, aspectRatio: 1.7777 },
         (textoDecodificado) => {
           const texto = (textoDecodificado || '').trim();
           detenerEscaneo();
@@ -531,28 +446,13 @@
           procesarCodigo(texto);
         },
         () => {}
-      ).catch((err) => {
-        const detalle = (err && err.message) ? err.message : String(err);
-        detenerEscaneo();
-        if (/permission|NotAllowedError|denied/i.test(detalle)) {
-          toast('⚠️ Permití el acceso a la cámara para escanear');
-        } else {
-          toast('⚠️ No se pudo abrir la cámara: ' + detalle);
-        }
-      });
-    } catch (err) {
-      const detalle = (err && err.message) ? err.message : String(err);
-      detenerEscaneo();
-      toast('⚠️ No se pudo abrir la cámara: ' + detalle);
-    }
+      ).catch(() => detenerEscaneo());
+    } catch (_) { detenerEscaneo(); }
   }
 
   async function detenerEscaneo() {
     if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
-    if (stream) {
-      stream.getTracks().forEach((t) => t.stop());
-      stream = null;
-    }
+    if (stream) { stream.getTracks().forEach((t) => t.stop()); stream = null; }
     if (videoEl) { videoEl.srcObject = null; videoEl.remove(); videoEl = null; }
     detector = null;
     if (scanner) {
@@ -565,8 +465,6 @@
 
   btnEscanear.addEventListener('click', iniciarEscaneo);
   btnCancelarScan.addEventListener('click', detenerEscaneo);
-
-  // ------------------------------- Guardar --------------------------------
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -590,14 +488,14 @@
     data.append('precio', String(precio));
     data.append('stock', String(stock));
     data.append('categoriaId', String(categoriaId));
-    data.append('descripcion', descripcionInput.value.trim());
+    data.append('descripcion', (descripcionInput.value || '').trim());
 
     btnGuardar.disabled = true;
-    btnGuardar.textContent = 'Guardando…';
+    btnGuardar.textContent = '⏳ Guardando producto…';
 
     try {
       if (archivoFotoSeleccionado) {
-        btnGuardar.textContent = 'Procesando foto…';
+        btnGuardar.textContent = '⏳ Optimizando y subiendo foto…';
         const fotoComprimida = await comprimirImagen(archivoFotoSeleccionado);
         data.append('imagen', fotoComprimida);
       }
@@ -615,26 +513,27 @@
       }
 
       const r = await res.json();
-
       const tipo = r.accion === 'CREADO' ? 'creado' : 'actualizado';
       const icono = r.accion === 'CREADO' ? '✅' : '🔄';
       beep(true);
       mostrarResultado(tipo,
-        `${icono} <strong>${r.nombre}</strong> — ${r.accion === 'CREADO' ? 'creado' : 'actualizado'}.<br>` +
-        `Código: ${r.codigoBarras} · Precio: $${r.precio} · Stock total: ${r.stock}`);
-      toast(r.mensaje);
+        `<div class="callout-title">${icono} ${r.nombre} — ${r.accion === 'CREADO' ? 'Creado con éxito' : 'Actualizado'}</div>` +
+        `<span>Código: <strong>${r.codigoBarras}</strong> · Precio: <strong>$${r.precio}</strong> · Stock total: <strong>${r.stock}</strong></span>`);
+      toast(r.mensaje || '✅ Guardado correctamente');
 
       form.reset();
       resetearFoto();
-      stockInput.placeholder = 'Ej.: 12';
+      stockInput.placeholder = 'Ej.: 24';
       codigoExiste = false;
-      btnGuardar.textContent = '💾 Guardar producto';
+      btnGuardar.textContent = '💾 Guardar Producto y Continuar';
       codigoInput.focus();
     } catch (err) {
       toast('⚠️ ' + err.message);
     } finally {
       btnGuardar.disabled = false;
-      btnGuardar.textContent = '💾 Guardar producto';
+      if (btnGuardar.textContent.includes('⏳')) {
+        btnGuardar.textContent = '💾 Guardar Producto y Continuar';
+      }
     }
   });
 
@@ -642,8 +541,6 @@
     resultado.className = tipo;
     resultado.innerHTML = html;
   }
-
-  // ------------------------------- Arranque -------------------------------
 
   cargarCategorias();
 })();
