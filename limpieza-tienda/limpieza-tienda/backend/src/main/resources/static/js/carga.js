@@ -82,11 +82,12 @@
 
   // ---------- Comportamiento clave del lector (Enter no recarga) -----------
 
-  codigoInput.addEventListener('keydown', async (e) => {
-    if (e.key !== 'Enter') return;
-    e.preventDefault();          // ← evita que el formulario se envíe/recargue
-
-    const codigo = codigoInput.value.trim();
+  /**
+   * Procesa un código de barras (venga del lector USB, del teclado o de la
+   * cámara): consulta si ya existe y precarga el formulario, o lo deja limpio.
+   */
+  async function procesarCodigo(codigo) {
+    codigo = (codigo || '').trim();
     if (!codigo) { nombreInput.focus(); return; }
 
     try {
@@ -118,7 +119,78 @@
       }
     }
     nombreInput.focus();        // ← el foco pasa automáticamente al Nombre
+  }
+
+  codigoInput.addEventListener('keydown', async (e) => {
+    if (e.key !== 'Enter') return;
+    e.preventDefault();          // ← evita que el formulario se envíe/recargue
+    await procesarCodigo(codigoInput.value);
   });
+
+  // --------------------- Escáner con la cámara del celular -----------------
+
+  let scanner = null;   // instancia de Html5Qrcode
+
+  const btnEscanear = $('#btnEscanear');
+  const btnCancelarScan = $('#btnCancelarScan');
+  const scanArea = $('#scanArea');
+
+  /** Abre la cámara trasera y lee el código de barras. */
+  async function iniciarEscaneo() {
+    if (typeof Html5Qrcode === 'undefined') {
+      toast('⚠️ El escáner de cámara no está disponible');
+      return;
+    }
+    try {
+      scanArea.style.display = 'block';
+      scanner = new Html5Qrcode('qr-reader');
+
+      await scanner.start(
+        { facingMode: 'environment' },                       // cámara trasera
+        {
+          fps: 10,                                           // cuadros por segundo
+          qrbox: { width: 250, height: 160 },                // recuadro alargado (códigos)
+          formatsToSupport: [
+            Html5QrcodeSupportedFormats.EAN_13,
+            Html5QrcodeSupportedFormats.EAN_8,
+            Html5QrcodeSupportedFormats.UPC_A,
+            Html5QrcodeSupportedFormats.UPC_E,
+            Html5QrcodeSupportedFormats.CODE_128,
+            Html5QrcodeSupportedFormats.CODE_39,
+            Html5QrcodeSupportedFormats.ITF,
+            Html5QrcodeSupportedFormats.CODABAR,
+            Html5QrcodeSupportedFormats.QR_CODE,
+          ],
+        },
+        (textoDecodificado) => {                             // lectura exitosa
+          codigoInput.value = textoDecodificado.trim();
+          detenerEscaneo();
+          procesarCodigo(textoDecodificado);
+        },
+        () => { /* fotograma sin lectura: se ignora */ }
+      );
+    } catch (err) {
+      scanArea.style.display = 'none';
+      const detalle = (err && err.message) ? err.message : String(err);
+      if (/permission|NotAllowedError|denied/i.test(detalle)) {
+        toast('⚠️ Permití el acceso a la cámara para escanear');
+      } else {
+        toast('⚠️ No se pudo abrir la cámara: ' + detalle);
+      }
+    }
+  }
+
+  /** Apaga la cámara y oculta el área de escaneo. */
+  async function detenerEscaneo() {
+    if (scanner) {
+      try { await scanner.stop(); scanner.clear(); } catch (_) {}
+      scanner = null;
+    }
+    scanArea.style.display = 'none';
+  }
+
+  btnEscanear.addEventListener('click', iniciarEscaneo);
+  btnCancelarScan.addEventListener('click', detenerEscaneo);
 
   // ------------------------- Vista previa de foto --------------------------
 

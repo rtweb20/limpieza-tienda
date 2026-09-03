@@ -36,6 +36,10 @@
     .hint { font-size: 12px; color: var(--texto-suave); margin-top: 4px; }
     .big-icon { font-size: 44px; }
     .top-actions { display: flex; gap: 8px; }
+    /* Escáner por cámara */
+    #scanArea { margin-top: 10px; text-align: center; }
+    #qr-reader { width: 100%; max-width: 320px; margin: 0 auto; border-radius: 12px; overflow: hidden; }
+    #qr-reader video { border-radius: 12px; }
   </style>
 </head>
 <body class="admin">
@@ -62,7 +66,12 @@
           <label for="codigoBarras">Código de barras <span class="req">*</span></label>
           <input id="codigoBarras" type="text" autofocus autocomplete="off"
                  inputmode="numeric" maxlength="64" placeholder="Escanear aquí…" required>
-          <div class="hint">El lector envía el valor + Enter automáticamente.</div>
+          <div class="hint">El lector USB/Bluetooth envía el valor + Enter. O usá la cámara del celular 👇</div>
+          <button type="button" id="btnEscanear" class="btn btn-outline" style="margin-top:8px">📷 Escanear con la cámara</button>
+          <div id="scanArea" style="display:none">
+            <div id="qr-reader"></div>
+            <button type="button" id="btnCancelarScan" class="btn btn-outline" style="margin-top:8px">✖ Cancelar escaneo</button>
+          </div>
         </div>
 
         <!-- 2. Nombre -->
@@ -117,6 +126,7 @@
 
   <script src="js/api.js"></script>
   <script src="js/demo-data.js"></script>
+  <script src="js/html5-qrcode.min.js"></script>
   <script src="js/carga.js"></script>
 </body>
 </html>

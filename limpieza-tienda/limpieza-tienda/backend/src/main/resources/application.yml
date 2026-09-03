@@ -29,6 +29,14 @@ spring:
   jackson:
     default-property-inclusion: non_null
 
+  sql:
+    init:
+      # Al arrancar, la app crea las tablas (schema.sql) y carga los productos
+      # (data.sql) si no existen. Ambos scripts son idempotentes.
+      mode: always
+      continue-on-error: false
+      encoding: UTF-8
+
   servlet:
     multipart:
       max-file-size: 8MB     # tamaño máximo por foto
