@@ -3,211 +3,439 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="noindex">
+  <meta name="robots" content="noindex, nofollow">
   <title>Panel de Administración — Aroma a Limpio</title>
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/admin.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔐</text></svg>">
 </head>
-<body class="admin">
+<body class="admin-body">
 
   <!-- ============================ LOGIN ================================= -->
-  <div id="loginView" class="login-wrap">
-    <form id="loginForm" class="login-card">
-      <div class="logo">🔐</div>
-      <h1>Panel de Administración</h1>
-      <p>Aroma a Limpio — ingresá tus credenciales</p>
-      <div class="field">
-        <label for="username">Usuario</label>
-        <input id="username" type="text" autocomplete="username" required>
+  <div id="loginView" class="login-screen">
+    <div class="login-card">
+      <div class="login-header">
+        <div class="brand-avatar">🫧</div>
+        <h1>Aroma a Limpio</h1>
+        <span class="badge-admin">Panel de Administración</span>
       </div>
-      <div class="field">
-        <label for="password">Contraseña</label>
-        <input id="password" type="password" autocomplete="current-password" required>
-      </div>
-      <button type="submit" class="btn btn-primary">Ingresar</button>
-      <div id="loginError" class="login-error" role="alert"></div>
-    </form>
+      <form id="loginForm" class="login-form">
+        <div class="form-group">
+          <label for="username">Usuario</label>
+          <div class="input-icon-wrap">
+            <span class="input-icon">👤</span>
+            <input id="username" type="text" autocomplete="username" placeholder="Ingresá tu usuario" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="password">Contraseña</label>
+          <div class="input-icon-wrap">
+            <span class="input-icon">🔑</span>
+            <input id="password" type="password" autocomplete="current-password" placeholder="••••••••" required>
+          </div>
+        </div>
+        <button type="submit" class="btn-primary-admin w-full">Ingresar al Panel</button>
+        <div id="loginError" class="login-error-msg" role="alert"></div>
+      </form>
+    </div>
   </div>
 
   <!-- ============================ PANEL ================================= -->
   <div id="adminView" style="display:none">
-    <div class="admin-bar">
-      <span class="brand">🫧 Aroma a Limpio</span>
-      <span class="spacer"></span>
-      <a href="carga.html">📷 Carga con lector</a>
-      <a href="index.html" target="_blank" rel="noopener">🌐 Ver tienda</a>
-      <button id="logoutBtn">Salir</button>
-    </div>
+    <!-- Topbar Navigation -->
+    <header class="admin-header">
+      <div class="admin-header-container">
+        <div class="admin-brand">
+          <span class="brand-icon">🫧</span>
+          <div class="brand-text">
+            <span class="brand-name">Aroma a Limpio</span>
+            <span class="brand-tag">Administración</span>
+          </div>
+        </div>
 
-    <nav class="tabs" aria-label="Secciones del panel">
-      <button class="tab active" data-tab="productos">📦 Productos</button>
-      <button class="tab" data-tab="categorias">🏷️ Categorías</button>
-      <button class="tab" data-tab="pedidos">🧾 Pedidos</button>
-    </nav>
-
-    <!-- ------------------------- PRODUCTOS ----------------------------- -->
-    <div id="panel-productos" class="wrap panel">
-      <div class="panel-head">
-        <h2>Productos</h2>
-        <span style="display:flex;gap:8px;flex-wrap:wrap">
-          <button id="vaciarProd" class="btn btn-outline" style="width:auto;padding:10px 18px;color:#b3261e;border-color:#b3261e">🗑️ Vaciar productos</button>
-          <button id="nuevoProd" class="btn btn-primary" style="width:auto;padding:10px 18px">+ Nuevo producto</button>
-        </span>
+        <div class="admin-header-actions">
+          <a href="carga.html" class="header-link-btn highlight">
+            <span class="btn-icon">📷</span>
+            <span class="btn-text">Carga con lector</span>
+          </a>
+          <a href="index.html" target="_blank" rel="noopener" class="header-link-btn">
+            <span class="btn-icon">🌐</span>
+            <span class="btn-text">Ver tienda</span>
+          </a>
+          <div class="user-pill">
+            <span class="user-avatar">👤</span>
+            <span class="user-name">Admin</span>
+            <button id="logoutBtn" class="btn-logout" title="Cerrar sesión">Salir</button>
+          </div>
+        </div>
       </div>
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Foto</th><th>Producto / variantes</th><th>Código</th><th>Categoría</th><th>Precio</th><th>Estado</th><th></th>
-          </tr>
-        </thead>
-        <tbody id="prodList"></tbody>
-      </table>
-    </div>
+    </header>
 
-    <!-- ------------------------ CATEGORÍAS ------------------------------ -->
-    <div id="panel-categorias" class="wrap panel" style="display:none">
-      <div class="panel-head">
-        <h2>Categorías</h2>
-        <button id="nuevaCat" class="btn btn-primary" style="width:auto;padding:10px 18px">+ Nueva categoría</button>
-      </div>
-      <table class="table">
-        <thead>
-          <tr><th>Nombre</th><th>Slug</th><th>Estado</th><th>Destacada</th><th></th></tr>
-        </thead>
-        <tbody id="catList"></tbody>
-      </table>
-    </div>
+    <!-- Main Content Container -->
+    <main class="admin-main">
+      
+      <!-- KPI Stats Summary Cards -->
+      <section class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon-wrap bg-blue">📦</div>
+          <div class="stat-info">
+            <span class="stat-label">Total Productos</span>
+            <span id="statProds" class="stat-value">0</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon-wrap bg-purple">🏷️</div>
+          <div class="stat-info">
+            <span class="stat-label">Categorías</span>
+            <span id="statCats" class="stat-value">0</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon-wrap bg-green">🧾</div>
+          <div class="stat-info">
+            <span class="stat-label">Pedidos</span>
+            <span id="statPedidos" class="stat-value">0</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon-wrap bg-amber">🔥</div>
+          <div class="stat-info">
+            <span class="stat-label">Ofertas / Destacados</span>
+            <span id="statOfertas" class="stat-value">0</span>
+          </div>
+        </div>
+      </section>
 
-    <!-- -------------------------- PEDIDOS ------------------------------- -->
-    <div id="panel-pedidos" class="wrap panel" style="display:none">
-      <div class="panel-head">
-        <h2>Pedidos recibidos</h2>
-      </div>
-      <table class="table">
-        <thead>
-          <tr><th>Pedido</th><th>Cliente</th><th>Detalle</th><th>Total</th><th>Estado</th></tr>
-        </thead>
-        <tbody id="pedList"></tbody>
-      </table>
-    </div>
+      <!-- Navigation Tabs -->
+      <nav class="admin-tabs" aria-label="Secciones del panel">
+        <button class="tab-btn active" data-tab="productos">
+          <span class="tab-icon">📦</span>
+          <span>Productos</span>
+          <span id="tabCountProds" class="tab-badge">0</span>
+        </button>
+        <button class="tab-btn" data-tab="categorias">
+          <span class="tab-icon">🏷️</span>
+          <span>Categorías</span>
+          <span id="tabCountCats" class="tab-badge">0</span>
+        </button>
+        <button class="tab-btn" data-tab="pedidos">
+          <span class="tab-icon">🧾</span>
+          <span>Pedidos</span>
+          <span id="tabCountPedidos" class="tab-badge">0</span>
+        </button>
+      </nav>
+
+      <!-- ====================== TAB PRODUCTOS ====================== -->
+      <section id="panel-productos" class="panel-section">
+        <!-- Toolbar & Filters -->
+        <div class="toolbar-card">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input id="prodSearch" type="search" placeholder="Buscar por nombre, código de barras o variante..." autocomplete="off">
+            <button id="clearSearch" class="btn-clear-search" style="display:none" title="Limpiar búsqueda">✕</button>
+          </div>
+
+          <div class="filter-group">
+            <select id="prodFilterCat" class="select-filter" aria-label="Filtrar por categoría">
+              <option value="">Todas las categorías</option>
+            </select>
+            <select id="prodFilterStatus" class="select-filter" aria-label="Filtrar por estado">
+              <option value="">Todos los estados</option>
+              <option value="activo">Solo Activos</option>
+              <option value="inactivo">Solo Inactivos</option>
+              <option value="oferta">Solo Ofertas 🔥</option>
+            </select>
+          </div>
+
+          <div class="toolbar-actions">
+            <button id="nuevoProd" class="btn-primary-admin">
+              <span class="btn-icon">➕</span> Nuevo producto
+            </button>
+            <button id="vaciarProd" class="btn-danger-outline" title="Eliminar todos los productos">
+              <span class="btn-icon">🗑️</span> Vaciar catálogo
+            </button>
+          </div>
+        </div>
+
+        <!-- Table Container -->
+        <div class="card-table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th class="th-foto">Foto</th>
+                <th class="th-prod">Producto y Variantes</th>
+                <th class="th-code">Código de Barras</th>
+                <th class="th-cat">Categoría</th>
+                <th class="th-price">Precio</th>
+                <th class="th-status">Estado</th>
+                <th class="th-actions">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="prodList">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+
+          <!-- Empty state when no products found -->
+          <div id="prodEmptyState" class="empty-placeholder" style="display:none">
+            <div class="empty-icon">📦</div>
+            <h3>No se encontraron productos</h3>
+            <p>Intentá con otro término de búsqueda o agregá un nuevo producto al catálogo.</p>
+          </div>
+
+          <!-- Table footer with count -->
+          <div class="table-footer">
+            <span id="prodCountText" class="footer-count">Cargando productos…</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================== TAB CATEGORÍAS ====================== -->
+      <section id="panel-categorias" class="panel-section" style="display:none">
+        <div class="toolbar-card justify-between">
+          <div>
+            <h2 class="panel-title">Gestión de Categorías</h2>
+            <p class="panel-subtitle">Organizá los productos de la tienda en secciones claras</p>
+          </div>
+          <button id="nuevaCat" class="btn-primary-admin">
+            <span class="btn-icon">➕</span> Nueva categoría
+          </button>
+        </div>
+
+        <div class="card-table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width: 60px;">Icono</th>
+                <th>Nombre</th>
+                <th>Slug URL</th>
+                <th>Orden</th>
+                <th>Estado</th>
+                <th>Destacada</th>
+                <th class="th-actions">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="catList"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ====================== TAB PEDIDOS ====================== -->
+      <section id="panel-pedidos" class="panel-section" style="display:none">
+        <div class="toolbar-card justify-between">
+          <div>
+            <h2 class="panel-title">Pedidos Recibidos</h2>
+            <p class="panel-subtitle">Gestioná los pedidos y actualizá el estado de entrega</p>
+          </div>
+        </div>
+
+        <div class="card-table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width: 130px;">Pedido / Fecha</th>
+                <th>Cliente y Entrega</th>
+                <th>Detalle de Productos</th>
+                <th style="width: 120px;">Total</th>
+                <th style="width: 170px;">Estado</th>
+              </tr>
+            </thead>
+            <tbody id="pedList"></tbody>
+          </table>
+
+          <div id="pedEmptyState" class="empty-placeholder" style="display:none">
+            <div class="empty-icon">🧾</div>
+            <h3>No hay pedidos registrados todavía</h3>
+            <p>Los pedidos realizados por los clientes en la tienda aparecerán aquí.</p>
+          </div>
+        </div>
+      </section>
+    </main>
   </div>
 
   <!-- ===================== MODAL CATEGORÍA ============================== -->
-  <div id="catOverlay" class="overlay"></div>
-  <div id="catModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="catModalTitle">
-    <div class="modal-card">
-      <div class="modal-head">
-        <h2 id="catModalTitle">Nueva categoría</h2>
-        <button class="icon-btn" onclick="document.getElementById('catModal').classList.remove('open');document.getElementById('catOverlay').classList.remove('open')">✕</button>
+  <div id="catOverlay" class="modal-overlay"></div>
+  <div id="catModal" class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="catModalTitle">
+    <div class="modal-box">
+      <div class="modal-top">
+        <div class="modal-title-wrap">
+          <span class="modal-title-icon">🏷️</span>
+          <h2 id="catModalTitle">Nueva categoría</h2>
+        </div>
+        <button class="btn-close-modal" aria-label="Cerrar modal" onclick="document.getElementById('catModal').classList.remove('open');document.getElementById('catOverlay').classList.remove('open')">✕</button>
       </div>
-      <form id="catForm">
+
+      <form id="catForm" class="modal-form">
         <input type="hidden" id="catId">
-        <div class="field">
-          <label for="catNombre">Nombre</label>
-          <input id="catNombre" type="text" maxlength="80" required>
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="catNombre">Nombre <span class="req">*</span></label>
+            <input id="catNombre" type="text" maxlength="80" placeholder="Ej: Ropa, Baño, Cocina..." required>
+          </div>
+          <div class="form-group">
+            <label for="catIcono">Icono (emoji)</label>
+            <input id="catIcono" type="text" maxlength="16" placeholder="Ej: 🧺, 🚿, 🍳">
+          </div>
         </div>
-        <div class="field">
-          <label for="catSlug">Slug (opcional, se genera solo)</label>
-          <input id="catSlug" type="text" maxlength="80" placeholder="ej.: cocina">
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="catSlug">Slug URL (opcional)</label>
+            <input id="catSlug" type="text" maxlength="80" placeholder="ej: ropa-limpieza">
+          </div>
+          <div class="form-group">
+            <label for="catOrden">Orden de aparición</label>
+            <input id="catOrden" type="number" min="0" value="0">
+          </div>
         </div>
-        <div class="field">
-          <label for="catIcono">Icono (emoji)</label>
-          <input id="catIcono" type="text" maxlength="16" placeholder="ej.: 🍳">
+
+        <div class="switch-box-grid">
+          <label class="switch-toggle-card">
+            <input id="catActiva" type="checkbox" checked>
+            <div class="toggle-content">
+              <strong>Categoría activa</strong>
+              <small>Visible para los clientes en la tienda</small>
+            </div>
+          </label>
+          <label class="switch-toggle-card">
+            <input id="catDestacada" type="checkbox">
+            <div class="toggle-content">
+              <strong>Destacada</strong>
+              <small>Aparece con resalte especial</small>
+            </div>
+          </label>
         </div>
-        <div class="field">
-          <label for="catOrden">Orden</label>
-          <input id="catOrden" type="number" min="0" value="0">
+
+        <div class="modal-foot">
+          <button type="button" class="btn-cancel" onclick="document.getElementById('catModal').classList.remove('open');document.getElementById('catOverlay').classList.remove('open')">Cancelar</button>
+          <button type="submit" class="btn-primary-admin">Guardar Categoría</button>
         </div>
-        <div class="switch-row">
-          <label><input id="catActiva" type="checkbox" checked> Activa</label>
-          <label><input id="catDestacada" type="checkbox"> Destacada</label>
-        </div>
-        <button type="submit" class="btn btn-primary">Guardar</button>
       </form>
     </div>
   </div>
 
   <!-- ===================== MODAL PRODUCTO =============================== -->
-  <div id="prodOverlay" class="overlay"></div>
-  <div id="prodModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="prodModalTitle">
-    <div class="modal-card">
-      <div class="modal-head">
-        <h2 id="prodModalTitle">Editar producto</h2>
-        <button class="icon-btn" onclick="document.getElementById('prodModal').classList.remove('open');document.getElementById('prodOverlay').classList.remove('open')">✕</button>
+  <div id="prodOverlay" class="modal-overlay"></div>
+  <div id="prodModal" class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="prodModalTitle">
+    <div class="modal-box modal-lg">
+      <div class="modal-top">
+        <div class="modal-title-wrap">
+          <span class="modal-title-icon">📦</span>
+          <h2 id="prodModalTitle">Editar producto</h2>
+        </div>
+        <button class="btn-close-modal" aria-label="Cerrar modal" onclick="document.getElementById('prodModal').classList.remove('open');document.getElementById('prodOverlay').classList.remove('open')">✕</button>
       </div>
-      <form id="prodForm">
+
+      <form id="prodForm" class="modal-form">
         <input type="hidden" id="prodId">
-        <div class="field">
-          <label for="prodNombre">Nombre</label>
-          <input id="prodNombre" type="text" maxlength="120" required>
-        </div>
-        <div class="field">
-          <label for="prodDesc">Descripción</label>
-          <textarea id="prodDesc" rows="2"></textarea>
-        </div>
         
-        <!-- FOTOGRAFÍA CON DRAG & DROP EN EL MODAL -->
-        <div class="field">
-          <label>Fotografía del producto</label>
-          <div id="adminDropzone" class="dropzone" tabindex="0" role="button" aria-label="Arrastrá una foto o haz clic para subir imagen">
+        <!-- Datos Principales -->
+        <div class="form-section-title">Información Básica</div>
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="prodNombre">Nombre del producto <span class="req">*</span></label>
+            <input id="prodNombre" type="text" maxlength="120" placeholder="Ej: Jabón Líquido Skip" required>
+          </div>
+          <div class="form-group">
+            <label for="prodCategoria">Categoría <span class="req">*</span></label>
+            <select id="prodCategoria" required></select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="prodDesc">Descripción breve (opcional)</label>
+          <textarea id="prodDesc" rows="2" placeholder="Detalles de fragancia, poder desengrasante o recomendaciones de uso..."></textarea>
+        </div>
+
+        <!-- FOTOGRAFÍA CON DRAG & DROP Y CTRL+V -->
+        <div class="form-section-title">Fotografía del Producto</div>
+        <div class="dropzone-container">
+          <div id="adminDropzone" class="dropzone" tabindex="0" role="button" aria-label="Arrastrá una foto o hacé clic para subir imagen">
             <input id="adminImagenFile" type="file" accept="image/*" style="display:none">
             
             <div id="adminDropEmpty" class="dropzone-empty">
               <div class="dropzone-icon">📸</div>
-              <p class="dropzone-title">Arrastrá y soltá una foto aquí</p>
-              <p class="dropzone-sub">o hacé clic para explorar · podés pegar con <strong>Ctrl + V</strong></p>
+              <p class="dropzone-title">Arrastrá y soltá una foto acá</p>
+              <p class="dropzone-sub">o hacé clic para elegir archivo · también podés pegar con <strong>Ctrl + V</strong></p>
               <button type="button" class="btn-dropzone" id="adminBtnExplorar">📁 Elegir foto…</button>
             </div>
 
             <div id="adminDropPreview" class="dropzone-preview" style="display:none">
               <div class="preview-thumb-wrap">
-                <img id="adminImgPreview" alt="Vista previa">
+                <img id="adminImgPreview" alt="Vista previa de foto">
               </div>
               <div class="preview-details">
-                <span id="adminPreviewTag" class="preview-tag">✅ Foto asignada</span>
+                <span id="adminPreviewTag" class="preview-tag">✅ Foto cargada</span>
                 <div id="adminPreviewFilename" class="preview-filename">foto.jpg</div>
                 <div id="adminPreviewFilesize" class="preview-filesize">Listo</div>
                 <div class="preview-actions">
-                  <button type="button" class="btn-mini btn-change" id="adminBtnCambiar">🔄 Cambiar</button>
+                  <button type="button" class="btn-mini btn-change" id="adminBtnCambiar">🔄 Cambiar foto</button>
                   <button type="button" class="btn-mini btn-remove" id="adminBtnQuitar">🗑️ Quitar</button>
                 </div>
               </div>
               <div class="drop-overlay-hint">
-                <span>✨ ¡Soltá aquí para cambiar la foto!</span>
+                <span>✨ ¡Soltá la foto para reemplazar!</span>
               </div>
             </div>
           </div>
-          <div style="margin-top:8px">
-            <label for="prodImagen" style="font-size:12px;color:var(--texto-suave);font-weight:600">URL de la imagen (se actualiza sola al arrastrar una foto):</label>
-            <input id="prodImagen" type="text" required placeholder="https://…/imagen.jpg o /api/imagen/…">
+          
+          <div class="url-input-wrap">
+            <label for="prodImagen" class="sub-label">URL de la imagen (se completa automáticamente al subir archivo):</label>
+            <input id="prodImagen" type="text" placeholder="https://…/imagen.jpg o /api/imagen/…">
           </div>
         </div>
 
-        <div class="field">
-          <label for="prodCategoria">Categoría</label>
-          <select id="prodCategoria"></select>
-        </div>
-        <div class="switch-row">
-          <label><input id="prodActivo" type="checkbox" checked> Activo</label>
-          <label><input id="prodDestacado" type="checkbox"> 🔥 Destacado (Combos y Ofertas)</label>
+        <!-- Opciones de visibilidad -->
+        <div class="switch-box-grid">
+          <label class="switch-toggle-card">
+            <input id="prodActivo" type="checkbox" checked>
+            <div class="toggle-content">
+              <strong>Producto Activo</strong>
+              <small>Visible y disponible para compra en la tienda</small>
+            </div>
+          </label>
+          <label class="switch-toggle-card">
+            <input id="prodDestacado" type="checkbox">
+            <div class="toggle-content">
+              <strong>🔥 Destacado / Oferta</strong>
+              <small>Aparece en el banner de ofertas principal</small>
+            </div>
+          </label>
         </div>
 
-        <div class="field">
-          <label>Variantes (presentación / precio)</label>
-          <div id="variantesBox"></div>
-          <button type="button" id="agregarVariante" class="btn btn-outline" style="margin-top:6px">+ Agregar variante</button>
+        <!-- Variantes y Precios -->
+        <div class="form-section-title d-flex-between">
+          <span>Presentaciones y Precios</span>
+          <span class="sub-hint">Mínimo 1 presentación</span>
         </div>
 
-        <button type="submit" class="btn btn-primary">Guardar producto</button>
+        <div class="variants-table-header">
+          <span>Presentación</span>
+          <span>Precio ($)</span>
+          <span>Precio Oferta ($)</span>
+          <span>Stock</span>
+          <span></span>
+        </div>
+
+        <div id="variantesBox" class="variants-box"></div>
+
+        <button type="button" id="agregarVariante" class="btn-add-variant">
+          ➕ Agregar otra variante
+        </button>
+
+        <div class="modal-foot">
+          <button type="button" class="btn-cancel" onclick="document.getElementById('prodModal').classList.remove('open');document.getElementById('prodOverlay').classList.remove('open')">Cancelar</button>
+          <button type="submit" class="btn-primary-admin" id="btnGuardarProd">Guardar Producto</button>
+        </div>
       </form>
     </div>
   </div>
 
-  <div id="toast" role="status" aria-live="polite"></div>
+  <!-- Global Toast Notification -->
+  <div id="toast" class="admin-toast" role="status" aria-live="polite"></div>
 
   <script src="js/api.js"></script>
   <script src="js/demo-data.js"></script>
   <script src="js/admin.js"></script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a3580c840d931d14',t:'MTc4ODQ3MzA1Mg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
