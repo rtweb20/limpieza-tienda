@@ -133,7 +133,7 @@
   <div id="prodModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="prodModalTitle">
     <div class="modal-card">
       <div class="modal-head">
-        <h2 id="prodModalTitle">Nuevo producto</h2>
+        <h2 id="prodModalTitle">Editar producto</h2>
         <button class="icon-btn" onclick="document.getElementById('prodModal').classList.remove('open');document.getElementById('prodOverlay').classList.remove('open')">✕</button>
       </div>
       <form id="prodForm">
@@ -146,10 +146,44 @@
           <label for="prodDesc">Descripción</label>
           <textarea id="prodDesc" rows="2"></textarea>
         </div>
+        
+        <!-- FOTOGRAFÍA CON DRAG & DROP EN EL MODAL -->
         <div class="field">
-          <label for="prodImagen">URL de la imagen (externa, ej. https://… o /img/nombre.jpg)</label>
-          <input id="prodImagen" type="text" required placeholder="https://…/imagen.jpg">
+          <label>Fotografía del producto</label>
+          <div id="adminDropzone" class="dropzone" tabindex="0" role="button" aria-label="Arrastrá una foto o haz clic para subir imagen">
+            <input id="adminImagenFile" type="file" accept="image/*" style="display:none">
+            
+            <div id="adminDropEmpty" class="dropzone-empty">
+              <div class="dropzone-icon">📸</div>
+              <p class="dropzone-title">Arrastrá y soltá una foto aquí</p>
+              <p class="dropzone-sub">o hacé clic para explorar · podés pegar con <strong>Ctrl + V</strong></p>
+              <button type="button" class="btn-dropzone" id="adminBtnExplorar">📁 Elegir foto…</button>
+            </div>
+
+            <div id="adminDropPreview" class="dropzone-preview" style="display:none">
+              <div class="preview-thumb-wrap">
+                <img id="adminImgPreview" alt="Vista previa">
+              </div>
+              <div class="preview-details">
+                <span id="adminPreviewTag" class="preview-tag">✅ Foto asignada</span>
+                <div id="adminPreviewFilename" class="preview-filename">foto.jpg</div>
+                <div id="adminPreviewFilesize" class="preview-filesize">Listo</div>
+                <div class="preview-actions">
+                  <button type="button" class="btn-mini btn-change" id="adminBtnCambiar">🔄 Cambiar</button>
+                  <button type="button" class="btn-mini btn-remove" id="adminBtnQuitar">🗑️ Quitar</button>
+                </div>
+              </div>
+              <div class="drop-overlay-hint">
+                <span>✨ ¡Soltá aquí para cambiar la foto!</span>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:8px">
+            <label for="prodImagen" style="font-size:12px;color:var(--texto-suave);font-weight:600">URL de la imagen (se actualiza sola al arrastrar una foto):</label>
+            <input id="prodImagen" type="text" required placeholder="https://…/imagen.jpg o /api/imagen/…">
+          </div>
         </div>
+
         <div class="field">
           <label for="prodCategoria">Categoría</label>
           <select id="prodCategoria"></select>
