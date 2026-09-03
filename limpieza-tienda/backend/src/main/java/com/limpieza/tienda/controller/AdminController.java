@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Panel de administración (protegido por {@code AdminAuthInterceptor}).
+ * Panel de administración (protegido por AdminAuthInterceptor).
  */
 @RestController
 @RequestMapping("/api/admin")
@@ -106,7 +106,7 @@ public class AdminController {
         adminService.eliminarProducto(id);
     }
 
-    /** Vacía el catálogo: borra todos los productos (y sus variantes). */
+    /** Vacía el catálogo completo (todos los productos y variantes). */
     @DeleteMapping("/productos")
     public Map<String, Object> vaciarProductos() {
         long eliminados = adminService.vaciarProductos();
@@ -114,12 +114,15 @@ public class AdminController {
                 "mensaje", "Se eliminaron " + eliminados + " productos.");
     }
 
+    /** Subida individual de imágenes (para el modal de edición/creación). */
+    @PostMapping(value = "/imagen", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public Map<String, String> subirImagen(@RequestParam("imagen") MultipartFile imagen) {
+        String url = adminService.subirImagen(imagen);
+        return Map.of("url", url != null ? url : "");
+    }
+
     // ---------------- Carga con lector de código de barras ----------------
 
-    /**
-     * Alta/actualización de productos desde el lector (multipart/form-data).
-     * Si el código de barras ya existe, actualiza datos y SUMA stock.
-     */
     @PostMapping(value = "/carga", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public CargaProductoResponse cargaProducto(
             @RequestParam("codigoBarras") String codigoBarras,
@@ -133,7 +136,6 @@ public class AdminController {
                 categoriaId, descripcion, imagen);
     }
 
-    /** Consulta un producto por su código de barras (para precargar el formulario). */
     @GetMapping("/productos/barcode/{codigo}")
     public ProductoDto porCodigoBarras(@PathVariable String codigo) {
         return cargaProductoService.buscarPorCodigo(codigo);
