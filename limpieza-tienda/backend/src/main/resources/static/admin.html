@@ -11,7 +11,7 @@
 </head>
 <body class="admin-body">
 
-  <!-- ============================ LOGIN ================================= -->
+  <!-- LOGIN -->
   <div id="loginView" class="login-screen">
     <div class="login-card">
       <div class="login-header">
@@ -40,9 +40,8 @@
     </div>
   </div>
 
-  <!-- ============================ PANEL ================================= -->
+  <!-- PANEL -->
   <div id="adminView" style="display:none">
-    <!-- Topbar Navigation -->
     <header class="admin-header">
       <div class="admin-header-container">
         <div class="admin-brand">
@@ -71,10 +70,8 @@
       </div>
     </header>
 
-    <!-- Main Content Container -->
     <main class="admin-main">
-      
-      <!-- KPI Stats Summary Cards -->
+      <!-- Estadísticas KPI -->
       <section class="stats-grid">
         <div class="stat-card">
           <div class="stat-icon-wrap bg-blue">📦</div>
@@ -106,7 +103,7 @@
         </div>
       </section>
 
-      <!-- Navigation Tabs -->
+      <!-- Pestañas -->
       <nav class="admin-tabs" aria-label="Secciones del panel">
         <button class="tab-btn active" data-tab="productos">
           <span class="tab-icon">📦</span>
@@ -125,9 +122,8 @@
         </button>
       </nav>
 
-      <!-- ====================== TAB PRODUCTOS ====================== -->
+      <!-- TAB PRODUCTOS -->
       <section id="panel-productos" class="panel-section">
-        <!-- Toolbar & Filters -->
         <div class="toolbar-card">
           <div class="search-box">
             <span class="search-icon">🔍</span>
@@ -157,7 +153,6 @@
           </div>
         </div>
 
-        <!-- Table Container -->
         <div class="card-table-wrap">
           <table class="data-table">
             <thead>
@@ -171,26 +166,22 @@
                 <th class="th-actions">Acciones</th>
               </tr>
             </thead>
-            <tbody id="prodList">
-              <!-- Rendered dynamically -->
-            </tbody>
+            <tbody id="prodList"></tbody>
           </table>
 
-          <!-- Empty state when no products found -->
           <div id="prodEmptyState" class="empty-placeholder" style="display:none">
             <div class="empty-icon">📦</div>
             <h3>No se encontraron productos</h3>
             <p>Intentá con otro término de búsqueda o agregá un nuevo producto al catálogo.</p>
           </div>
 
-          <!-- Table footer with count -->
           <div class="table-footer">
             <span id="prodCountText" class="footer-count">Cargando productos…</span>
           </div>
         </div>
       </section>
 
-      <!-- ====================== TAB CATEGORÍAS ====================== -->
+      <!-- TAB CATEGORÍAS -->
       <section id="panel-categorias" class="panel-section" style="display:none">
         <div class="toolbar-card justify-between">
           <div>
@@ -220,7 +211,7 @@
         </div>
       </section>
 
-      <!-- ====================== TAB PEDIDOS ====================== -->
+      <!-- TAB PEDIDOS -->
       <section id="panel-pedidos" class="panel-section" style="display:none">
         <div class="toolbar-card justify-between">
           <div>
@@ -253,7 +244,7 @@
     </main>
   </div>
 
-  <!-- ===================== MODAL CATEGORÍA ============================== -->
+  <!-- MODAL CATEGORÍA -->
   <div id="catOverlay" class="modal-overlay"></div>
   <div id="catModal" class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="catModalTitle">
     <div class="modal-box">
@@ -314,7 +305,7 @@
     </div>
   </div>
 
-  <!-- ===================== MODAL PRODUCTO =============================== -->
+  <!-- MODAL PRODUCTO -->
   <div id="prodOverlay" class="modal-overlay"></div>
   <div id="prodModal" class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="prodModalTitle">
     <div class="modal-box modal-lg">
@@ -329,7 +320,6 @@
       <form id="prodForm" class="modal-form">
         <input type="hidden" id="prodId">
         
-        <!-- Datos Principales -->
         <div class="form-section-title">Información Básica</div>
         <div class="form-row-2">
           <div class="form-group">
@@ -344,10 +334,9 @@
 
         <div class="form-group">
           <label for="prodDesc">Descripción breve (opcional)</label>
-          <textarea id="prodDesc" rows="2" placeholder="Detalles de fragancia, poder desengrasante o recomendaciones de uso..."></textarea>
+          <textarea id="prodDesc" rows="2" placeholder="Detalles de fragancia o recomendaciones de uso..."></textarea>
         </div>
 
-        <!-- FOTOGRAFÍA CON DRAG & DROP Y CTRL+V -->
         <div class="form-section-title">Fotografía del Producto</div>
         <div class="dropzone-container">
           <div id="adminDropzone" class="dropzone" tabindex="0" role="button" aria-label="Arrastrá una foto o hacé clic para subir imagen">
@@ -380,30 +369,28 @@
           </div>
           
           <div class="url-input-wrap">
-            <label for="prodImagen" class="sub-label">URL de la imagen (se completa automáticamente al subir archivo):</label>
+            <label for="prodImagen" class="sub-label">URL de la imagen (se completa automáticamente):</label>
             <input id="prodImagen" type="text" placeholder="https://…/imagen.jpg o /api/imagen/…">
           </div>
         </div>
 
-        <!-- Opciones de visibilidad -->
         <div class="switch-box-grid">
           <label class="switch-toggle-card">
             <input id="prodActivo" type="checkbox" checked>
             <div class="toggle-content">
               <strong>Producto Activo</strong>
-              <small>Visible y disponible para compra en la tienda</small>
+              <small>Visible en la tienda</small>
             </div>
           </label>
           <label class="switch-toggle-card">
             <input id="prodDestacado" type="checkbox">
             <div class="toggle-content">
               <strong>🔥 Destacado / Oferta</strong>
-              <small>Aparece en el banner de ofertas principal</small>
+              <small>Aparece en el banner de ofertas</small>
             </div>
           </label>
         </div>
 
-        <!-- Variantes y Precios -->
         <div class="form-section-title d-flex-between">
           <span>Presentaciones y Precios</span>
           <span class="sub-hint">Mínimo 1 presentación</span>
@@ -431,11 +418,10 @@
     </div>
   </div>
 
-  <!-- Global Toast Notification -->
   <div id="toast" class="admin-toast" role="status" aria-live="polite"></div>
 
   <script src="js/api.js"></script>
   <script src="js/demo-data.js"></script>
   <script src="js/admin.js"></script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a3580c840d931d14',t:'MTc4ODQ3MzA1Mg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
