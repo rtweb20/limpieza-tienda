@@ -1,14 +1,39 @@
-# 📷 Carga de productos con lector de código de barras — Aroma a Limpio
+# 📷 Carga de productos con código de barras — Aroma a Limpio
 
 Funcionalidad para cargar e inventariar productos escaneando el **código de
-barras físico** con un lector USB o Bluetooth. El lector funciona como un
-teclado: escribe el número y envía un **Enter** al final.
+barras físico**. Hay dos formas de escanear:
+
+1. **Lector USB o Bluetooth** — funciona como un teclado: escribe el número y
+   envía un **Enter** al final.
+2. **Cámara del celular** — botón **"📷 Escanear con la cámara"** que abre la
+   cámara del teléfono y lee el código sin necesidad de lector externo.
+
+## 📱 Cómo escanear con el celular (paso a paso)
+
+1. Abrí la tienda en el teléfono (la URL de Render, ej.
+   `https://tu-servicio.onrender.com/`).
+2. Entrá al panel: `/admin.html` → ingresá usuario y clave → botón
+   **"📷 Carga con lector"**.
+3. Tocá **"📷 Escanear con la cámara"**.
+4. El navegador te va a pedir **permiso para usar la cámara** → tocá *Permitir*.
+5. Apuntá la cámara al código de barras (cámara trasera, buena luz, a ~15–20 cm).
+6. Al leerlo, el código aparece solo en el campo y:
+   - Si el producto **ya existe** → se precargan sus datos (nombre, precio,
+     categoría) y el stock queda para **sumar** reposición.
+   - Si es **nuevo** → completás nombre, precio, stock, descripción, foto y
+     categoría.
+7. Tocá **"💾 Guardar producto"** y listo: quedó cargado e inventariado.
+
+> ⚠️ **La cámara requiere HTTPS.** En Render el sitio ya es HTTPS, así que
+> funciona directo. En local también funciona con `http://localhost` (los
+> navegadores lo consideran seguro). Los códigos soportados incluyen
+> **EAN-13, EAN-8, UPC-A, UPC-E, Code 128, Code 39, ITF, Codabar y QR**.
 
 ## 🧠 Cómo funciona
 
-1. El operador escanea el código (el lector escribe + Enter).
-2. **La página NO se recarga**: al recibir el Enter se consulta si el código ya
-   existe y el foco pasa automáticamente al campo **Nombre**.
+1. El operador escanea el código (lector que escribe + Enter, o cámara).
+2. **La página NO se recarga**: al recibir el código se consulta si ya existe y
+   el foco pasa automáticamente al campo **Nombre**.
    - Si el código **ya existe** → se precargan nombre, precio, descripción y
      categoría; el campo stock queda para **sumar** reposición.
    - Si es **nuevo** → se deja el formulario limpio para completar los datos.
@@ -67,8 +92,11 @@ si no existe (lo usa la pantalla para precargar datos).
 ## 🖥️ Frontend
 
 - **`static/carga.html`** — pantalla de carga (acceso desde el panel: botón
-  "📷 Carga con lector").
-- **`static/js/carga.js`** — lógica del lector y envío con `FormData`.
+  "📷 Carga con lector"). Incluye el botón de escaneo por cámara.
+- **`static/js/carga.js`** — lógica del lector, del escáner por cámara y envío
+  con `FormData`.
+- **`static/js/html5-qrcode.min.js`** — librería de escaneo por cámara
+  (servida localmente, sin depender de CDNs).
 
 Detalle del comportamiento del Enter (la parte importante):
 

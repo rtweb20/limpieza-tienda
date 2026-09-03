@@ -1,114 +1,111 @@
 # 🚀 Despliegue en Render — Aroma a Limpio
 
-Guía paso a paso para publicar el servicio (Spring Boot, vía **Docker**) y la
-base de datos PostgreSQL en [Render](https://render.com).
+Guía paso a paso para publicar la tienda en [Render](https://render.com).
 
-> Render no tiene un runtime nativo de Java: los proyectos Spring Boot se
-> despliegan con **Docker**. Ya dejamos un `Dockerfile` listo en la raíz del
-> proyecto, así que no necesitás Java ni Maven instalados en tu máquina.
-
----
-
-## Paso 0 — Subir el proyecto a GitHub
-
-Render construye desde un repositorio de GitHub. Tenés 3 opciones (elegí la
-que te resulte más cómoda):
-
-### Opción A — GitHub Desktop (recomendada, sin comandos)
-1. Descargá el proyecto (el archivo `.zip` que te pasamos) y descomprimilo.
-2. Instalá [GitHub Desktop](https://desktop.github.com/) y entrá con tu cuenta de GitHub.
-3. **File → Add local repository…** → seleccioná la carpeta descomprimida.
-4. Te va a avisar que no tiene repo: click en **"create a repository"**.
-5. Botón **Publish repository** → escribí un nombre (ej. `limpieza-tienda`) y
-   dejá **"Keep this code private"** marcado → **Publish**.
-6. Listo: ya está en tu GitHub. Cada vez que cambies algo en la carpeta,
-   GitHub Desktop te muestra los cambios y con **Commit** + **Push** se actualizan.
-
-### Opción B — Subir por el navegador (sin instalar nada)
-1. Creá un repo vacío en github.com (**New repository**, sin README).
-2. Entrá al repo → botón **Add file → Upload files**.
-3. Arrastrá **todo el contenido** de la carpeta descomprimida.
-4. **Commit changes**.
-
-> ⚠️ GitHub puede omitir los archivos/carpetas ocultos (`.gitignore`, `.mvn`).
-> **No es problema**: el deploy usa el `Dockerfile`, que no depende de esos
-> archivos. Si más adelante usás Git normal, agregalos a mano.
-
-### Opción C — Con Git (si instalás Git for Windows)
-```bash
-git init
-git add .
-git commit -m "Tienda de limpieza: Spring Boot + PostgreSQL + frontend"
-git branch -M main
-git remote add origin https://github.com/TU_USUARIO/limpieza-tienda.git
-git push -u origin main
-```
+> ⭐ **Novedad:** la app ahora **crea las tablas y carga los productos
+> automáticamente al arrancar**. Ya NO necesitás ejecutar SQL a mano ni usar
+> programas como psql o DBeaver.
 
 ---
 
-## Paso 1 — Crear la base de datos PostgreSQL
+## Paso 0 — Subir el proyecto a GitHub (sin Git)
 
-1. Dashboard de Render → **New +** → **PostgreSQL**.
-2. Nombre: `limpieza-tienda-db` → región más cercana → plan **Free** → **Create**.
-3. Esperá a que diga **Available**.
-4. Copiá la **Internal Database URL** (algo como
-   `postgresql://user:pass@dpg-xxxx:5432/limpieza_tienda_db`).
+Descargá el `limpieza-tienda.zip`, descomprimilo y subí su contenido a tu repo
+`rtweb20/limpieza-tienda`. Opciones:
 
-### Cargar el esquema y los datos
+### Opción A — GitHub Desktop (recomendada)
+1. Instalá [GitHub Desktop](https://desktop.github.com/) y entrá con tu cuenta.
+2. **File → Add local repository…** → seleccioná la carpeta descomprimida.
+3. Si te ofrece **"create a repository"** → **Publish repository** → publicá.
+   (Si ya tenés el repo conectado, con **Commit + Push** actualizás los cambios.)
 
-Opción fácil: en la página de tu base, pestaña **Shell**, pegá primero el
-contenido de `database/schema.sql` y después el de `database/data.sql`.
-(También podés conectarte desde tu máquina con `psql` si lo tenés.)
+### Opción B — Por el navegador
+1. En `https://github.com/rtweb20/limpieza-tienda`, navegá hasta la carpeta
+   interna `limpieza-tienda/limpieza-tienda`.
+2. **Add file → Upload files** → arrastrá el contenido del ZIP descomprimido
+   (carpetas `backend`, `database`, `docs` y el `README.md`).
+3. **Commit changes**.
 
-> Los scripts son idempotentes (hacen `DROP … IF EXISTS` al inicio): podés
-> re-ejecutarlos sin miedo.
+> ⚠️ No subas una carpeta `limpieza-tienda` anidada de nuevo. Arrastrá lo que
+> está **adentro**. Y no toques el `Dockerfile` de la **raíz** del repo (ya
+> apunta bien a `limpieza-tienda/limpieza-tienda/backend`).
+
+---
+
+## Paso 1 — Crear (o reiniciar) la base de datos
+
+### Si TODAVÍA no tenés base de datos
+1. Render → **New +** → **PostgreSQL** → nombre `aroma-a-limpio-db` → **Create**.
+2. Esperá a que diga **Available**.
+
+### Si ya tenés una base de datos vieja (con datos viejos)
+Como el catálogo cambió (nombre, sin "Cocina", fotos, código de barras), lo más
+limpio es **borrarla y crear una nueva**:
+1. Abrí tu base en Render → **Settings** → abajo **Delete Database** → confirmá.
+2. Creá una nueva: **New +** → **PostgreSQL** → **Create**.
+
+> Al borrar la base se pierden los pedidos de prueba (no hay problema recién
+> empezando). Si NO querés borrar nada, podés dejar la base actual: la app va a
+> agregar la columna `codigo_barras` sola, aunque los productos viejos de
+> "Cocina" seguirían ahí. Recomendamos empezar limpio.
+
+### Copiá la URL de conexión
+1. Abrí tu base → pestaña **Info** → sección **Connections**.
+2. Copiá la **Internal Database URL** (se ve `postgresql://usuario:clave@dpg-xxxx:5432/nombre_db`).
 
 ---
 
 ## Paso 2 — Crear el servicio web (Docker)
 
-1. **New +** → **Web Service**.
-2. Conectá tu repositorio de GitHub.
-3. Configuración:
-   - **Name:** `limpieza-tienda-api`
-   - **Runtime:** **Docker** (dejá el `Dockerfile` que está en la raíz)
-   - **Instance Type:** Free (o el que necesites)
-4. Variables de entorno (pestaña **Environment**):
+1. **New +** → **Web Service** → conectá tu repo de GitHub.
+2. **Runtime:** Docker (usa el `Dockerfile` de la raíz del repo).
+3. Variables de entorno (pestaña **Environment**):
 
    | Key | Value |
    | --- | --- |
-   | `DB_URL` | la **Internal Database URL** de tu PostgreSQL |
-   | `DB_USER` | usuario de la BD (aparece en la página de tu PostgreSQL) |
-   | `DB_PASSWORD` | contraseña de la BD |
-   | `ADMIN_USERNAME` | tu usuario del panel (ej. `admin`) |
-   | `ADMIN_PASSWORD` | una contraseña segura |
-   | `WHATSAPP_NUMBER` | tu número de WhatsApp, ej. `5492612578860` |
-   | `STORE_NAME` | nombre del local |
+   | `DB_URL` | la **Internal Database URL** que copiaste |
+   | `DB_USER` | usuario de la base (está en la página de tu base) |
+   | `DB_PASSWORD` | contraseña de la base |
+   | `ADMIN_USERNAME` | `admin` |
+   | `ADMIN_PASSWORD` | una clave segura |
+   | `WHATSAPP_NUMBER` | `5492612578860` |
+   | `STORE_NAME` | `Aroma a Limpio` |
    | `CORS_ALLOWED_ORIGINS` | `*` |
 
-   > `PORT` lo inyecta Render automáticamente; la app ya lo lee.
+4. **Create Web Service** y esperá el deploy.
 
-5. **Create Web Service** y esperá el primer deploy (descarga la imagen de
-   Maven, tarda unos minutos).
+> 💡 **¿Dónde está la sección "Connections"?** En la página de tu base de
+> datos hay un botón **Connect** (arriba a la derecha) o una sección
+> **Connections** con dos solapas: *Internal* y *External*. La URL interna es
+> la que va en `DB_URL`. Render **no tiene** una terminal web para ejecutar SQL;
+> por eso la app ahora se encarga sola.
 
 ---
 
 ## Paso 3 — Probar
 
-- **Tienda:** `https://limpieza-tienda-api.onrender.com/`
-- **Admin:** `https://limpieza-tienda-api.onrender.com/admin.html`
-- **Health:** `GET /api/categorias` debería devolver las categorías.
+En el log del deploy vas a ver (entre las últimas líneas):
+```
+Started TiendaApplication
+```
+Y al entrar, la app ya dejó las tablas y los productos cargados.
+
+- Tienda: `https://tu-servicio.onrender.com/`
+- Panel: `https://tu-servicio.onrender.com/admin.html` → usuario `admin`
+- Carga con lector: dentro del panel, botón **📷 Carga con lector**
+- Verificación: `https://tu-servicio.onrender.com/api/categorias` → JSON con
+  `Combos y Ofertas, Ropa, Baño, Accesorios`
 
 ---
 
 ## ⚠️ Notas de producción
 
-- **Cambiá siempre** `ADMIN_PASSWORD` y las credenciales de la BD.
-- Plan **Free**: el servicio se duerme tras ~15 min de inactividad (la primera
-  visita tarda ~1 min en despertar) y la **PostgreSQL gratuita expira a los 30
-  días**. Para un local real conviene el plan pago.
-- El deploy es automático: cada `push` a GitHub recompila y publica.
-- Las imágenes se sirven por URL externa (S3, Cloudinary, Google Drive…): subí
-  las fotos y pegá la URL en el alta del producto.
-- Los pedidos quedan guardados en la tabla `pedidos`; desde el panel podés
-  cambiarles el estado.
+- **Plan Free:** el servicio se duerme tras ~15 min de inactividad (tarda ~1 min
+  en despertar) y la **PostgreSQL gratuita expira a los 30 días**. Para un local
+  real conviene un plan pago.
+- **Fotos:** las que trae el catálogo van dentro de la app (`/img/...`). Las
+  fotos que saques con el lector van a `/uploads/` dentro del contenedor → en el
+  plan Free se pierden al redeployar. Para producción: disco persistente en
+  Render (`UPLOADS_DIR`) o storage externo (Cloudinary/S3).
+- **Cambiá siempre** `ADMIN_PASSWORD` y las credenciales de la base.
+- El deploy es automático con cada `push` a GitHub.

@@ -82,11 +82,12 @@
 
   // ---------- Comportamiento clave del lector (Enter no recarga) -----------
 
-  codigoInput.addEventListener('keydown', async (e) => {
-    if (e.key !== 'Enter') return;
-    e.preventDefault();          // ← evita que el formulario se envíe/recargue
-
-    const codigo = codigoInput.value.trim();
+  /**
+   * Procesa un código de barras (venga del lector USB, del teclado o de la
+   * cámara): consulta si ya existe y precarga el formulario, o lo deja limpio.
+   */
+  async function procesarCodigo(codigo) {
+    codigo = (codigo || '').trim();
     if (!codigo) { nombreInput.focus(); return; }
 
     try {
@@ -118,7 +119,193 @@
       }
     }
     nombreInput.focus();        // ← el foco pasa automáticamente al Nombre
+  }
+
+  codigoInput.addEventListener('keydown', async (e) => {
+    if (e.key !== 'Enter') return;
+    e.preventDefault();          // ← evita que el formulario se envíe/recargue
+    await procesarCodigo(codigoInput.value);
   });
+
+  // --------------------- Escáner con la cámara del celular -----------------
+
+  const btnEscanear = $('#btnEscanear');
+  const btnCancelarScan = $('#btnCancelarScan');
+  const scanArea = $('#scanArea');
+  const scanStatus = $('#scanStatus');
+
+  let scanner = null;      // instancia Html5Qrcode (fallback iOS)
+  let stream = null;       // MediaStream del escáner nativo
+  let detector = null;     // BarcodeDetector nativo
+  let rafId = null;        // requestAnimationFrame nativo
+  let videoEl = null;      // <video> nativo
+  let escaneando = false;
+
+  function setScanStatus(msg) { if (scanStatus) scanStatus.textContent = msg; }
+
+  const FORMATOS_1D = ['ean_13', 'ean_8', 'upc_a', 'upc_e',
+                       'code_128', 'code_39', 'code_93', 'codabar', 'itf', 'qr_code'];
+
+  /** Devuelve un BarcodeDetector nativo si el navegador lo soporta (Android/Chrome). */
+  async function barcodeDetectorNativo() {
+    if (!('BarcodeDetector' in window)) return null;
+    try {
+      const soportados = await window.BarcodeDetector.getSupportedFormats();
+      const usar = FORMATOS_1D.filter((f) => soportados.includes(f));
+      return usar.length ? new window.BarcodeDetector({ formats: usar }) : null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /** Punto de entrada del botón: usa el mejor método disponible. */
+  async function iniciarEscaneo() {
+    if (escaneando) return;
+    escaneando = true;
+    scanArea.style.display = 'block';
+    setScanStatus('📷 Preparando cámara…');
+
+    // 1) Navegador moderno (Android/Chrome): escáner nativo, el mejor para 1D.
+    const nativo = await barcodeDetectorNativo();
+    if (nativo) {
+      const ok = await iniciarEscaneoNativo(nativo);
+      if (ok) return;
+    }
+
+    // 2) Fallback: html5-qrcode (iPhone/Safari y navegadores sin BarcodeDetector).
+    iniciarEscaneoHtml5();
+  }
+
+  async function iniciarEscaneoNativo(detectorNativo) {
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } },
+        audio: false,
+      });
+
+      const contenedor = $('#qr-reader');
+      contenedor.innerHTML = '';
+      videoEl = document.createElement('video');
+      videoEl.setAttribute('playsinline', '');
+      videoEl.setAttribute('muted', '');
+      videoEl.style.width = '100%';
+      videoEl.style.maxWidth = '340px';
+      videoEl.style.borderRadius = '12px';
+      contenedor.appendChild(videoEl);
+
+      videoEl.srcObject = stream;
+      await videoEl.play();
+
+      detector = detectorNativo;
+      setScanStatus('🔍 Apuntá al código de barras (buena luz, ~15 cm).');
+
+      let ultimo = 0;
+      const bucle = async (ts) => {
+        if (!detector || !videoEl || !stream) return;
+        if (ts - ultimo > 120) {                     // ~8 lecturas/segundo
+          ultimo = ts;
+          try {
+            const codigos = await detector.detect(videoEl);
+            if (codigos && codigos.length) {
+              const texto = (codigos[0].rawValue || '').trim();
+              await detenerEscaneo();
+              codigoInput.value = texto;
+              procesarCodigo(texto);
+              return;
+            }
+          } catch (_) { /* fotograma sin código */ }
+        }
+        rafId = requestAnimationFrame(bucle);
+      };
+      rafId = requestAnimationFrame(bucle);
+      return true;
+    } catch (err) {
+      detenerEscaneo();
+      const detalle = (err && err.message) ? err.message : String(err);
+      if (/permission|NotAllowedError|denied/i.test(detalle)) {
+        setScanStatus('⚠️ Permití el acceso a la cámara y volvé a intentar.');
+        toast('⚠️ Permití el acceso a la cámara');
+        return true;   // ya avisamos; no pasar al fallback para no duplicar el error
+      }
+      return false;    // otro error: dejamos caer al fallback
+    }
+  }
+
+  function iniciarEscaneoHtml5() {
+    if (typeof Html5Qrcode === 'undefined') {
+      setScanStatus('⚠️ Este navegador no soporta el escáner.');
+      toast('⚠️ El escáner de cámara no está disponible');
+      detenerEscaneo();
+      return;
+    }
+    try {
+      const contenedor = $('#qr-reader');
+      contenedor.innerHTML = '';
+      scanner = new Html5Qrcode('qr-reader');
+      setScanStatus('🔍 Apuntá al código. Si hay poca luz, usá la linterna 💡.');
+
+      scanner.start(
+        { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } },
+        {
+          fps: 10,
+          qrbox: { width: 280, height: 130 },   // alargado: ideal para códigos de barras
+          aspectRatio: 1.7777,
+          showTorchButtonIfSupported: true,     // linterna 💡
+          rememberLastUsedCamera: true,
+          formatsToSupport: [
+            Html5QrcodeSupportedFormats.EAN_13,
+            Html5QrcodeSupportedFormats.EAN_8,
+            Html5QrcodeSupportedFormats.UPC_A,
+            Html5QrcodeSupportedFormats.UPC_E,
+            Html5QrcodeSupportedFormats.CODE_128,
+            Html5QrcodeSupportedFormats.CODE_39,
+            Html5QrcodeSupportedFormats.CODABAR,
+            Html5QrcodeSupportedFormats.ITF,
+            Html5QrcodeSupportedFormats.QR_CODE,
+          ],
+        },
+        (textoDecodificado) => {
+          const texto = (textoDecodificado || '').trim();
+          detenerEscaneo();
+          codigoInput.value = texto;
+          procesarCodigo(texto);
+        },
+        () => { /* fotograma sin lectura */ }
+      ).catch((err) => {
+        const detalle = (err && err.message) ? err.message : String(err);
+        detenerEscaneo();
+        if (/permission|NotAllowedError|denied/i.test(detalle)) {
+          toast('⚠️ Permití el acceso a la cámara para escanear');
+        } else {
+          toast('⚠️ No se pudo abrir la cámara: ' + detalle);
+        }
+      });
+    } catch (err) {
+      const detalle = (err && err.message) ? err.message : String(err);
+      detenerEscaneo();
+      toast('⚠️ No se pudo abrir la cámara: ' + detalle);
+    }
+  }
+
+  /** Apaga la cámara y limpia TODO (escáner nativo o fallback). */
+  async function detenerEscaneo() {
+    if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+    if (stream) {
+      stream.getTracks().forEach((t) => t.stop());
+      stream = null;
+    }
+    if (videoEl) { videoEl.srcObject = null; videoEl.remove(); videoEl = null; }
+    detector = null;
+    if (scanner) {
+      try { await scanner.stop(); scanner.clear(); } catch (_) {}
+      scanner = null;
+    }
+    scanArea.style.display = 'none';
+    escaneando = false;
+  }
+
+  btnEscanear.addEventListener('click', iniciarEscaneo);
+  btnCancelarScan.addEventListener('click', detenerEscaneo);
 
   // ------------------------- Vista previa de foto --------------------------
 

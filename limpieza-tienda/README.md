@@ -58,15 +58,17 @@ limpieza-tienda/
 
 **Requisitos:** Java 17+ y Maven 3.6+ (o usar el wrapper `mvnw`), PostgreSQL 14+.
 
-1. Crear la base y cargar esquema + datos:
+> ⭐ Al arrancar, la app **crea las tablas y carga los productos automáticamente**
+> (scripts `schema.sql` / `data.sql` del classpath, idempotentes). Solo hace
+> falta que la base de datos exista.
+
+1. Crear la base (vacía):
 
    ```bash
    psql -U postgres -c "CREATE DATABASE limpieza_tienda;"
-   psql -U postgres -d limpieza_tienda -f database/schema.sql
-   psql -U postgres -d limpieza_tienda -f database/data.sql
    ```
 
-2. Levantar la app:
+2. Levantar la app (crea tablas + datos sola):
 
    ```bash
    cd backend
@@ -75,6 +77,9 @@ limpieza-tienda/
    export DB_PASSWORD=postgres
    mvn spring-boot:run
    ```
+
+   *(Opcional) Si preferís cargar los datos a mano, los scripts completos están
+   en `database/schema.sql` y `database/data.sql`.*
 
 3. Abrir:
    - Tienda: http://localhost:8080/
