@@ -20,9 +20,26 @@
   }
 
   function fallbackImg(img) {
+    const src = img.getAttribute('src') || '';
+    const cod = (img.dataset && img.dataset.cod) || '';
+    const slug = (img.dataset && img.dataset.slug) || '';
+
+    const intentos = [];
+    const urlCod = '/img/fotos/' + cod + '.jpg';
+    const urlSlug = '/img/fotos/' + slug + '.jpg';
+    if (cod && src !== urlCod) intentos.push(urlCod);
+    if (slug && src !== urlSlug && intentos.indexOf(urlSlug) === -1) intentos.push(urlSlug);
+
+    const paso = Number(img.dataset.paso || 0);
+    if (paso < intentos.length) {
+      img.dataset.paso = String(paso + 1);
+      img.src = intentos[paso];
+      return;
+    }
+
     img.onerror = null;
     img.src = "data:image/svg+xml;utf8," + encodeURIComponent(
-      "<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><rect width='100%' height='100%' fill='#e8eef2'/><text x='50' y='60' font-size='40' text-anchor='middle'>🫧</text></svg>");
+      "<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><rect width='100%' height='100%' fill='#e3f4fc'/><text x='50' y='60' font-size='40' text-anchor='middle'>🫧</text></svg>");
   }
 
   // ----------------------------- Estado / auth -----------------------------
@@ -43,7 +60,7 @@
         return await API.request(method, path, body, { 'X-Admin-Token': token });
       } catch (e) {
         if (e.status === 401) { logout(); throw e; }
-        if (e.status) throw e; // error de negocio real
+        if (e.status) throw e;
         modoDemo = true;
         toast('⚠️ Backend no disponible: modo demo local');
       }
@@ -222,11 +239,202 @@
 
   // ----------------------------- Productos ---------------------------------
 
+  async function comprimirImagen(file) {
+    try {
+      if (!file || !file.type || !file.type.startsWith('image/')) return file;
+      if (file.type === 'image/gif') return file;
+      if (typeof createImageBitmap !== 'function') return file;
+
+      const bitmap = await createImageBitmap(file);
+      const MAX = 1000;
+      const escala = Math.min(1, MAX / Math.max(bitmap.width, bitmap.height));
+      const w = Math.max(1, Math.round(bitmap.width * escala));
+      const h = Math.max(1, Math.round(bitmap.height * escala));
+
+      const canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, w, h);
+      ctx.drawImage(bitmap, 0, 0, w, h);
+      if (bitmap.close) bitmap.close();
+
+      const blob = await new Promise((res) => canvas.toBlob(res, 'image/jpeg', 0.82));
+      if (!blob) return file;
+      return new File([blob], (file.name ? file.name.replace(/\.[^.]+$/, '') : 'foto') + '.jpg', { type: 'image/jpeg' });
+    } catch (_) {
+      return file;
+    }
+  }
+
+  // Dropzone del modal de producto
+  const adminDropzone = $('#adminDropzone');
+  const adminDropEmpty = $('#adminDropEmpty');
+  const adminDropPreview = $('#adminDropPreview');
+  const adminImgPreview = $('#adminImgPreview');
+  const adminPreviewFilename = $('#adminPreviewFilename');
+  const adminPreviewFilesize = $('#adminPreviewFilesize');
+  const adminPreviewTag = $('#adminPreviewTag');
+  const adminImagenFile = $('#adminImagenFile');
+  const prodImagen = $('#prodImagen');
+  const adminBtnExplorar = $('#adminBtnExplorar');
+  const adminBtnCambiar = $('#adminBtnCambiar');
+  const adminBtnQuitar = $('#adminBtnQuitar');
+
+  function mostrarAdminFotoUrl(url, nombre) {
+    if (!url) {
+      resetearAdminFoto();
+      return;
+    }
+    adminImgPreview.src = url;
+    adminPreviewFilename.textContent = nombre ? `Foto: ${nombre}` : 'Foto del producto';
+    adminPreviewFilename.title = url;
+    
+    if (url.startsWith('data:')) {
+      adminPreviewFilesize.textContent = 'Imagen local';
+      adminPreviewTag.textContent = '✅ Nueva foto';
+    } else if (url.startsWith('/api/imagen/') || url.startsWith('/uploads/')) {
+      adminPreviewFilesize.textContent = 'Guardada en servidor/base';
+      adminPreviewTag.textContent = '📦 Foto actual';
+    } else {
+      adminPreviewFilesize.textContent = 'URL web externa';
+      adminPreviewTag.textContent = '🌐 Foto online';
+    }
+
+    adminDropEmpty.style.display = 'none';
+    adminDropPreview.style.display = 'flex';
+  }
+
+  function resetearAdminFoto() {
+    adminImagenFile.value = '';
+    prodImagen.value = '';
+    adminImgPreview.src = '';
+    adminDropPreview.style.display = 'none';
+    adminDropEmpty.style.display = 'flex';
+  }
+
+  async function procesarArchivoAdminFoto(file) {
+    if (!file || !file.type.startsWith('image/')) {
+      toast('⚠️ El archivo debe ser una imagen (JPG, PNG, WEBP, GIF)');
+      return;
+    }
+    toast('⏳ Procesando y subiendo foto…');
+    const fotoComprimida = await comprimirImagen(file);
+
+    if (!modoDemo && token) {
+      try {
+        const formData = new FormData();
+        formData.append('imagen', fotoComprimida);
+        const res = await fetch('/api/admin/imagen', {
+          method: 'POST',
+          headers: { 'X-Admin-Token': token },
+          body: formData,
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.url) {
+            prodImagen.value = data.url;
+            mostrarAdminFotoUrl(data.url, file.name);
+            toast('✅ Imagen subida con éxito');
+            return;
+          }
+        }
+      } catch (_) {}
+    }
+
+    // Fallback dataURL (si backend está offline o en modo demo)
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result;
+      prodImagen.value = dataUrl;
+      mostrarAdminFotoUrl(dataUrl, file.name);
+      toast('✅ Imagen lista');
+    };
+    reader.readAsDataURL(fotoComprimida);
+  }
+
+  if (adminDropzone) {
+    adminDropzone.addEventListener('click', (e) => {
+      if (e.target.closest('#adminBtnQuitar')) return;
+      if (adminDropEmpty.style.display !== 'none' || e.target.closest('#adminBtnCambiar') || e.target.closest('#adminBtnExplorar')) {
+        adminImagenFile.click();
+      }
+    });
+
+    adminBtnQuitar.addEventListener('click', (e) => {
+      e.stopPropagation();
+      resetearAdminFoto();
+      toast('🗑️ Imagen quitada');
+    });
+
+    adminBtnCambiar.addEventListener('click', (e) => {
+      e.stopPropagation();
+      adminImagenFile.click();
+    });
+
+    adminImagenFile.addEventListener('change', () => {
+      const file = adminImagenFile.files && adminImagenFile.files[0];
+      if (file) procesarArchivoAdminFoto(file);
+    });
+
+    ['dragenter', 'dragover'].forEach((eventName) => {
+      adminDropzone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        adminDropzone.classList.add('dragover');
+      });
+    });
+
+    ['dragleave', 'dragend'].forEach((eventName) => {
+      adminDropzone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        adminDropzone.classList.remove('dragover');
+      });
+    });
+
+    adminDropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      adminDropzone.classList.remove('dragover');
+      const dt = e.dataTransfer;
+      if (dt && dt.files && dt.files.length > 0) {
+        procesarArchivoAdminFoto(dt.files[0]);
+      }
+    });
+
+    prodImagen.addEventListener('input', () => {
+      const val = prodImagen.value.trim();
+      if (val) mostrarAdminFotoUrl(val, 'URL');
+      else resetearAdminFoto();
+    });
+  }
+
+  // Pegar foto con Ctrl+V cuando el modal está abierto
+  document.addEventListener('paste', (e) => {
+    const modal = $('#prodModal');
+    if (!modal || !modal.classList.contains('open')) return;
+    const items = (e.clipboardData || window.clipboardData)?.items;
+    if (!items) return;
+
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].type && items[i].type.startsWith('image/')) {
+        const file = items[i].getAsFile();
+        if (file) {
+          procesarArchivoAdminFoto(file);
+          toast('📋 Foto pegada desde el portapapeles');
+          break;
+        }
+      }
+    }
+  });
+
   async function cargarProductos() {
     const prods = await api('GET', '/api/admin/productos');
     $('#prodList').innerHTML = prods.map((p) => `
       <tr>
-        <td><img class="thumb" src="${p.imagenUrl}" alt="" onerror="window.__fallbackImg?.(this)"></td>
+        <td><img class="thumb" src="${p.imagenUrl}" alt="" data-cod="${p.codigoBarras || ''}" data-slug="${p.slug || ''}" onerror="window.__fallbackImg?.(this)"></td>
         <td>
           <strong>${p.nombre}</strong>
           <ul class="var-list">${(p.variantes || []).map((v) =>
@@ -257,6 +465,11 @@
     $('#prodNombre').value = prod ? prod.nombre : '';
     $('#prodDesc').value = prod ? (prod.descripcion || '') : '';
     $('#prodImagen').value = prod ? prod.imagenUrl : '';
+    if (prod && prod.imagenUrl) {
+      mostrarAdminFotoUrl(prod.imagenUrl, prod.nombre);
+    } else {
+      resetearAdminFoto();
+    }
     $('#prodCategoria').innerHTML = cats.map((c) =>
       `<option value="${c.id}" ${prod && prod.categoriaId === c.id ? 'selected' : ''}>${c.nombre}</option>`).join('');
     $('#prodDestacado').checked = prod ? !!prod.destacado : false;
@@ -302,10 +515,12 @@
 
     if (!variantes.length) { toast('⚠️ Agregá al menos una variante'); return; }
 
+    const imgUrl = $('#prodImagen').value.trim() || 'https://placehold.co/600x600/EFE6D4/6B5130?text=Aroma+a+Limpio';
+
     const body = {
       nombre: $('#prodNombre').value.trim(),
       descripcion: $('#prodDesc').value.trim() || null,
-      imagenUrl: $('#prodImagen').value.trim(),
+      imagenUrl: imgUrl,
       categoriaId: Number($('#prodCategoria').value),
       destacado: $('#prodDestacado').checked,
       activo: $('#prodActivo').checked,
@@ -369,7 +584,6 @@
     window.__fallbackImg = fallbackImg;
 
     if (token) {
-      // Verificamos el token contra la API; si no responde, seguimos en demo.
       mostrarPanel();
     } else {
       mostrarLogin();
