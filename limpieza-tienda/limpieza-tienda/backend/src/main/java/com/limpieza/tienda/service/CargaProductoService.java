@@ -34,9 +34,13 @@ import java.util.Optional;
 @Transactional
 public class CargaProductoService {
 
-    /** Imagen por defecto cuando el producto se carga sin foto. */
-    private static final String IMAGEN_DEFAULT =
-            "https://placehold.co/600x600/EFE6D4/6B5130?text=Aroma+a+Limpio";
+    /**
+     * Ruta base de las fotos que se colocan por código de barras o por nombre
+     * (carpeta {@code static/img/fotos/}). Cuando un producto se carga sin
+     * subir foto, apuntamos a {@code /img/fotos/<codigo>.jpg}; si ese archivo
+     * no existe, el frontend muestra un placeholder.
+     */
+    private static final String FOTOS_DIR = "/img/fotos/";
 
     private final ProductoRepository productoRepository;
     private final VarianteRepository varianteRepository;
@@ -74,7 +78,7 @@ public class CargaProductoService {
             throw new PeticionInvalidaException("El stock debe ser un número mayor o igual a 0.");
         }
 
-        codigoBarras = codigoBarras.trim();
+        codigoBarras = normalizarCodigo(codigoBarras.trim());
         Categoria categoria = categoriaRepository.findById(categoriaId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Categoría no encontrada: " + categoriaId));
 
@@ -97,7 +101,8 @@ public class CargaProductoService {
             producto.setActivo(true);
 
             String ruta = imageStorage.guardar(imagen);
-            producto.setImagenUrl(ruta != null ? ruta : IMAGEN_DEFAULT);
+            // Sin foto subida: buscamos automáticamente /img/fotos/<codigo>.jpg
+            producto.setImagenUrl(ruta != null ? ruta : FOTOS_DIR + codigoBarras + ".jpg");
             producto = productoRepository.save(producto);
 
             variante = new Variante();
@@ -162,10 +167,24 @@ public class CargaProductoService {
     /** Busca un producto por código de barras (para precargar el formulario). */
     @Transactional(readOnly = true)
     public ProductoDto buscarPorCodigo(String codigoBarras) {
-        Producto producto = productoRepository.findByCodigoBarras(codigoBarras.trim())
+        String codigo = normalizarCodigo(codigoBarras == null ? "" : codigoBarras.trim());
+        Producto producto = productoRepository.findByCodigoBarras(codigo)
                 .orElseThrow(() -> new RecursoNoEncontradoException(
-                        "No existe un producto con el código: " + codigoBarras));
+                        "No existe un producto con el código: " + codigo));
         return ProductoDto.from(producto);
+    }
+
+    /**
+     * Normaliza el código de barras leído. Algunos lectores/cámaras devuelven el
+     * UPC-A (12 dígitos) y otros el EAN-13 (13 dígitos) para el mismo producto.
+     * Un UPC-A de 12 dígitos equivale al EAN-13 con un 0 delante, así que lo
+     * convertimos para que ambos celulares registren el MISMO código.
+     */
+    private String normalizarCodigo(String codigo) {
+        if (codigo != null && codigo.matches("\\d{12}")) {
+            return "0" + codigo;
+        }
+        return codigo;
     }
 
     /** Genera un slug único para la URL del producto. */

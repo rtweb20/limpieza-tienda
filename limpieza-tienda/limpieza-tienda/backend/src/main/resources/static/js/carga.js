@@ -44,6 +44,75 @@
     toast._t = setTimeout(() => el.classList.remove('show'), 2800);
   }
 
+  /** Pitido tipo caja de supermercado: ok = agudo simple; error = doble grave. */
+  function beep(ok) {
+    try {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return;
+      beep._ctx = beep._ctx || new Ctx();
+      const ctx = beep._ctx;
+      if (ctx.state === 'suspended') ctx.resume();
+      const tonos = ok ? [880] : [330, 262];
+      tonos.forEach((f, i) => {
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.type = 'square';
+        o.frequency.value = f;
+        o.connect(g);
+        g.connect(ctx.destination);
+        const t = ctx.currentTime + i * 0.18;
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(0.18, t + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.12);
+        o.start(t);
+        o.stop(t + 0.14);
+      });
+    } catch (_) { /* sin audio disponible */ }
+  }
+
+  /**
+   * Normaliza el código leído: si un lector/cámara da UPC-A (12 dígitos) y otro
+   * EAN-13 (13 dígitos) para el MISMO producto, los unificamos anteponiendo un 0.
+   */
+  function normalizarCodigo(codigo) {
+    codigo = (codigo || '').trim();
+    if (/^\d{12}$/.test(codigo)) return '0' + codigo;
+    return codigo;
+  }
+
+  /**
+   * Reduce la foto antes de subirla (máx. 1000 px, JPEG) para que ocupe poco en
+   * la base de datos. Si no se puede comprimir, devuelve el archivo original.
+   */
+  async function comprimirImagen(file) {
+    try {
+      if (!file || !file.type || !file.type.startsWith('image/')) return file;
+      if (file.type === 'image/gif') return file;          // no tocamos los gifs
+      if (typeof createImageBitmap !== 'function') return file;
+
+      const bitmap = await createImageBitmap(file);
+      const MAX = 1000;
+      const escala = Math.min(1, MAX / Math.max(bitmap.width, bitmap.height));
+      const w = Math.max(1, Math.round(bitmap.width * escala));
+      const h = Math.max(1, Math.round(bitmap.height * escala));
+
+      const canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, w, h);
+      ctx.drawImage(bitmap, 0, 0, w, h);
+      bitmap.close && bitmap.close();
+
+      const blob = await new Promise((res) => canvas.toBlob(res, 'image/jpeg', 0.82));
+      if (!blob) return file;
+      return new File([blob], 'foto.jpg', { type: 'image/jpeg' });
+    } catch (_) {
+      return file;   // ante cualquier problema, subimos la foto original
+    }
+  }
+
   /** Petición autenticada con el token del panel. */
   async function apiAutenticada(method, path, body) {
     const options = { method, headers: { 'X-Admin-Token': token } };
@@ -82,18 +151,28 @@
 
   // ---------- Comportamiento clave del lector (Enter no recarga) -----------
 
+  let codigoExiste = false;   // ¿el código escaneado ya está cargado?
+
   /**
    * Procesa un código de barras (venga del lector USB, del teclado o de la
    * cámara): consulta si ya existe y precarga el formulario, o lo deja limpio.
    */
   async function procesarCodigo(codigo) {
-    codigo = (codigo || '').trim();
+    codigo = normalizarCodigo(codigo);
     if (!codigo) { nombreInput.focus(); return; }
+    codigoInput.value = codigo;
 
     try {
       // ¿Ya existe este código?
       const producto = await apiAutenticada('GET',
         '/api/admin/productos/barcode/' + encodeURIComponent(codigo));
+
+      // ============ YA ESTÁ CARGADO (como la caja del supermercado) ==========
+      codigoExiste = true;
+      beep(false);
+      const stockActual = (producto.variantes && producto.variantes[0])
+        ? producto.variantes[0].stock : 0;
+
       // Precargamos los datos existentes para que solo haga falta confirmar.
       nombreInput.value = producto.nombre || '';
       precioInput.value = (producto.variantes && producto.variantes[0])
@@ -102,18 +181,24 @@
       if (producto.categoriaId) categoriaSelect.value = String(producto.categoriaId);
       stockInput.value = '';
       stockInput.placeholder = 'Se suma al stock actual';
-      mostrarResultado('info',
-        `🏷️ Código ya cargado: <strong>${producto.nombre}</strong>.<br>` +
-        `Se actualizarán los datos y se sumará stock.`);
+      btnGuardar.textContent = '➕ Sumar stock';
+      mostrarResultado('duplicado',
+        `⛔ YA CARGADO: <strong>${producto.nombre}</strong><br>` +
+        `<span style="font-weight:400;font-size:14px">Stock actual: ${stockActual} · ` +
+        `si es reposición, poné la cantidad y tocá «➕ Sumar stock».</span>`);
+      toast('⛔ Este producto ya está cargado');
     } catch (err) {
       if (err.status === 404) {
-        // Código nuevo: dejamos el formulario limpio y solo pasamos al nombre.
+        // ============ CÓDIGO NUEVO ============
+        codigoExiste = false;
+        beep(true);
         nombreInput.value = '';
         precioInput.value = '';
         descripcionInput.value = '';
         stockInput.value = '';
         stockInput.placeholder = 'Ej.: 12';
-        mostrarResultado('info', '🆕 Código nuevo: completá los datos del producto.');
+        btnGuardar.textContent = '💾 Guardar producto';
+        mostrarResultado('nuevo', '✅ CÓDIGO NUEVO — completá los datos del producto.');
       } else {
         toast('⚠️ ' + err.message);
       }
@@ -129,27 +214,129 @@
 
   // --------------------- Escáner con la cámara del celular -----------------
 
-  let scanner = null;   // instancia de Html5Qrcode
-
   const btnEscanear = $('#btnEscanear');
   const btnCancelarScan = $('#btnCancelarScan');
   const scanArea = $('#scanArea');
+  const scanStatus = $('#scanStatus');
 
-  /** Abre la cámara trasera y lee el código de barras. */
+  let scanner = null;      // instancia Html5Qrcode (fallback iOS)
+  let stream = null;       // MediaStream del escáner nativo
+  let detector = null;     // BarcodeDetector nativo
+  let rafId = null;        // requestAnimationFrame nativo
+  let videoEl = null;      // <video> nativo
+  let escaneando = false;
+
+  function setScanStatus(msg) { if (scanStatus) scanStatus.textContent = msg; }
+
+  const FORMATOS_1D = ['ean_13', 'ean_8', 'upc_a', 'upc_e',
+                       'code_128', 'code_39', 'code_93', 'codabar', 'itf', 'qr_code'];
+
+  /** Devuelve un BarcodeDetector nativo si el navegador lo soporta (Android/Chrome). */
+  async function barcodeDetectorNativo() {
+    if (!('BarcodeDetector' in window)) return null;
+    try {
+      const soportados = await window.BarcodeDetector.getSupportedFormats();
+      const usar = FORMATOS_1D.filter((f) => soportados.includes(f));
+      return usar.length ? new window.BarcodeDetector({ formats: usar }) : null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /** Punto de entrada del botón: usa el mejor método disponible. */
   async function iniciarEscaneo() {
+    if (escaneando) return;
+    escaneando = true;
+    scanArea.style.display = 'block';
+    setScanStatus('📷 Preparando cámara…');
+
+    // 1) Navegador moderno (Android/Chrome): escáner nativo, el mejor para 1D.
+    const nativo = await barcodeDetectorNativo();
+    if (nativo) {
+      const ok = await iniciarEscaneoNativo(nativo);
+      if (ok) return;
+    }
+
+    // 2) Fallback: html5-qrcode (iPhone/Safari y navegadores sin BarcodeDetector).
+    iniciarEscaneoHtml5();
+  }
+
+  async function iniciarEscaneoNativo(detectorNativo) {
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } },
+        audio: false,
+      });
+
+      const contenedor = $('#qr-reader');
+      contenedor.innerHTML = '';
+      videoEl = document.createElement('video');
+      videoEl.setAttribute('playsinline', '');
+      videoEl.setAttribute('muted', '');
+      videoEl.style.width = '100%';
+      videoEl.style.maxWidth = '340px';
+      videoEl.style.borderRadius = '12px';
+      contenedor.appendChild(videoEl);
+
+      videoEl.srcObject = stream;
+      await videoEl.play();
+
+      detector = detectorNativo;
+      setScanStatus('🔍 Apuntá al código de barras (buena luz, ~15 cm).');
+
+      let ultimo = 0;
+      const bucle = async (ts) => {
+        if (!detector || !videoEl || !stream) return;
+        if (ts - ultimo > 120) {                     // ~8 lecturas/segundo
+          ultimo = ts;
+          try {
+            const codigos = await detector.detect(videoEl);
+            if (codigos && codigos.length) {
+              const texto = (codigos[0].rawValue || '').trim();
+              await detenerEscaneo();
+              codigoInput.value = texto;
+              procesarCodigo(texto);
+              return;
+            }
+          } catch (_) { /* fotograma sin código */ }
+        }
+        rafId = requestAnimationFrame(bucle);
+      };
+      rafId = requestAnimationFrame(bucle);
+      return true;
+    } catch (err) {
+      detenerEscaneo();
+      const detalle = (err && err.message) ? err.message : String(err);
+      if (/permission|NotAllowedError|denied/i.test(detalle)) {
+        setScanStatus('⚠️ Permití el acceso a la cámara y volvé a intentar.');
+        toast('⚠️ Permití el acceso a la cámara');
+        return true;   // ya avisamos; no pasar al fallback para no duplicar el error
+      }
+      return false;    // otro error: dejamos caer al fallback
+    }
+  }
+
+  function iniciarEscaneoHtml5() {
     if (typeof Html5Qrcode === 'undefined') {
+      setScanStatus('⚠️ Este navegador no soporta el escáner.');
       toast('⚠️ El escáner de cámara no está disponible');
+      detenerEscaneo();
       return;
     }
     try {
-      scanArea.style.display = 'block';
+      const contenedor = $('#qr-reader');
+      contenedor.innerHTML = '';
       scanner = new Html5Qrcode('qr-reader');
+      setScanStatus('🔍 Apuntá al código. Si hay poca luz, usá la linterna 💡.');
 
-      await scanner.start(
-        { facingMode: 'environment' },                       // cámara trasera
+      scanner.start(
+        { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } },
         {
-          fps: 10,                                           // cuadros por segundo
-          qrbox: { width: 250, height: 160 },                // recuadro alargado (códigos)
+          fps: 10,
+          qrbox: { width: 280, height: 130 },   // alargado: ideal para códigos de barras
+          aspectRatio: 1.7777,
+          showTorchButtonIfSupported: true,     // linterna 💡
+          rememberLastUsedCamera: true,
           formatsToSupport: [
             Html5QrcodeSupportedFormats.EAN_13,
             Html5QrcodeSupportedFormats.EAN_8,
@@ -157,36 +344,49 @@
             Html5QrcodeSupportedFormats.UPC_E,
             Html5QrcodeSupportedFormats.CODE_128,
             Html5QrcodeSupportedFormats.CODE_39,
-            Html5QrcodeSupportedFormats.ITF,
             Html5QrcodeSupportedFormats.CODABAR,
+            Html5QrcodeSupportedFormats.ITF,
             Html5QrcodeSupportedFormats.QR_CODE,
           ],
         },
-        (textoDecodificado) => {                             // lectura exitosa
-          codigoInput.value = textoDecodificado.trim();
+        (textoDecodificado) => {
+          const texto = (textoDecodificado || '').trim();
           detenerEscaneo();
-          procesarCodigo(textoDecodificado);
+          codigoInput.value = texto;
+          procesarCodigo(texto);
         },
-        () => { /* fotograma sin lectura: se ignora */ }
-      );
+        () => { /* fotograma sin lectura */ }
+      ).catch((err) => {
+        const detalle = (err && err.message) ? err.message : String(err);
+        detenerEscaneo();
+        if (/permission|NotAllowedError|denied/i.test(detalle)) {
+          toast('⚠️ Permití el acceso a la cámara para escanear');
+        } else {
+          toast('⚠️ No se pudo abrir la cámara: ' + detalle);
+        }
+      });
     } catch (err) {
-      scanArea.style.display = 'none';
       const detalle = (err && err.message) ? err.message : String(err);
-      if (/permission|NotAllowedError|denied/i.test(detalle)) {
-        toast('⚠️ Permití el acceso a la cámara para escanear');
-      } else {
-        toast('⚠️ No se pudo abrir la cámara: ' + detalle);
-      }
+      detenerEscaneo();
+      toast('⚠️ No se pudo abrir la cámara: ' + detalle);
     }
   }
 
-  /** Apaga la cámara y oculta el área de escaneo. */
+  /** Apaga la cámara y limpia TODO (escáner nativo o fallback). */
   async function detenerEscaneo() {
+    if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+    if (stream) {
+      stream.getTracks().forEach((t) => t.stop());
+      stream = null;
+    }
+    if (videoEl) { videoEl.srcObject = null; videoEl.remove(); videoEl = null; }
+    detector = null;
     if (scanner) {
       try { await scanner.stop(); scanner.clear(); } catch (_) {}
       scanner = null;
     }
     scanArea.style.display = 'none';
+    escaneando = false;
   }
 
   btnEscanear.addEventListener('click', iniciarEscaneo);
@@ -206,7 +406,8 @@
   form.addEventListener('submit', async (e) => {
     e.preventDefault();          // nunca recargamos la página
 
-    const codigo = codigoInput.value.trim();
+    const codigo = normalizarCodigo(codigoInput.value);
+    codigoInput.value = codigo;
     const nombre = nombreInput.value.trim();
     const precio = parseFloat(precioInput.value);
     const stock = parseInt(stockInput.value, 10);
@@ -228,12 +429,19 @@
     data.append('stock', String(stock));
     data.append('categoriaId', String(categoriaId));
     data.append('descripcion', descripcionInput.value.trim());
-    if (imagenInput.files[0]) data.append('imagen', imagenInput.files[0]);
 
     btnGuardar.disabled = true;
     btnGuardar.textContent = 'Guardando…';
 
     try {
+      // Comprimimos la foto para que ocupe poco en la base de datos.
+      let foto = imagenInput.files[0];
+      if (foto) {
+        btnGuardar.textContent = 'Procesando foto…';
+        foto = await comprimirImagen(foto);
+      }
+      if (foto) data.append('imagen', foto);
+
       const res = await fetch('/api/admin/carga', {
         method: 'POST',
         headers: { 'X-Admin-Token': token },   // sin Content-Type (lo pone el navegador)
@@ -249,6 +457,7 @@
       // Feedback visual según el resultado
       const tipo = r.accion === 'CREADO' ? 'creado' : 'actualizado';
       const icono = r.accion === 'CREADO' ? '✅' : '🔄';
+      beep(true);
       mostrarResultado(tipo,
         `${icono} <strong>${r.nombre}</strong> — ${r.accion === 'CREADO' ? 'creado' : 'actualizado'}.<br>` +
         `Código: ${r.codigoBarras} · Precio: $${r.precio} · Stock total: ${r.stock}`);
@@ -258,6 +467,8 @@
       form.reset();
       imgPreview.style.display = 'none';
       stockInput.placeholder = 'Ej.: 12';
+      codigoExiste = false;
+      btnGuardar.textContent = '💾 Guardar producto';
       codigoInput.focus();
     } catch (err) {
       toast('⚠️ ' + err.message);

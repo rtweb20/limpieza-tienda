@@ -17,12 +17,12 @@ barras físico**. Hay dos formas de escanear:
 3. Tocá **"📷 Escanear con la cámara"**.
 4. El navegador te va a pedir **permiso para usar la cámara** → tocá *Permitir*.
 5. Apuntá la cámara al código de barras (cámara trasera, buena luz, a ~15–20 cm).
-6. Al leerlo, el código aparece solo en el campo y:
-   - Si el producto **ya existe** → se precargan sus datos (nombre, precio,
-     categoría) y el stock queda para **sumar** reposición.
-   - Si es **nuevo** → completás nombre, precio, stock, descripción, foto y
-     categoría.
-7. Tocá **"💾 Guardar producto"** y listo: quedó cargado e inventariado.
+6. Al leerlo, la pantalla **pita como la caja de un supermercado** y te avisa:
+   - 🆕 **Código nuevo** → pitido de OK y cartel verde: completás nombre, precio,
+     stock, descripción, foto y categoría.
+   - ⛔ **YA CARGADO** → pitido de error y cartel rojo grande con el nombre y el
+     stock actual. Si es reposición, ponés la cantidad y tocás **"➕ Sumar stock"**.
+7. Tocá **"💾 Guardar producto"** (o "➕ Sumar stock") y listo.
 
 > ⚠️ **La cámara requiere HTTPS.** En Render el sitio ya es HTTPS, así que
 > funciona directo. En local también funciona con `http://localhost` (los
@@ -34,15 +34,45 @@ barras físico**. Hay dos formas de escanear:
 1. El operador escanea el código (lector que escribe + Enter, o cámara).
 2. **La página NO se recarga**: al recibir el código se consulta si ya existe y
    el foco pasa automáticamente al campo **Nombre**.
-   - Si el código **ya existe** → se precargan nombre, precio, descripción y
-     categoría; el campo stock queda para **sumar** reposición.
-   - Si es **nuevo** → se deja el formulario limpio para completar los datos.
+   - Si el código **ya existe** → cartel rojo **"⛔ YA CARGADO"** (con pitido),
+     se precargan nombre, precio, descripción y categoría; el campo stock queda
+     para **sumar** reposición.
+   - Si es **nuevo** → pitido de OK y cartel verde; formulario limpio.
 3. Se completan nombre, precio, stock, descripción, foto y categoría.
 4. Al guardar:
    - **Código nuevo** → crea el producto (con una variante "Unidad").
    - **Código existente** → actualiza datos y **suma** el stock escaneado.
-   - La foto se sube al servidor con un **nombre único (UUID)** y en la base
-     queda la ruta `/uploads/<uuid>.jpg`.
+   - La foto se guarda **directamente en la base de datos** (tabla `imagenes`) y
+     en el producto queda la ruta `/api/imagen/<id>`. Así la foto **sobrevive a
+     los redeploys** (el disco del servidor de Render es temporal).
+
+## 🔢 Normalización de códigos (12 vs 13 dígitos)
+
+Algunos lectores/cámaras devuelven el **UPC-A** (12 dígitos) y otros el
+**EAN-13** (13 dígitos) para el **mismo** producto. Para que dos celulares
+distintos no carguen el mismo producto dos veces:
+
+- Si el código leído tiene **12 dígitos**, se le antepone un `0` y se guarda
+  como EAN-13. Ej.: `779123456789` → `0779123456789`.
+- La búsqueda y el guardado normalizan igual, así que ambos formatos caen en el
+  **mismo** producto.
+
+> 💡 Si un paquete tiene **dos códigos distintos** (uno grande EAN-13 y uno
+> chico UPC-A), usá siempre el **grande** (EAN-13). Con la normalización, el
+> chico también termina apuntando al mismo producto.
+
+## 🗑️ Empezar de cero (vaciar el catálogo)
+
+El catálogo arranca **vacío de productos** (solo quedan las 4 categorías). Para
+borrar todo lo cargado y volver a empezar:
+
+1. Entrá al panel `/admin.html`.
+2. Pestaña **📦 Productos** → botón **"🗑️ Vaciar productos"**.
+3. Confirmá. Se borran todos los productos (y sus variantes); las categorías se
+   conservan.
+
+> Endpoint: `DELETE /api/admin/productos` (requiere token). Devuelve
+> `{"eliminados": N, "mensaje": "…"}`.
 
 ## 🗄️ Base de datos
 
@@ -65,12 +95,13 @@ Archivos nuevos/ modificados:
 | --- | --- |
 | `model/Producto.java` | Campo `codigoBarras` |
 | `repository/ProductoRepository.java` | `findByCodigoBarras(...)` |
-| `service/ImageStorageService.java` | Guarda la foto con nombre UUID en `uploads/` y borra la anterior |
+| `service/ImageStorageService.java` | Guarda la foto en la base (tabla `imagenes`) y borra la anterior |
 | `service/CargaProductoService.java` | Lógica de upsert (crear o actualizar + sumar stock) |
 | `dto/CargaProductoResponse.java` | Respuesta: creado/actualizado, stock total, imagen |
 | `controller/AdminController.java` | Endpoints `POST /api/admin/carga` y `GET /api/admin/productos/barcode/{codigo}` |
-| `config/WebConfig.java` | Sirve `/uploads/**` como estático |
-| `application.yml` | Límites de subida y carpeta `app.uploads.dir` |
+| `model/Imagen.java` + `repository/ImagenRepository.java` | Entidad/repo de la tabla `imagenes` (fotos en bytea) |
+| `controller/ImagenController.java` | Sirve `GET /api/imagen/{id}` (público, con cache) |
+| `application.yml` | Límites de subida de fotos |
 
 ### Endpoints (requieren el token del panel: header `X-Admin-Token`)
 
@@ -88,6 +119,30 @@ Archivos nuevos/ modificados:
 
 **`GET /api/admin/productos/barcode/{codigo}`** → devuelve el producto o `404`
 si no existe (lo usa la pantalla para precargar datos).
+
+**`DELETE /api/admin/productos`** → vacía el catálogo completo (productos +
+variantes). Devuelve `{"eliminados": N, "mensaje": "…"}`.
+
+## 🖼️ Fotos de productos (carpeta `img/fotos/`)
+
+Para no subir foto producto por producto, podés colocar las fotos en la carpeta
+**`static/img/fotos/`** y la tienda las muestra **automáticamente**.
+
+El nombre del archivo debe ser:
+
+1. **Por código de barras** (recomendado): `7791234567890.jpg`
+2. **Por nombre** (sin acentos, minúsculas, espacios → guiones):
+   `jabon-en-polvo-ala.jpg`
+
+Cómo funciona:
+
+- Cuando escaneás un producto **sin subir foto**, la app le asigna
+  `/img/fotos/<código>.jpg`.
+- Si ese archivo no existe, la tienda prueba con `/img/fotos/<nombre>.jpg`.
+- Si ninguno existe, muestra un placeholder (🫧).
+
+> Estas fotos van **dentro del proyecto** (se suben al repo), así que también
+> sobreviven a los redeploys, igual que las guardadas en la base de datos.
 
 ## 🖥️ Frontend
 
@@ -115,31 +170,23 @@ agrega el `boundary` del multipart automáticamente).
 ## 🚀 Paso a paso para integrarlo en tu proyecto
 
 1. **Subí los archivos nuevos al repo** (por navegador o GitHub Desktop):
-   - `database/migracion_codigo_barras.sql`
-   - `backend/src/main/resources/static/carga.html`
-   - `backend/src/main/resources/static/js/carga.js`
-   - y los archivos Java modificados (Producto, ProductoRepository, ProductoDto,
-     AdminController, WebConfig, application.yml, + los 3 servicios/DTO nuevos).
+   - `backend/src/main/resources/data.sql` (catálogo arranca vacío)
+   - `backend/src/main/resources/static/carga.html` y `static/js/carga.js`
+   - `static/admin.html` y `static/js/admin.js` (botón "Vaciar productos")
+   - y los Java modificados (AdminController, AdminService, CargaProductoService).
 
-2. **Aplicá la migración en la base** (una sola vez), pegando el contenido de
-   `database/migracion_codigo_barras.sql` en la pestaña **Shell** de tu
-   PostgreSQL en Render. (Si creás la base de cero con `schema.sql`, no hace
-   falta: ya trae la columna.)
+2. **Redeploy** en Render (el Dockerfile compila todo automáticamente).
 
-3. **Redeploy** en Render (el Dockerfile compila todo automáticamente).
-
-4. **Probá**: entrá al panel (`/admin.html`) → botón **"📷 Carga con lector"**
-   → escaneá un código → completá → guardar. El segundo escaneo del mismo
-   código debe decir "actualizado" y sumar stock.
+3. **Probá**: entrá al panel (`/admin.html`) → **"🗑️ Vaciar productos"** para
+   empezar de cero → botón **"📷 Carga con lector"** → escaneá un código.
+   Al escanear el mismo código de nuevo debe decir **"⛔ YA CARGADO"**.
 
 ## ⚠️ Notas importantes (producción)
 
-- Las fotos se guardan en la carpeta `uploads/` **dentro del contenedor**.
-  En el plan **Free de Render el disco es efímero**: las fotos se pierden en
-  cada redeploy. Para un local real:
-  - agregá un **Disco persistente** al servicio en Render y apuntá
-    `UPLOADS_DIR=/ruta/del/disco/uploads`, o
-  - subí las fotos a un storage externo (Cloudinary/S3) y guardá la URL.
+- **Las fotos se guardan en la base de datos** (tabla `imagenes`, columna
+  `bytea`), no en el disco del servidor. Por eso **sobreviven a los redeploys**
+  de Render. La app las comprime en el celular antes de subirlas (máx. 1000 px,
+  JPEG) para que ocupen poco.
 - El código de barras es único: dos productos no pueden compartirlo (el segundo
   escaneo siempre actualiza/suma stock, nunca crea un duplicado).
 - La página de carga está protegida por el mismo login del panel.

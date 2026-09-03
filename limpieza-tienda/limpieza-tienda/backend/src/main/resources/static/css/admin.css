@@ -3,7 +3,7 @@
    (se usa junto con styles.css para heredar botones, modales y toasts)
    ========================================================================== */
 
-body.admin { background: #eef1f4; }
+body.admin { background: #edf6fb; }
 
 /* ------------------------------ Login ----------------------------------- */
 
@@ -30,7 +30,7 @@ body.admin { background: #eef1f4; }
   height: 72px;
   margin: 0 auto 12px;
   border-radius: 20px;
-  background: var(--verde-suave);
+  background: var(--celeste-suave);
   display: grid;
   place-items: center;
 }
@@ -43,7 +43,7 @@ body.admin { background: #eef1f4; }
 /* ------------------------------ Topbar admin ---------------------------- */
 
 .admin-bar {
-  background: #221d17;
+  background: linear-gradient(135deg, #24abe9 0%, var(--celeste) 55%, var(--celeste-osc) 100%);
   color: #fff;
   display: flex;
   align-items: center;
@@ -52,6 +52,7 @@ body.admin { background: #eef1f4; }
   position: sticky;
   top: 0;
   z-index: 40;
+  box-shadow: 0 2px 12px rgba(12, 92, 130, .22);
 }
 
 .admin-bar .brand { font-weight: 800; font-size: 16px; display: flex; align-items: center; gap: 8px; }
@@ -86,7 +87,7 @@ body.admin { background: #eef1f4; }
   color: var(--texto);
 }
 
-.tab.active { background: var(--verde); border-color: var(--verde); color: #fff; }
+.tab.active { background: var(--celeste); border-color: var(--celeste); color: #fff; }
 
 .wrap { max-width: 1080px; margin: 16px auto 60px; padding: 0 16px; }
 
@@ -112,9 +113,9 @@ body.admin { background: #eef1f4; }
 .thumb { width: 44px; height: 44px; border-radius: 10px; object-fit: cover; background: #eef2f5; }
 
 .badge { display: inline-block; font-size: 11px; font-weight: 800; padding: 3px 9px; border-radius: 999px; }
-.badge.ok { background: var(--verde-suave); color: var(--verde-osc); }
+.badge.ok { background: var(--celeste-suave); color: var(--celeste-osc); }
 .badge.no { background: #fdecea; color: var(--rojo); }
-.badge.oferta { background: var(--ambar-suave); color: #8a5b00; }
+.badge.oferta { background: var(--acento-suave); color: #0a6b93; }
 .badge.pedido { background: #e8f0fe; color: var(--azul); }
 
 .row-actions { display: flex; gap: 6px; }
@@ -156,7 +157,7 @@ body.admin { background: #eef1f4; }
 
 .switch-row { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
 .switch-row label { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; }
-.switch-row input { width: 18px; height: 18px; accent-color: var(--verde); }
+.switch-row input { width: 18px; height: 18px; accent-color: var(--celeste); }
 
 /* Estado del pedido */
 .estado-select {

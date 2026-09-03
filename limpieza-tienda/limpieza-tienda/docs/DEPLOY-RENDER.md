@@ -104,8 +104,8 @@ Y al entrar, la app ya dejó las tablas y los productos cargados.
   en despertar) y la **PostgreSQL gratuita expira a los 30 días**. Para un local
   real conviene un plan pago.
 - **Fotos:** las que trae el catálogo van dentro de la app (`/img/...`). Las
-  fotos que saques con el lector van a `/uploads/` dentro del contenedor → en el
-  plan Free se pierden al redeployar. Para producción: disco persistente en
-  Render (`UPLOADS_DIR`) o storage externo (Cloudinary/S3).
+  fotos que subas con el lector se guardan **en la base de datos** (tabla
+  `imagenes`) y **sobreviven a los redeploys** — ya no dependen del disco del
+  servidor.
 - **Cambiá siempre** `ADMIN_PASSWORD` y las credenciales de la base.
 - El deploy es automático con cada `push` a GitHub.

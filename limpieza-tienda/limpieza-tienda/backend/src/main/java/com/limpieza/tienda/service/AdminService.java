@@ -38,17 +38,20 @@ public class AdminService {
     private final VarianteRepository varianteRepository;
     private final PedidoRepository pedidoRepository;
     private final PedidoItemRepository pedidoItemRepository;
+    private final ImageStorageService imageStorage;
 
     public AdminService(CategoriaRepository categoriaRepository,
                         ProductoRepository productoRepository,
                         VarianteRepository varianteRepository,
                         PedidoRepository pedidoRepository,
-                        PedidoItemRepository pedidoItemRepository) {
+                        PedidoItemRepository pedidoItemRepository,
+                        ImageStorageService imageStorage) {
         this.categoriaRepository = categoriaRepository;
         this.productoRepository = productoRepository;
         this.varianteRepository = varianteRepository;
         this.pedidoRepository = pedidoRepository;
         this.pedidoItemRepository = pedidoItemRepository;
+        this.imageStorage = imageStorage;
     }
 
     // ------------------------------------------------------------------ //
@@ -132,8 +135,22 @@ public class AdminService {
     public void eliminarProducto(Long id) {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Producto no encontrado: " + id));
+        // Borramos la foto guardada en la base (si la tiene).
+        imageStorage.eliminar(producto.getImagenUrl());
         // ON DELETE CASCADE en schema.sql limpia las variantes.
         productoRepository.delete(producto);
+    }
+
+    /**
+     * Vacía el catálogo completo (todos los productos y sus variantes).
+     * Las categorías se conservan. Devuelve la cantidad de productos eliminados.
+     */
+    public long vaciarProductos() {
+        long total = productoRepository.count();
+        varianteRepository.deleteAll();
+        productoRepository.deleteAll();
+        imageStorage.eliminarTodas();
+        return total;
     }
 
     private void aplicarProducto(Producto p, ProductoUpsertRequest r, Long id) {

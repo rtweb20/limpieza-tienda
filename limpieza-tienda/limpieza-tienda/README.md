@@ -16,7 +16,7 @@ pedido se envía directo al **WhatsApp del local** con un mensaje ya formateado.
 | Integración WhatsApp | Genera `https://wa.me/<numero>?text=<mensaje codificado>` con el resumen del pedido y el total |
 | Botón flotante | Acceso directo a WhatsApp para consultas |
 | Backoffice | Panel protegido por credenciales para editar precios, variantes, productos, categorías y gestionar pedidos |
-| Carga con lector | Alta/inventario por **código de barras** (USB/Bluetooth): escaneo → Enter sin recarga → alta o actualización + suma de stock, con subida de foto |
+| Carga con lector | Alta/inventario por **código de barras** (USB/Bluetooth o cámara del celular): escaneo → Enter sin recarga → alta o actualización + suma de stock, con foto guardada **en la base de datos** |
 
 ## 🧱 Stack
 
@@ -33,7 +33,7 @@ limpieza-tienda/
 ├── .dockerignore
 ├── database/
 │   ├── schema.sql          # DDL: categorias, productos, variantes, pedidos, pedido_items
-│   └── data.sql            # Carga masiva inicial de productos + variantes
+│   └── data.sql            # Carga inicial: solo las categorías (el catálogo arranca vacío)
 ├── backend/                # Proyecto Spring Boot (Maven)
 │   ├── pom.xml
 │   ├── mvnw / mvnw.cmd     # Maven Wrapper (opcional, para compilar sin Maven instalado)
@@ -58,9 +58,10 @@ limpieza-tienda/
 
 **Requisitos:** Java 17+ y Maven 3.6+ (o usar el wrapper `mvnw`), PostgreSQL 14+.
 
-> ⭐ Al arrancar, la app **crea las tablas y carga los productos automáticamente**
-> (scripts `schema.sql` / `data.sql` del classpath, idempotentes). Solo hace
-> falta que la base de datos exista.
+> ⭐ Al arrancar, la app **crea las tablas y las categorías automáticamente**
+> (scripts `schema.sql` / `data.sql` del classpath, idempotentes). El catálogo
+> de productos arranca **vacío**: se carga escaneando códigos de barras desde
+> el panel. Solo hace falta que la base de datos exista.
 
 1. Crear la base (vacía):
 
@@ -96,6 +97,7 @@ limpieza-tienda/
 | GET | `/api/productos/destacados` | Combos y ofertas (banner) |
 | GET | `/api/categorias/{slug}/productos` | Productos por categoría |
 | GET | `/api/buscar?q=…` | Búsqueda con autocompletado |
+| GET | `/api/imagen/{id}` | Foto de producto guardada en la base |
 | GET | `/api/whatsapp` | Número y enlace de consulta |
 | POST | `/api/pedidos` | Crea el pedido y devuelve el enlace `wa.me` |
 
@@ -107,6 +109,7 @@ limpieza-tienda/
 | GET/POST | `/api/admin/categorias` | Listar / crear |
 | PUT/DELETE | `/api/admin/categorias/{id}` | Editar / eliminar |
 | GET/POST | `/api/admin/productos` | Listar / crear (con variantes) |
+| DELETE | `/api/admin/productos` | Vaciar el catálogo (borra productos y sus fotos) |
 | PUT/DELETE | `/api/admin/productos/{id}` | Editar / eliminar |
 | POST | `/api/admin/carga` | Alta/actualización por código de barras (`multipart/form-data`, sube foto) |
 | GET | `/api/admin/productos/barcode/{codigo}` | Buscar producto por código de barras |

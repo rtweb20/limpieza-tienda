@@ -21,11 +21,33 @@
     toast._t = setTimeout(() => el.classList.remove('show'), 2600);
   }
 
+  /**
+   * Si la foto falla, intenta primero la foto "por código de barras" y después
+   * la "por nombre" (carpeta /img/fotos/), y recién al final muestra un
+   * placeholder. Así, colocando la foto con el nombre correcto, aparece sola.
+   */
   function fallbackImg(img, label) {
+    const src = img.getAttribute('src') || '';
+    const cod = (img.dataset && img.dataset.cod) || '';
+    const slug = (img.dataset && img.dataset.slug) || '';
+
+    const intentos = [];
+    const urlCod = '/img/fotos/' + cod + '.jpg';
+    const urlSlug = '/img/fotos/' + slug + '.jpg';
+    if (cod && src !== urlCod) intentos.push(urlCod);
+    if (slug && src !== urlSlug && intentos.indexOf(urlSlug) === -1) intentos.push(urlSlug);
+
+    const paso = Number(img.dataset.paso || 0);
+    if (paso < intentos.length) {
+      img.dataset.paso = String(paso + 1);
+      img.src = intentos[paso];
+      return;
+    }
+
     const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='600' height='600'>
-      <rect width='100%' height='100%' fill='#e8eef2'/>
+      <rect width='100%' height='100%' fill='#e3f4fc'/>
       <text x='300' y='320' font-family='Arial' font-size='120' text-anchor='middle'>🫧</text>
-      <text x='300' y='470' font-family='Arial' font-size='40' fill='#64757d' text-anchor='middle'>${label || ''}</text>
+      <text x='300' y='470' font-family='Arial' font-size='40' fill='#0c5c82' text-anchor='middle'>${label || ''}</text>
     </svg>`;
     img.onerror = null;
     img.src = 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
@@ -98,6 +120,7 @@
                aria-label="Ver ${p.nombre}">
         ${p.enOferta ? '<span class="tag-oferta">OFERTA</span>' : ''}
         <img src="${p.imagenUrl}" alt="${p.nombre}" loading="lazy"
+             data-cod="${p.codigoBarras || ''}" data-slug="${p.slug || ''}"
              onerror="window.__fallbackImg?.(this,'${p.nombre.slice(0, 16)}')">
         <div class="b-body">
           <div class="b-title">${p.nombre}</div>
@@ -135,6 +158,7 @@
         <div class="img-wrap">
           ${enOferta ? '<span class="tag-oferta">OFERTA</span>' : ''}
           <img class="prod" src="${p.imagenUrl}" alt="${p.nombre}" loading="lazy"
+               data-cod="${p.codigoBarras || ''}" data-slug="${p.slug || ''}"
                onerror="window.__fallbackImg?.(this,'${p.nombre.slice(0, 16)}')">
         </div>
         <div class="body">
@@ -218,6 +242,8 @@
         precio: v.precioVenta,
         precioNormal: v.precio,
         imagen: p.imagenUrl,
+        codigo: p.codigoBarras || '',
+        slug: p.slug || '',
         stock: v.stock,
         cantidad: 1,
       });
@@ -257,6 +283,7 @@
     body.innerHTML = state.carrito.map((it) => `
       <div class="cart-item">
         <img src="${it.imagen}" alt="${it.nombre}"
+             data-cod="${it.codigo || ''}" data-slug="${it.slug || ''}"
              onerror="window.__fallbackImg?.(this,'${it.nombre.slice(0, 12)}')">
         <div class="ci-info">
           <div class="ci-name">${it.nombre}</div>
@@ -393,7 +420,8 @@
     }
     box.innerHTML = resultados.slice(0, 8).map((p) => `
       <button type="button" data-id="${p.id}">
-        <img src="${p.imagenUrl}" alt="" onerror="window.__fallbackImg?.(this,'')">
+        <img src="${p.imagenUrl}" alt="" data-cod="${p.codigoBarras || ''}" data-slug="${p.slug || ''}"
+             onerror="window.__fallbackImg?.(this,'')">
         <span class="s-name">${p.nombre}</span>
         <span class="s-price">${money(p.precioDesde)}</span>
       </button>`).join('');

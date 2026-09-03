@@ -1,0 +1,20 @@
+CARPETA DE FOTOS DE PRODUCTOS — Aroma a Limpio
+================================================
+
+Poné acá las fotos de los productos para que se muestren automáticamente
+en la tienda. Cada foto debe llamarse de UNA de estas dos formas:
+
+1) Por CÓDIGO DE BARRAS (recomendado):
+   <codigo>.jpg   →  ejemplo:  7791234567890.jpg
+
+2) Por NOMBRE (sin acentos, en minúsculas, espacios con guiones):
+   jabon-en-polvo-ala.jpg
+
+Cuando un producto se carga escaneando su código y NO se le sube foto,
+la tienda busca automáticamente:
+   /img/fotos/<codigo>.jpg
+y si no existe prueba:
+   /img/fotos/<nombre>.jpg
+
+Formatos aceptados: .jpg, .png, .webp  (jpg es lo más liviano).
+Tamaño recomendado: 600 x 600 px (la app las comprime si hace falta).

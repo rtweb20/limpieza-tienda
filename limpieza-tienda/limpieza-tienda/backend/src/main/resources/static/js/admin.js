@@ -20,9 +20,26 @@
   }
 
   function fallbackImg(img) {
+    const src = img.getAttribute('src') || '';
+    const cod = (img.dataset && img.dataset.cod) || '';
+    const slug = (img.dataset && img.dataset.slug) || '';
+
+    const intentos = [];
+    const urlCod = '/img/fotos/' + cod + '.jpg';
+    const urlSlug = '/img/fotos/' + slug + '.jpg';
+    if (cod && src !== urlCod) intentos.push(urlCod);
+    if (slug && src !== urlSlug && intentos.indexOf(urlSlug) === -1) intentos.push(urlSlug);
+
+    const paso = Number(img.dataset.paso || 0);
+    if (paso < intentos.length) {
+      img.dataset.paso = String(paso + 1);
+      img.src = intentos[paso];
+      return;
+    }
+
     img.onerror = null;
     img.src = "data:image/svg+xml;utf8," + encodeURIComponent(
-      "<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><rect width='100%' height='100%' fill='#e8eef2'/><text x='50' y='60' font-size='40' text-anchor='middle'>🫧</text></svg>");
+      "<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><rect width='100%' height='100%' fill='#e3f4fc'/><text x='50' y='60' font-size='40' text-anchor='middle'>🫧</text></svg>");
   }
 
   // ----------------------------- Estado / auth -----------------------------
@@ -88,6 +105,11 @@
       const id = Number(path.split('/').pop());
       demoDB.productos = demoDB.productos.filter((p) => p.id !== id);
       return r(null);
+    }
+    if (method === 'DELETE' && path.endsWith('/productos')) {
+      const n = demoDB.productos.length;
+      demoDB.productos = [];
+      return r({ eliminados: n, mensaje: 'Se eliminaron ' + n + ' productos.' });
     }
     if (method === 'PATCH' && /\/pedidos\/\d+\/estado$/.test(path)) {
       const id = Number(path.split('/').pop().split('/')[0]);
@@ -221,7 +243,7 @@
     const prods = await api('GET', '/api/admin/productos');
     $('#prodList').innerHTML = prods.map((p) => `
       <tr>
-        <td><img class="thumb" src="${p.imagenUrl}" alt="" onerror="window.__fallbackImg?.(this)"></td>
+        <td><img class="thumb" src="${p.imagenUrl}" alt="" data-cod="${p.codigoBarras || ''}" data-slug="${p.slug || ''}" onerror="window.__fallbackImg?.(this)"></td>
         <td>
           <strong>${p.nombre}</strong>
           <ul class="var-list">${(p.variantes || []).map((v) =>
@@ -397,6 +419,15 @@
     $('#catForm').addEventListener('submit', guardarCategoria);
 
     // Productos
+    $('#vaciarProd').addEventListener('click', async () => {
+      const ok = confirm('⚠️ ¿Eliminar TODOS los productos?\n\nSe borra todo el catálogo para empezar de cero (las categorías se conservan). Esta acción no se puede deshacer.');
+      if (!ok) return;
+      try {
+        const r = await api('DELETE', '/api/admin/productos');
+        cargarProductos();
+        toast('🗑️ ' + (r && r.mensaje ? r.mensaje : 'Productos eliminados'));
+      } catch (err) { toast('⚠️ ' + err.message); }
+    });
     $('#nuevoProd').addEventListener('click', () => abrirProdModal(null));
     $('#prodList').addEventListener('click', (e) => {
       const ed = e.target.closest('[data-editar-prod]');
