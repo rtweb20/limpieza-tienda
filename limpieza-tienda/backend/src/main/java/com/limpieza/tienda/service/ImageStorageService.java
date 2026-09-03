@@ -14,6 +14,7 @@ import java.util.Set;
 public class ImageStorageService {
 
     private static final Set<String> EXT_PERMITIDAS = Set.of("jpg", "jpeg", "png", "webp", "gif");
+
     private final ImagenRepository imagenRepository;
 
     public ImageStorageService(ImagenRepository imagenRepository) {
@@ -27,7 +28,8 @@ public class ImageStorageService {
         }
         String extension = extraerExtension(archivo.getOriginalFilename(), archivo.getContentType());
         if (!EXT_PERMITIDAS.contains(extension)) {
-            throw new PeticionInvalidaException("Formato no permitido (.jpg, .png, .webp o .gif).");
+            throw new PeticionInvalidaException(
+                    "Formato de imagen no permitido (.jpg, .png, .webp o .gif).");
         }
 
         byte[] bytes;
@@ -40,9 +42,16 @@ public class ImageStorageService {
             throw new PeticionInvalidaException("La imagen está vacía.");
         }
 
+        String ct = archivo.getContentType() != null ? archivo.getContentType() : "image/" + extension;
+        if (ct.contains(";")) {
+            ct = ct.split(";")[0].trim();
+        }
+        if (ct.length() > 60) {
+            ct = ct.substring(0, 60);
+        }
+
         Imagen imagen = new Imagen();
-        imagen.setContentType(archivo.getContentType() != null
-                ? archivo.getContentType() : "image/" + extension);
+        imagen.setContentType(ct);
         imagen.setDatos(bytes);
         imagen = imagenRepository.save(imagen);
 
@@ -58,7 +67,6 @@ public class ImageStorageService {
             long id = Long.parseLong(ruta.substring("/api/imagen/".length()));
             imagenRepository.deleteById(id);
         } catch (NumberFormatException e) {
-            // Se ignora si no es numérico
         }
     }
 
@@ -69,11 +77,18 @@ public class ImageStorageService {
 
     private String extraerExtension(String nombreOriginal, String contentType) {
         if (nombreOriginal != null && nombreOriginal.contains(".")) {
-            String ext = nombreOriginal.substring(nombreOriginal.lastIndexOf('.') + 1).toLowerCase().trim();
-            if (EXT_PERMITIDAS.contains(ext)) return ext;
+            String ext = nombreOriginal.substring(nombreOriginal.lastIndexOf('.') + 1)
+                    .toLowerCase().trim();
+            if (EXT_PERMITIDAS.contains(ext)) {
+                return ext;
+            }
         }
         if (contentType != null) {
-            return switch (contentType.toLowerCase()) {
+            String ct = contentType.toLowerCase().trim();
+            if (ct.contains(";")) {
+                ct = ct.split(";")[0].trim();
+            }
+            return switch (ct) {
                 case "image/jpeg", "image/jpg" -> "jpg";
                 case "image/png" -> "png";
                 case "image/webp" -> "webp";
