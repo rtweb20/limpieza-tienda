@@ -22,13 +22,11 @@ import com.limpieza.tienda.repository.ProductoRepository;
 import com.limpieza.tienda.repository.VarianteRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Operaciones de administración (backoffice).
- */
 @Service
 @Transactional
 public class AdminService {
@@ -38,22 +36,23 @@ public class AdminService {
     private final VarianteRepository varianteRepository;
     private final PedidoRepository pedidoRepository;
     private final PedidoItemRepository pedidoItemRepository;
+    private final ImageStorageService imageStorage;
 
     public AdminService(CategoriaRepository categoriaRepository,
                         ProductoRepository productoRepository,
                         VarianteRepository varianteRepository,
                         PedidoRepository pedidoRepository,
-                        PedidoItemRepository pedidoItemRepository) {
+                        PedidoItemRepository pedidoItemRepository,
+                        ImageStorageService imageStorage) {
         this.categoriaRepository = categoriaRepository;
         this.productoRepository = productoRepository;
         this.varianteRepository = varianteRepository;
         this.pedidoRepository = pedidoRepository;
         this.pedidoItemRepository = pedidoItemRepository;
+        this.imageStorage = imageStorage;
     }
 
-    // ------------------------------------------------------------------ //
-    // CATEGORÍAS                                                          //
-    // ------------------------------------------------------------------ //
+    // ---------------- Categorías ----------------
 
     public List<CategoriaDto> listarCategorias() {
         return categoriaRepository.findAllByOrderByOrdenAsc().stream().map(CategoriaDto::from).toList();
@@ -104,9 +103,7 @@ public class AdminService {
         }
     }
 
-    // ------------------------------------------------------------------ //
-    // PRODUCTOS                                                           //
-    // ------------------------------------------------------------------ //
+    // ---------------- Productos ----------------
 
     public List<ProductoDto> listarProductos() {
         return productoRepository.findAllConVariantes().stream().map(ProductoDto::from).toList();
@@ -132,19 +129,20 @@ public class AdminService {
     public void eliminarProducto(Long id) {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Producto no encontrado: " + id));
-        // ON DELETE CASCADE en schema.sql limpia las variantes.
+        imageStorage.eliminar(producto.getImagenUrl());
         productoRepository.delete(producto);
     }
 
-    /**
-     * Vacía el catálogo completo (todos los productos y sus variantes).
-     * Las categorías se conservan. Devuelve la cantidad de productos eliminados.
-     */
     public long vaciarProductos() {
         long total = productoRepository.count();
         varianteRepository.deleteAll();
         productoRepository.deleteAll();
+        imageStorage.eliminarTodas();
         return total;
+    }
+
+    public String subirImagen(MultipartFile imagen) {
+        return imageStorage.guardar(imagen);
     }
 
     private void aplicarProducto(Producto p, ProductoUpsertRequest r, Long id) {
@@ -171,11 +169,16 @@ public class AdminService {
         }
     }
 
-    private void reemplazarVariantes(Producto producto, List<VarianteUpsertRequest> variantes) {
-        varianteRepository.deleteByProductoId(producto.getId());
+    private void reemplazarVariantes(Producto producto, List<VarianteUpsertRequest> variantesReq) {
+        List<Variante> actuales = varianteRepository.findByProductoIdOrderByOrdenAsc(producto.getId());
+        if (actuales != null && !actuales.isEmpty()) {
+            varianteRepository.deleteAllInBatch(actuales);
+            varianteRepository.flush(); // Elimina de inmediato antes del INSERT para no violar uq_variantes_producto_presentacion
+        }
+
         List<Variante> nuevas = new ArrayList<>();
         int orden = 1;
-        for (VarianteUpsertRequest vr : variantes) {
+        for (VarianteUpsertRequest vr : variantesReq) {
             Variante v = new Variante();
             v.setProducto(producto);
             v.setPresentacion(vr.presentacion().trim());
@@ -184,16 +187,14 @@ public class AdminService {
             v.setStock(vr.stock() != null ? vr.stock() : 0);
             v.setActiva(vr.activa() != null ? vr.activa() : true);
             v.setOrden(vr.orden() != null ? vr.orden() : orden++);
-            nuevas.add(varianteRepository.save(v));
+            nuevas.add(v);
         }
-        // Refrescamos la colección en memoria para que el DTO de respuesta
-        // refleje las variantes recién persistidas.
+        varianteRepository.saveAll(nuevas);
+        varianteRepository.flush();
         producto.setVariantes(nuevas);
     }
 
-    // ------------------------------------------------------------------ //
-    // PEDIDOS                                                             //
-    // ------------------------------------------------------------------ //
+    // ---------------- Pedidos ----------------
 
     public List<PedidoResponse> listarPedidosConItems() {
         return pedidoRepository.findAllByOrderByCreatedAtDesc().stream()
