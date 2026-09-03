@@ -5,7 +5,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 
 @Entity
@@ -19,18 +18,33 @@ public class Imagen {
     @Column(name = "content_type", nullable = false, length = 60)
     private String contentType;
 
-    @Lob
-    @Column(name = "datos", nullable = false)
+    @Column(name = "datos", nullable = false, columnDefinition = "bytea")
     private byte[] datos;
 
-    public Imagen() {}
+    public Imagen() {
+    }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getContentType() { return contentType; }
-    public void setContentType(String contentType) { this.contentType = contentType; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public byte[] getDatos() { return datos; }
-    public void setDatos(byte[] datos) { this.datos = datos; }
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+
+    public byte[] getDatos() {
+        return datos;
+    }
+
+    public void setDatos(byte[] datos) {
+        this.datos = datos;
+    }
 }
