@@ -1030,3 +1030,49 @@ footer .admin-link:hover { border-color: rgba(255, 255, 255, .55); background: r
     animation-iteration-count: 1 !important;
   }
 }
+
+/* Encabezado del catálogo: refuerza la jerarquía visual sin alterar el flujo. */
+.catalog-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+  margin: 20px 0 15px;
+  padding: 17px 19px;
+  border: 1px solid rgba(213, 230, 240, .96);
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(255,255,255,.92), rgba(235,247,252,.86));
+  box-shadow: 0 5px 16px rgba(14, 70, 100, .06);
+}
+
+.catalog-heading-copy { min-width: 0; }
+.catalog-eyebrow {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--acento);
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: .8px;
+  text-transform: uppercase;
+}
+.catalog-heading .section-title { margin: 0; }
+.catalog-note {
+  flex: 0 0 auto;
+  max-width: 230px;
+  color: var(--texto-suave);
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.35;
+  text-align: right;
+}
+
+@media (max-width: 560px) {
+  .catalog-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 7px;
+    margin-top: 16px;
+    padding: 14px 15px;
+  }
+  .catalog-note { max-width: none; text-align: left; }
+}
