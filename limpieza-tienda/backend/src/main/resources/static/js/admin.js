@@ -199,12 +199,14 @@
   }
 
   function poblarFiltroCategorias(cats) {
-    const sel = $('#prodFilterCat');
-    if (!sel) return;
-    const currentVal = sel.value;
-    sel.innerHTML = '<option value="">Todas las categorías</option>' +
-      cats.map(c => `<option value="${c.id}">${c.icono || '🏷️'} ${c.nombre}</option>`).join('');
-    if (currentVal) sel.value = currentVal;
+    ['#prodFilterCat', '#stockFilterCat'].forEach((selector) => {
+      const sel = $(selector);
+      if (!sel) return;
+      const currentVal = sel.value;
+      sel.innerHTML = '<option value="">Todas las categorías</option>' +
+        cats.map(c => `<option value="${c.id}">${c.icono || '🏷️'} ${c.nombre}</option>`).join('');
+      if (currentVal) sel.value = currentVal;
+    });
   }
 
   function activarTab(tab) {
@@ -256,6 +258,7 @@
           productoId: p.id,
           nombre: p.nombre,
           presentacion: v.presentacion || 'Unidad',
+          categoriaId: p.categoriaId,
           categoriaNombre: p.categoriaNombre,
           categoriaIcono: p.categoriaIcono,
           codigoBarras: p.codigoBarras,
@@ -278,6 +281,7 @@
   function renderStockFiltrado() {
     const searchVal = ($('#stockSearch').value || '').trim().toLowerCase();
     const estadoVal = $('#stockFilterEstado').value;
+    const catVal = $('#stockFilterCat').value;
     const umbral = getUmbral();
 
     $('#clearStockSearch').style.display = searchVal ? 'block' : 'none';
@@ -290,8 +294,10 @@
       rows = rows.filter((r) =>
         (r.nombre || '').toLowerCase().includes(searchVal) ||
         (r.presentacion || '').toLowerCase().includes(searchVal) ||
+        (r.categoriaNombre || '').toLowerCase().includes(searchVal) ||
         (r.codigoBarras || '').toLowerCase().includes(searchVal));
     }
+    if (catVal) rows = rows.filter((r) => String(r.categoriaId) === String(catVal));
     if (estadoVal) rows = rows.filter((r) => r.estado === estadoVal);
 
     rows.sort((a, b) => a.stock - b.stock || (a.nombre || '').localeCompare(b.nombre || ''));
@@ -341,6 +347,11 @@
           <td>${barcodeHtml}</td>
           <td style="text-align:center;"><strong class="stock-num ${et.cls}">${r.stock}</strong></td>
           <td><span class="badge-stock ${et.cls}">${et.icon} ${et.text}</span></td>
+          <td>
+            <div class="action-btn-group">
+              <button class="btn-action edit" data-editar-stock="${r.productoId}" title="Editar producto y actualizar stock">✏️</button>
+            </div>
+          </td>
         </tr>`;
     }).join('');
   }
@@ -752,6 +763,7 @@
     $('#statOfertas').textContent = cacheProductos.filter(p => p.destacado).length;
     actualizarIndicadoresStock();
     renderProductosFiltrados();
+    renderStockFiltrado();
   }
 
   async function abrirProdModal(id) {
@@ -939,12 +951,17 @@
       $('#stockSearch').focus();
     });
     $('#stockFilterEstado').addEventListener('change', renderStockFiltrado);
+    $('#stockFilterCat').addEventListener('change', renderStockFiltrado);
     $('#stockUmbral').addEventListener('input', () => {
       setUmbral($('#stockUmbral').value);
       renderStockFiltrado();
     });
     $('#btnExportCsv').addEventListener('click', exportarStockCSV);
     $('#btnPrintStock').addEventListener('click', () => window.print());
+    $('#stockList').addEventListener('click', (e) => {
+      const ed = e.target.closest('[data-editar-stock]');
+      if (ed) abrirProdModal(Number(ed.dataset.editarStock));
+    });
 
     $('#nuevaCat').addEventListener('click', () => abrirCatModal(null));
     $('#catList').addEventListener('click', async (e) => {

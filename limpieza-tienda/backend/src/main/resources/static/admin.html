@@ -203,6 +203,9 @@
           </div>
 
           <div class="filter-group">
+            <select id="stockFilterCat" class="select-filter" aria-label="Filtrar por categoría">
+              <option value="">Todas las categorías</option>
+            </select>
             <select id="stockFilterEstado" class="select-filter" aria-label="Filtrar por estado de stock">
               <option value="">Todo el stock</option>
               <option value="sin-stock">🔴 Sin stock</option>
@@ -237,6 +240,7 @@
                 <th class="th-code">Código de Barras</th>
                 <th style="text-align:center;">Stock actual</th>
                 <th>Estado</th>
+                <th class="th-actions">Acciones</th>
               </tr>
             </thead>
             <tbody id="stockList"></tbody>
