@@ -384,7 +384,6 @@ main {
   position: relative;
   aspect-ratio: 1 / 1;
   overflow: hidden;
-  padding: 16px;
   background:
     radial-gradient(circle at 50% 25%, rgba(255, 255, 255, .62), transparent 48%),
     linear-gradient(135deg, #e5f5fc 0%, #f9fcfe 100%);
@@ -404,8 +403,9 @@ main {
 .card img.prod {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   object-position: center;
+  background: #eef7fb;
   transition: transform .35s ease;
 }
 
