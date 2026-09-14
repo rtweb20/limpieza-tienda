@@ -1408,3 +1408,113 @@ body.admin-body {
 @media (max-width: 640px) {
   .stock-summary-row { grid-template-columns: 1fr 1fr; }
 }
+
+/* ============================================================================
+   MULTIMEDIA — foto/video del local y publicidad de marcas
+   ============================================================================ */
+
+.media-section-title {
+  margin: 22px 2px 12px;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--admin-dark);
+}
+
+.media-section-title:first-of-type { margin-top: 4px; }
+
+.medios-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
+  margin-bottom: 8px;
+}
+
+.medios-vacio {
+  grid-column: 1 / -1;
+  padding: 18px;
+  color: var(--admin-text-muted);
+  font-size: 13.5px;
+}
+
+.medio-card {
+  display: flex;
+  overflow: hidden;
+  flex-direction: column;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius);
+  background: var(--admin-card);
+  box-shadow: var(--admin-shadow-sm);
+}
+
+.medio-preview {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  background: #0f2438;
+}
+
+.medio-preview img,
+.medio-preview video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.medio-body {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 10px 12px;
+}
+
+.medio-tipo-badge {
+  align-self: flex-start;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: var(--admin-primary-light);
+  color: var(--admin-primary-hover);
+  font-size: 10.5px;
+  font-weight: 800;
+}
+
+.medio-input {
+  width: 100%;
+  padding: 6px 9px;
+  border: 1.5px solid var(--admin-border);
+  border-radius: 8px;
+  color: var(--admin-text);
+  font: inherit;
+  font-size: 12.5px;
+}
+
+.medio-input:focus {
+  border-color: var(--admin-primary);
+  outline: none;
+}
+
+.medio-activo-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--admin-text-muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.medio-actions {
+  justify-content: flex-end;
+  padding: 0 12px 10px;
+}
+
+@media (max-width: 640px) {
+  .medios-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+}
+
+.form-hint {
+  display: block;
+  margin-top: 5px;
+  color: var(--admin-text-muted);
+  font-size: 11.5px;
+  line-height: 1.4;
+}

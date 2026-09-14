@@ -153,6 +153,7 @@
     categorias,
     productos,
     destacados: productos.filter((p) => p.destacado),
+    medios: [],
     whatsapp: {
       numero: WHATSAPP_NUMBER,
       url: `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Hola 👋, quería hacer una consulta sobre ' + STORE + '.')}`,

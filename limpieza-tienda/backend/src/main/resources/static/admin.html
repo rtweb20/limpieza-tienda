@@ -127,6 +127,11 @@
           <span>Categorías</span>
           <span id="tabCountCats" class="tab-badge">0</span>
         </button>
+        <button class="tab-btn" data-tab="multimedia">
+          <span class="tab-icon">🎬</span>
+          <span>Multimedia</span>
+          <span id="tabCountMedios" class="tab-badge">0</span>
+        </button>
         <button class="tab-btn" data-tab="pedidos">
           <span class="tab-icon">🧾</span>
           <span>Pedidos</span>
@@ -288,6 +293,30 @@
         </div>
       </section>
 
+      <!-- TAB MULTIMEDIA -->
+      <section id="panel-multimedia" class="panel-section" style="display:none">
+        <div class="toolbar-card justify-between">
+          <div>
+            <h2 class="panel-title">Fotos y Videos</h2>
+            <p class="panel-subtitle">Subí la foto y el video del local, y la publicidad de las marcas que trabajás — aparecen en la home de la tienda.</p>
+          </div>
+          <button id="nuevoMedio" class="btn-primary-admin">
+            <span class="btn-icon">➕</span> Subir foto o video
+          </button>
+        </div>
+
+        <h3 class="media-section-title">📍 Foto y video del local</h3>
+        <div id="mediosLocalGrid" class="medios-grid"></div>
+
+        <h3 class="media-section-title">🏷️ Publicidad de marcas</h3>
+        <div id="mediosMarcaGrid" class="medios-grid"></div>
+        <div id="mediosMarcaEmpty" class="empty-placeholder" style="display:none">
+          <div class="empty-icon">🏷️</div>
+          <h3>Todavía no cargaste publicidad de marcas</h3>
+          <p>Subí una foto o video con el logo o promo de la marca y va a aparecer en la home.</p>
+        </div>
+      </section>
+
       <!-- TAB PEDIDOS -->
       <section id="panel-pedidos" class="panel-section" style="display:none">
         <div class="toolbar-card justify-between">
@@ -377,6 +406,65 @@
         <div class="modal-foot">
           <button type="button" class="btn-cancel" onclick="document.getElementById('catModal').classList.remove('open');document.getElementById('catOverlay').classList.remove('open')">Cancelar</button>
           <button type="submit" class="btn-primary-admin">Guardar Categoría</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL MULTIMEDIA (subir foto/video) -->
+  <div id="medioOverlay" class="modal-overlay"></div>
+  <div id="medioModal" class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="medioModalTitle">
+    <div class="modal-box">
+      <div class="modal-top">
+        <div class="modal-title-wrap">
+          <span class="modal-title-icon">🎬</span>
+          <h2 id="medioModalTitle">Subir foto o video</h2>
+        </div>
+        <button class="btn-close-modal" aria-label="Cerrar modal" onclick="document.getElementById('medioModal').classList.remove('open');document.getElementById('medioOverlay').classList.remove('open')">✕</button>
+      </div>
+
+      <form id="medioForm" class="modal-form">
+        <div class="form-group">
+          <label>¿Para dónde es? <span class="req">*</span></label>
+          <div class="seg">
+            <input type="radio" id="medioDestinoLocal" name="medioDestino" value="LOCAL" checked>
+            <label for="medioDestinoLocal">📍 Del local</label>
+            <input type="radio" id="medioDestinoMarca" name="medioDestino" value="MARCA">
+            <label for="medioDestinoMarca">🏷️ De una marca</label>
+          </div>
+        </div>
+
+        <div class="form-group" id="medioMarcaNombreGroup" style="display:none">
+          <label for="medioMarcaNombre">Nombre de la marca <span class="req">*</span></label>
+          <input id="medioMarcaNombre" type="text" maxlength="80" placeholder="Ej: Skip, Ala, Vivere...">
+        </div>
+
+        <div class="form-group">
+          <label>¿Es foto o video? <span class="req">*</span></label>
+          <div class="seg">
+            <input type="radio" id="medioFormatoFoto" name="medioFormato" value="FOTO" checked>
+            <label for="medioFormatoFoto">📷 Foto</label>
+            <input type="radio" id="medioFormatoVideo" name="medioFormato" value="VIDEO">
+            <label for="medioFormatoVideo">🎬 Video</label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="medioTitulo">Título (opcional)</label>
+          <input id="medioTitulo" type="text" maxlength="160" placeholder="Ej: Nuestro local en Godoy Cruz">
+        </div>
+
+        <div class="form-group">
+          <label for="medioArchivo">Archivo <span class="req">*</span></label>
+          <input id="medioArchivo" type="file" accept="image/jpeg,image/png,image/webp,image/gif" required>
+          <small class="form-hint">Fotos: JPG, PNG, WEBP o GIF. Videos: MP4, WEBM o MOV — probá que pesen poco (menos de 60&nbsp;MB e idealmente pocos segundos) para que la página cargue rápido.</small>
+        </div>
+
+        <div id="medioError" class="login-error-msg" role="alert" style="display:none"></div>
+
+        <div class="modal-foot">
+          <button type="button" class="btn-cancel" onclick="document.getElementById('medioModal').classList.remove('open');document.getElementById('medioOverlay').classList.remove('open')">Cancelar</button>
+          <button id="medioSubmitBtn" type="submit" class="btn-primary-admin">Subir</button>
         </div>
       </form>
     </div>

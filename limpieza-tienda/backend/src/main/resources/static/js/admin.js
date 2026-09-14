@@ -219,6 +219,7 @@
     if (tab === 'productos') cargarProductos();
     if (tab === 'stock') cargarStock();
     if (tab === 'categorias') cargarCategorias();
+    if (tab === 'multimedia') cargarMedios();
     if (tab === 'pedidos') cargarPedidos();
   }
 
@@ -921,6 +922,164 @@
     }
   }
 
+  /* ------------------------------------------------------------------------
+     MULTIMEDIA — foto/video del local y publicidad de marcas que se muestran
+     en la home pública. El dueño los sube y edita acá.
+     ------------------------------------------------------------------------ */
+
+  let cacheMedios = [];
+
+  function medioPreviewHtml(m) {
+    if (m.formato === 'VIDEO') {
+      return `<video src="${m.url}" muted playsinline preload="metadata"></video>`;
+    }
+    return `<img src="${m.url}" alt="${m.titulo || m.marcaNombre || 'Medio'}" loading="lazy">`;
+  }
+
+  function medioCardHtml(m) {
+    const esMarca = m.destino === 'MARCA';
+    return `
+      <div class="medio-card" data-id="${m.id}">
+        <div class="medio-preview">${medioPreviewHtml(m)}</div>
+        <div class="medio-body">
+          <span class="medio-tipo-badge">${m.formato === 'VIDEO' ? '🎬 Video' : '📷 Foto'}</span>
+          ${esMarca ? `<input class="medio-input" type="text" maxlength="80" data-medio-field="marcaNombre" data-id="${m.id}" value="${m.marcaNombre || ''}" placeholder="Nombre de la marca">` : ''}
+          <input class="medio-input" type="text" maxlength="160" data-medio-field="titulo" data-id="${m.id}" value="${m.titulo || ''}" placeholder="Título (opcional)">
+          <label class="medio-activo-toggle">
+            <input type="checkbox" data-medio-field="activo" data-id="${m.id}" ${m.activo !== false ? 'checked' : ''}>
+            Visible en la tienda
+          </label>
+        </div>
+        <div class="action-btn-group medio-actions">
+          <button class="btn-action delete" data-borrar-medio="${m.id}" title="Eliminar">🗑️</button>
+        </div>
+      </div>`;
+  }
+
+  async function cargarMedios() {
+    const medios = await api('GET', '/api/admin/medios');
+    cacheMedios = medios || [];
+    $('#tabCountMedios').textContent = cacheMedios.length;
+
+    const locales = cacheMedios.filter((m) => m.destino === 'LOCAL');
+    const marcas = cacheMedios.filter((m) => m.destino === 'MARCA');
+
+    $('#mediosLocalGrid').innerHTML = locales.length
+      ? locales.map(medioCardHtml).join('')
+      : '<p class="medios-vacio">Todavía no subiste ninguna foto ni video del local.</p>';
+
+    $('#mediosMarcaGrid').innerHTML = marcas.map(medioCardHtml).join('');
+    $('#mediosMarcaEmpty').style.display = marcas.length ? 'none' : 'flex';
+  }
+
+  function actualizarAceptArchivoMedio() {
+    const esVideo = $('#medioFormatoVideo').checked;
+    $('#medioArchivo').setAttribute('accept', esVideo
+      ? 'video/mp4,video/webm,video/quicktime'
+      : 'image/jpeg,image/png,image/webp,image/gif');
+  }
+
+  function abrirMedioModal() {
+    $('#medioForm').reset();
+    $('#medioDestinoLocal').checked = true;
+    $('#medioFormatoFoto').checked = true;
+    $('#medioMarcaNombreGroup').style.display = 'none';
+    $('#medioError').style.display = 'none';
+    $('#medioError').textContent = '';
+    actualizarAceptArchivoMedio();
+    $('#medioModal').classList.add('open');
+    $('#medioOverlay').classList.add('open');
+  }
+
+  function cerrarMedioModal() {
+    $('#medioModal').classList.remove('open');
+    $('#medioOverlay').classList.remove('open');
+  }
+
+  async function guardarMedio(e) {
+    e.preventDefault();
+    const destino = $('input[name="medioDestino"]:checked').value;
+    const formato = $('input[name="medioFormato"]:checked').value;
+    const marcaNombre = $('#medioMarcaNombre').value.trim();
+    const titulo = $('#medioTitulo').value.trim();
+    const archivo = $('#medioArchivo').files[0];
+    const errEl = $('#medioError');
+    errEl.style.display = 'none';
+
+    if (destino === 'MARCA' && !marcaNombre) {
+      errEl.textContent = 'Falta el nombre de la marca.';
+      errEl.style.display = 'block';
+      return;
+    }
+    if (!archivo) {
+      errEl.textContent = 'Elegí un archivo para subir.';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    const btn = $('#medioSubmitBtn');
+    btn.disabled = true;
+    btn.textContent = '⏳ Subiendo…';
+
+    try {
+      if (modoDemo || !token) {
+        throw new Error('La carga de fotos/videos necesita el servidor conectado (no funciona en modo demostración).');
+      }
+      const formData = new FormData();
+      formData.append('destino', destino);
+      formData.append('formato', formato);
+      if (marcaNombre) formData.append('marcaNombre', marcaNombre);
+      if (titulo) formData.append('titulo', titulo);
+      formData.append('archivo', archivo);
+
+      const res = await fetch('/api/admin/medios', {
+        method: 'POST',
+        headers: { 'X-Admin-Token': token },
+        body: formData,
+      });
+
+      if (!res.ok) {
+        let msg = 'No se pudo subir el archivo.';
+        try { msg = (await res.json()).message || msg; } catch (_) {}
+        throw new Error(msg);
+      }
+
+      cerrarMedioModal();
+      await cargarMedios();
+      toast('✅ Archivo subido con éxito');
+    } catch (err) {
+      errEl.textContent = err.message || 'No se pudo subir el archivo.';
+      errEl.style.display = 'block';
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Subir';
+    }
+  }
+
+  async function actualizarMedioCampo(id, campo, valor) {
+    try {
+      const body = {};
+      body[campo] = valor;
+      await api('PUT', '/api/admin/medios/' + id, body);
+      const m = cacheMedios.find((x) => x.id === id);
+      if (m) m[campo] = valor;
+      toast('✅ Guardado');
+    } catch (err) {
+      toast('⚠️ ' + err.message);
+    }
+  }
+
+  async function borrarMedio(id) {
+    if (!confirm('¿Eliminar esta foto/video?')) return;
+    try {
+      await api('DELETE', '/api/admin/medios/' + id);
+      await cargarMedios();
+      toast('✅ Eliminado');
+    } catch (err) {
+      toast('⚠️ ' + err.message);
+    }
+  }
+
   function init() {
     window.__fallbackImg = fallbackImg;
 
@@ -1033,6 +1192,30 @@
     $('#pedList').addEventListener('change', (e) => {
       const sel = e.target.closest('.estado-select');
       if (sel) cambiarEstado(Number(sel.dataset.pedido), sel.value, sel);
+    });
+
+    $('#nuevoMedio').addEventListener('click', abrirMedioModal);
+    $('#medioOverlay').addEventListener('click', cerrarMedioModal);
+    $('#medioForm').addEventListener('submit', guardarMedio);
+    $$('input[name="medioDestino"]').forEach((r) => r.addEventListener('change', () => {
+      $('#medioMarcaNombreGroup').style.display = $('#medioDestinoMarca').checked ? 'block' : 'none';
+    }));
+    $$('input[name="medioFormato"]').forEach((r) => r.addEventListener('change', actualizarAceptArchivoMedio));
+
+    ['#mediosLocalGrid', '#mediosMarcaGrid'].forEach((sel) => {
+      const grid = $(sel);
+      grid.addEventListener('click', (e) => {
+        const bo = e.target.closest('[data-borrar-medio]');
+        if (bo) borrarMedio(Number(bo.dataset.borrarMedio));
+      });
+      grid.addEventListener('change', (e) => {
+        const el = e.target.closest('[data-medio-field]');
+        if (!el) return;
+        const id = Number(el.dataset.id);
+        const campo = el.dataset.medioField;
+        const valor = campo === 'activo' ? el.checked : el.value.trim();
+        actualizarMedioCampo(id, campo, valor);
+      });
     });
   }
 

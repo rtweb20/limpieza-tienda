@@ -65,6 +65,51 @@
     renderTodo();
   }
 
+  // -------------------- Medios (foto/video local y marcas) -----------------
+
+  async function cargarMedios() {
+    let medios = [];
+    try {
+      medios = await API.get('/api/medios');
+    } catch (e) {
+      medios = (window.DEMO && DEMO.medios) || [];
+    }
+    renderHeroMedia(medios);
+    renderBrandsStrip(medios);
+  }
+
+  function renderHeroMedia(medios) {
+    const foto = medios.find((m) => m.destino === 'LOCAL' && m.formato === 'FOTO' && m.activo !== false);
+    const video = medios.find((m) => m.destino === 'LOCAL' && m.formato === 'VIDEO' && m.activo !== false);
+
+    const elFoto = $('#heroFoto');
+    if (elFoto && foto) {
+      elFoto.classList.add('tiene-contenido');
+      elFoto.innerHTML = `<img src="${foto.url}" alt="${foto.titulo || 'Foto del local'}" loading="lazy">`;
+    }
+
+    const elVideo = $('#heroVideo');
+    if (elVideo && video) {
+      elVideo.classList.add('tiene-contenido');
+      elVideo.innerHTML = `<video src="${video.url}" controls playsinline preload="metadata"></video>`;
+    }
+  }
+
+  function renderBrandsStrip(medios) {
+    const marcas = medios.filter((m) => m.destino === 'MARCA' && m.activo !== false);
+    if (!marcas.length) return; // deja los 4 casilleros "Espacio para marca" del HTML
+
+    const row = $('#brandsRow');
+    if (!row) return;
+    row.innerHTML = marcas.map((m) => {
+      const media = m.formato === 'VIDEO'
+        ? `<video src="${m.url}" muted loop playsinline autoplay preload="metadata"></video>`
+        : `<img src="${m.url}" alt="${m.marcaNombre || 'Marca'}" loading="lazy">`;
+      const caption = m.marcaNombre ? `<span class="brand-ad-caption">${m.marcaNombre}</span>` : '';
+      return `<div class="brand-ad-slot tiene-contenido">${media}${caption}</div>`;
+    }).join('');
+  }
+
   // ----------------------------- Render ------------------------------------
 
   function renderTodo() {
@@ -594,6 +639,7 @@
     window.__fallbackImg = fallbackImg;
     toggleDireccion();
     cargarDatos();
+    cargarMedios();
   }
 
   document.addEventListener('DOMContentLoaded', init);
