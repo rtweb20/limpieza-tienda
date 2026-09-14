@@ -158,10 +158,11 @@
     }
 
     return `
-      <div class="detail-media">
+      <div class="detail-media" data-img="${p.imagenUrl}" data-nombre="${p.nombre}">
         ${enOferta ? '<span class="tag-oferta">OFERTA</span>' : ''}
         <img src="${p.imagenUrl}" alt="${p.nombre}" loading="lazy"
              onerror="window.__fallbackImg?.(this,'${p.nombre.slice(0, 16)}')">
+        <span class="zoom-hint">🔍 Ampliar</span>
       </div>
       <span class="cat">${p.categoriaIcono || ''} ${p.categoriaNombre || ''}</span>
       ${p.descripcion ? `<p class="detail-desc">${p.descripcion}</p>` : ''}
@@ -187,6 +188,18 @@
   function cerrarDetalle() {
     $('#productModal').classList.remove('open');
     $('#productOverlay').classList.remove('open');
+  }
+
+  function abrirLightbox(src, alt) {
+    $('#lightboxImg').src = src;
+    $('#lightboxImg').alt = alt || '';
+    $('#lightbox').classList.add('open');
+    $('#lightboxOverlay').classList.add('open');
+  }
+
+  function cerrarLightbox() {
+    $('#lightbox').classList.remove('open');
+    $('#lightboxOverlay').classList.remove('open');
   }
 
   function renderGrid() {
@@ -549,6 +562,11 @@
     });
 
     $('#productDetailBody').addEventListener('click', (e) => {
+      const media = e.target.closest('.detail-media');
+      if (media) {
+        abrirLightbox(media.dataset.img, media.dataset.nombre);
+        return;
+      }
       const btn = e.target.closest('#detailAddBtn');
       if (!btn) return;
       const productoId = Number(btn.dataset.id);
@@ -564,8 +582,13 @@
       cerrarDetalle();
     });
 
+    $('#closeLightbox').addEventListener('click', cerrarLightbox);
+    $('#lightboxOverlay').addEventListener('click', cerrarLightbox);
+
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && $('#productModal').classList.contains('open')) cerrarDetalle();
+      if (e.key !== 'Escape') return;
+      if ($('#lightbox').classList.contains('open')) { cerrarLightbox(); return; }
+      if ($('#productModal').classList.contains('open')) cerrarDetalle();
     });
 
     window.__fallbackImg = fallbackImg;
