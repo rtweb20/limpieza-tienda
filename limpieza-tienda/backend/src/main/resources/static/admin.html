@@ -101,6 +101,13 @@
             <span id="statOfertas" class="stat-value">0</span>
           </div>
         </div>
+        <div class="stat-card">
+          <div class="stat-icon-wrap bg-red">⚠️</div>
+          <div class="stat-info">
+            <span class="stat-label">Para Comprar</span>
+            <span id="statBajoStock" class="stat-value">0</span>
+          </div>
+        </div>
       </section>
 
       <!-- Pestañas -->
@@ -109,6 +116,11 @@
           <span class="tab-icon">📦</span>
           <span>Productos</span>
           <span id="tabCountProds" class="tab-badge">0</span>
+        </button>
+        <button class="tab-btn" data-tab="stock">
+          <span class="tab-icon">📊</span>
+          <span>Stock</span>
+          <span id="tabCountStock" class="tab-badge">0</span>
         </button>
         <button class="tab-btn" data-tab="categorias">
           <span class="tab-icon">🏷️</span>
@@ -177,6 +189,67 @@
 
           <div class="table-footer">
             <span id="prodCountText" class="footer-count">Cargando productos…</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB STOCK -->
+      <section id="panel-stock" class="panel-section" style="display:none">
+        <div class="toolbar-card">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input id="stockSearch" type="search" placeholder="Buscar producto, presentación o código..." autocomplete="off">
+            <button id="clearStockSearch" class="btn-clear-search" style="display:none" title="Limpiar búsqueda">✕</button>
+          </div>
+
+          <div class="filter-group">
+            <select id="stockFilterEstado" class="select-filter" aria-label="Filtrar por estado de stock">
+              <option value="">Todo el stock</option>
+              <option value="sin-stock">🔴 Sin stock</option>
+              <option value="bajo">🟠 Stock bajo</option>
+              <option value="ok">🟢 Stock OK</option>
+            </select>
+            <label class="umbral-input-wrap" title="Se marca &quot;Stock bajo&quot; cuando queda esta cantidad o menos">
+              <span>Avisar si stock ≤</span>
+              <input id="stockUmbral" type="number" min="0" value="5">
+            </label>
+          </div>
+
+          <div class="toolbar-actions">
+            <button id="btnExportCsv" class="btn-danger-outline" title="Descargar la lista en CSV (se abre en Excel)">
+              <span class="btn-icon">⬇️</span> Exportar CSV
+            </button>
+            <button id="btnPrintStock" class="btn-primary-admin" title="Imprimir la lista de stock">
+              <span class="btn-icon">🖨️</span> Imprimir
+            </button>
+          </div>
+        </div>
+
+        <div class="stock-summary-row" id="stockSummaryRow"></div>
+
+        <div class="card-table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th class="th-prod">Producto</th>
+                <th>Presentación</th>
+                <th class="th-cat">Categoría</th>
+                <th class="th-code">Código de Barras</th>
+                <th style="text-align:center;">Stock actual</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody id="stockList"></tbody>
+          </table>
+
+          <div id="stockEmptyState" class="empty-placeholder" style="display:none">
+            <div class="empty-icon">📊</div>
+            <h3>No se encontraron productos</h3>
+            <p>Probá con otro término de búsqueda o cambiá el filtro de estado.</p>
+          </div>
+
+          <div class="table-footer">
+            <span id="stockCountText" class="footer-count">Cargando stock…</span>
           </div>
         </div>
       </section>
