@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Aroma a Limpio — Artículos de limpieza, cuidado personal y aromas. Armá tu pedido y envialo por WhatsApp.">
   <title>Aroma a Limpio — Artículos de limpieza</title>
-  <link rel="stylesheet" href="css/styles.css?v=20260911">
+  <link rel="stylesheet" href="css/styles.css?v=20260914">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🫧</text></svg>">
 </head>
 <body>
@@ -32,14 +32,6 @@
 
   <!-- =========================== CATEGORÍAS ============================ -->
   <nav id="cats" class="cats" aria-label="Categorías"></nav>
-
-  <!-- ============================= BANNER ============================== -->
-  <div class="banner-wrap">
-    <h2 class="section-title">🔥 Combos y Ofertas</h2>
-    <div id="banner" style="display:none">
-      <div id="bannerList" class="banner"></div>
-    </div>
-  </div>
 
   <!-- ============================ CATÁLOGO ============================= -->
   <main>
@@ -155,6 +147,18 @@
           💬 Enviar pedido por WhatsApp
         </button>
       </form>
+    </div>
+  </div>
+
+  <!-- ========================= DETALLE DE PRODUCTO ====================== -->
+  <div id="productOverlay" class="overlay"></div>
+  <div id="productModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="productTitle">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h2 id="productTitle">Producto</h2>
+        <button id="closeProduct" class="icon-btn" aria-label="Cerrar">✕</button>
+      </div>
+      <div id="productDetailBody"></div>
     </div>
   </div>
 

@@ -69,7 +69,6 @@
 
   function renderTodo() {
     renderCategorias();
-    renderBanner();
     renderGrid();
     renderCarrito();
     $('#whatsappFab').setAttribute('href', state.whatsappUrl);
@@ -85,25 +84,6 @@
       `<button class="cat-chip ${state.filtro === c.slug ? 'active' : ''}" data-slug="${c.slug}">
         ${c.icono ? c.icono + ' ' : ''}${c.nombre}
       </button>`).join('');
-  }
-
-  function renderBanner() {
-    const destacados = state.productos.filter((p) => p.destacado);
-    const wrap = $('#banner');
-    if (!destacados.length) { wrap.style.display = 'none'; return; }
-    wrap.style.display = 'block';
-
-    $('#bannerList').innerHTML = destacados.map((p) => `
-      <article class="banner-card" data-id="${p.id}" role="button" tabindex="0"
-               aria-label="Ver ${p.nombre}">
-        ${p.enOferta ? '<span class="tag-oferta">OFERTA</span>' : ''}
-        <img src="${p.imagenUrl}" alt="${p.nombre}" loading="lazy"
-             onerror="window.__fallbackImg?.(this,'${p.nombre.slice(0, 16)}')">
-        <div class="b-body">
-          <div class="b-title">${p.nombre}</div>
-          <div class="b-price">${money(p.precioDesde)}</div>
-        </div>
-      </article>`).join('');
   }
 
   function productoCard(p) {
@@ -151,6 +131,62 @@
           </button>
         </div>
       </article>`;
+  }
+
+  function detalleHTML(p) {
+    const variantes = p.variantes || [];
+    const primerVariante = variantes[0];
+    const precio = primerVariante ? primerVariante.precioVenta : p.precioDesde;
+    const enOferta = p.enOferta || (primerVariante && primerVariante.precioOferta
+      && primerVariante.precioOferta < primerVariante.precio);
+
+    let selector = '';
+    if (variantes.length > 1) {
+      selector = `
+        <div class="select-wrap">
+          <select id="detailVarSelect" class="var-select" aria-label="Presentación de ${p.nombre}">
+            ${variantes.map((v) =>
+              `<option value="${v.id}" data-precio="${v.precioVenta}" data-oferta="${v.precioOferta || ''}">
+                ${v.presentacion} — ${money(v.precioVenta)}
+              </option>`).join('')}
+          </select>
+        </div>`;
+    } else if (variantes.length === 1) {
+      selector = `<div class="select-wrap"><select id="detailVarSelect" class="var-select" disabled
+                    aria-label="Presentación de ${p.nombre}">
+                    <option value="${variantes[0].id}">${variantes[0].presentacion}</option></select></div>`;
+    }
+
+    return `
+      <div class="detail-media">
+        ${enOferta ? '<span class="tag-oferta">OFERTA</span>' : ''}
+        <img src="${p.imagenUrl}" alt="${p.nombre}" loading="lazy"
+             onerror="window.__fallbackImg?.(this,'${p.nombre.slice(0, 16)}')">
+      </div>
+      <span class="cat">${p.categoriaIcono || ''} ${p.categoriaNombre || ''}</span>
+      ${p.descripcion ? `<p class="detail-desc">${p.descripcion}</p>` : ''}
+      <div class="price-row">
+        ${enOferta ? `<span class="price old">${money(primerVariante ? primerVariante.precio : precio)}</span>` : ''}
+        <span class="price ${enOferta ? 'oferta' : ''}" data-role="detail-precio">${money(precio)}</span>
+      </div>
+      ${selector}
+      <button id="detailAddBtn" class="add-btn" data-id="${p.id}" ${variantes.length ? '' : 'disabled'}>
+        ${variantes.length ? '➕ Agregar al carrito' : 'Sin stock'}
+      </button>`;
+  }
+
+  function abrirDetalle(productoId) {
+    const p = state.productos.find((x) => x.id === productoId);
+    if (!p) return;
+    $('#productTitle').textContent = p.nombre;
+    $('#productDetailBody').innerHTML = detalleHTML(p);
+    $('#productModal').classList.add('open');
+    $('#productOverlay').classList.add('open');
+  }
+
+  function cerrarDetalle() {
+    $('#productModal').classList.remove('open');
+    $('#productOverlay').classList.remove('open');
   }
 
   function renderGrid() {
@@ -421,20 +457,6 @@
       renderGrid();
     });
 
-    $('#bannerList').addEventListener('click', (e) => {
-      const card = e.target.closest('.banner-card');
-      if (!card) return;
-      const p = state.productos.find((x) => x.id === Number(card.dataset.id));
-      if (p) {
-        state.filtro = 'busqueda';
-        state.query = p.nombre;
-        $('#searchInput').value = p.nombre;
-        renderCategorias();
-        renderGrid();
-        $('#productGrid').scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    });
-
     $('#productGrid').addEventListener('change', (e) => {
       const select = e.target.closest('.var-select');
       if (!select) return;
@@ -446,18 +468,23 @@
 
     $('#productGrid').addEventListener('click', (e) => {
       const btn = e.target.closest('.add-btn');
-      if (!btn) return;
-      const card = btn.closest('.card');
-      const select = card.querySelector('.var-select');
-      const productoId = Number(btn.dataset.id);
-      let varianteId;
-      if (select && !select.disabled) {
-        varianteId = Number(select.value);
-      } else {
-        const p = state.productos.find((x) => x.id === productoId);
-        varianteId = p.variantes[0].id;
+      if (btn) {
+        const card = btn.closest('.card');
+        const select = card.querySelector('.var-select');
+        const productoId = Number(btn.dataset.id);
+        let varianteId;
+        if (select && !select.disabled) {
+          varianteId = Number(select.value);
+        } else {
+          const p = state.productos.find((x) => x.id === productoId);
+          varianteId = p.variantes[0].id;
+        }
+        agregarAlCarrito(productoId, varianteId);
+        return;
       }
-      agregarAlCarrito(productoId, varianteId);
+      if (e.target.closest('.select-wrap')) return;
+      const card = e.target.closest('.card');
+      if (card) abrirDetalle(Number(card.dataset.id));
     });
 
     $('#cartItems').addEventListener('click', (e) => {
@@ -509,6 +536,37 @@
     $('#checkoutOverlay').addEventListener('click', cerrarCheckout);
     $('#checkoutForm').addEventListener('submit', enviarPedido);
     $$('input[name="modalidad"]').forEach((r) => r.addEventListener('change', toggleDireccion));
+
+    $('#closeProduct').addEventListener('click', cerrarDetalle);
+    $('#productOverlay').addEventListener('click', cerrarDetalle);
+
+    $('#productDetailBody').addEventListener('change', (e) => {
+      const select = e.target.closest('#detailVarSelect');
+      if (!select) return;
+      const opt = select.selectedOptions[0];
+      $('#productDetailBody').querySelector('[data-role="detail-precio"]').textContent =
+        money(Number(opt.dataset.precio));
+    });
+
+    $('#productDetailBody').addEventListener('click', (e) => {
+      const btn = e.target.closest('#detailAddBtn');
+      if (!btn) return;
+      const productoId = Number(btn.dataset.id);
+      const select = $('#detailVarSelect');
+      let varianteId;
+      if (select && !select.disabled) {
+        varianteId = Number(select.value);
+      } else {
+        const p = state.productos.find((x) => x.id === productoId);
+        varianteId = p.variantes[0].id;
+      }
+      agregarAlCarrito(productoId, varianteId);
+      cerrarDetalle();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && $('#productModal').classList.contains('open')) cerrarDetalle();
+    });
 
     window.__fallbackImg = fallbackImg;
     toggleDireccion();
