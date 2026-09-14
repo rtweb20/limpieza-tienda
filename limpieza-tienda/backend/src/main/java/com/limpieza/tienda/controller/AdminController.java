@@ -4,6 +4,8 @@ import com.limpieza.tienda.dto.CargaProductoResponse;
 import com.limpieza.tienda.dto.CategoriaDto;
 import com.limpieza.tienda.dto.CategoriaRequest;
 import com.limpieza.tienda.dto.LoginRequest;
+import com.limpieza.tienda.dto.MedioDto;
+import com.limpieza.tienda.dto.MedioRequest;
 import com.limpieza.tienda.dto.PedidoEstadoRequest;
 import com.limpieza.tienda.dto.PedidoResponse;
 import com.limpieza.tienda.dto.ProductoDto;
@@ -11,6 +13,7 @@ import com.limpieza.tienda.dto.ProductoUpsertRequest;
 import com.limpieza.tienda.service.AdminService;
 import com.limpieza.tienda.service.AuthService;
 import com.limpieza.tienda.service.CargaProductoService;
+import com.limpieza.tienda.service.MedioService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -41,12 +44,14 @@ public class AdminController {
     private final AdminService adminService;
     private final AuthService authService;
     private final CargaProductoService cargaProductoService;
+    private final MedioService medioService;
 
     public AdminController(AdminService adminService, AuthService authService,
-                           CargaProductoService cargaProductoService) {
+                           CargaProductoService cargaProductoService, MedioService medioService) {
         this.adminService = adminService;
         this.authService = authService;
         this.cargaProductoService = cargaProductoService;
+        this.medioService = medioService;
     }
 
     // ---------------- Auth ----------------
@@ -139,6 +144,37 @@ public class AdminController {
     @GetMapping("/productos/barcode/{codigo}")
     public ProductoDto porCodigoBarras(@PathVariable String codigo) {
         return cargaProductoService.buscarPorCodigo(codigo);
+    }
+
+    // ---------------- Medios (foto/video del local y marcas) ----------------
+
+    @GetMapping("/medios")
+    public List<MedioDto> mediosAdmin() {
+        return medioService.listarTodos();
+    }
+
+    /** Alta de una foto o video: multipart con el archivo + sus datos. */
+    @PostMapping(value = "/medios", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    public MedioDto crearMedio(
+            @RequestParam("destino") String destino,
+            @RequestParam("formato") String formato,
+            @RequestParam(value = "marcaNombre", required = false) String marcaNombre,
+            @RequestParam(value = "titulo", required = false) String titulo,
+            @RequestParam(value = "orden", required = false) Integer orden,
+            @RequestParam("archivo") MultipartFile archivo) {
+        return medioService.crear(destino, formato, marcaNombre, titulo, orden, archivo);
+    }
+
+    @PutMapping("/medios/{id}")
+    public MedioDto actualizarMedio(@PathVariable Long id, @Valid @RequestBody MedioRequest request) {
+        return medioService.actualizar(id, request);
+    }
+
+    @DeleteMapping("/medios/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void eliminarMedio(@PathVariable Long id) {
+        medioService.eliminar(id);
     }
 
     // ---------------- Pedidos ----------------
