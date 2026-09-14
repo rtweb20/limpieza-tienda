@@ -194,6 +194,7 @@
       $('#tabCountPedidos').textContent = cachePedidos.length;
 
       poblarFiltroCategorias(cacheCategorias);
+      actualizarIndicadoresStock();
     } catch (_) {}
   }
 
@@ -214,8 +215,172 @@
     if (panel) panel.style.display = 'block';
 
     if (tab === 'productos') cargarProductos();
+    if (tab === 'stock') cargarStock();
     if (tab === 'categorias') cargarCategorias();
     if (tab === 'pedidos') cargarPedidos();
+  }
+
+  /* ------------------------------------------------------------------------
+     STOCK — vista de solo lectura para que el dueño vea cuánto le queda de
+     cada producto (por presentación) y si conviene comprar o no.
+     ------------------------------------------------------------------------ */
+
+  function getUmbral() {
+    const v = Number(localStorage.getItem('admin-stock-umbral'));
+    return Number.isFinite(v) && v >= 0 ? v : 5;
+  }
+
+  function setUmbral(v) {
+    localStorage.setItem('admin-stock-umbral', String(Math.max(0, Number(v) || 0)));
+  }
+
+  function estadoStock(stock, umbral) {
+    const s = Number(stock || 0);
+    if (s <= 0) return 'sin-stock';
+    if (s <= umbral) return 'bajo';
+    return 'ok';
+  }
+
+  function etiquetaEstado(estado) {
+    if (estado === 'sin-stock') return { icon: '🔴', text: 'Sin stock — ¡Comprar ya!', cls: 'sin-stock' };
+    if (estado === 'bajo') return { icon: '🟠', text: 'Stock bajo — Comprar', cls: 'bajo' };
+    return { icon: '🟢', text: 'Stock OK', cls: 'ok' };
+  }
+
+  function buildStockRows() {
+    const rows = [];
+    cacheProductos.forEach((p) => {
+      const vars = (p.variantes && p.variantes.length) ? p.variantes : [{ presentacion: 'Unidad', stock: 0 }];
+      vars.forEach((v) => {
+        rows.push({
+          productoId: p.id,
+          nombre: p.nombre,
+          presentacion: v.presentacion || 'Unidad',
+          categoriaNombre: p.categoriaNombre,
+          categoriaIcono: p.categoriaIcono,
+          codigoBarras: p.codigoBarras,
+          activo: p.activo,
+          stock: Number(v.stock || 0),
+        });
+      });
+    });
+    return rows;
+  }
+
+  function actualizarIndicadoresStock() {
+    const umbral = getUmbral();
+    const todas = buildStockRows().map((r) => estadoStock(r.stock, umbral));
+    const paraComprar = todas.filter((e) => e !== 'ok').length;
+    $('#tabCountStock').textContent = todas.length;
+    $('#statBajoStock').textContent = paraComprar;
+  }
+
+  function renderStockFiltrado() {
+    const searchVal = ($('#stockSearch').value || '').trim().toLowerCase();
+    const estadoVal = $('#stockFilterEstado').value;
+    const umbral = getUmbral();
+
+    $('#clearStockSearch').style.display = searchVal ? 'block' : 'none';
+
+    const todasLasFilas = buildStockRows().map((r) => ({ ...r, estado: estadoStock(r.stock, umbral) }));
+    const total = todasLasFilas.length;
+
+    let rows = todasLasFilas;
+    if (searchVal) {
+      rows = rows.filter((r) =>
+        (r.nombre || '').toLowerCase().includes(searchVal) ||
+        (r.presentacion || '').toLowerCase().includes(searchVal) ||
+        (r.codigoBarras || '').toLowerCase().includes(searchVal));
+    }
+    if (estadoVal) rows = rows.filter((r) => r.estado === estadoVal);
+
+    rows.sort((a, b) => a.stock - b.stock || (a.nombre || '').localeCompare(b.nombre || ''));
+
+    const nSin = todasLasFilas.filter((r) => r.estado === 'sin-stock').length;
+    const nBajo = todasLasFilas.filter((r) => r.estado === 'bajo').length;
+    const nOk = todasLasFilas.filter((r) => r.estado === 'ok').length;
+    $('#stockSummaryRow').innerHTML = `
+      <div class="stock-mini-card sin-stock"><strong>${nSin}</strong><span>🔴 Sin stock</span></div>
+      <div class="stock-mini-card bajo"><strong>${nBajo}</strong><span>🟠 Stock bajo</span></div>
+      <div class="stock-mini-card ok"><strong>${nOk}</strong><span>🟢 Stock OK</span></div>
+      <div class="stock-mini-card total"><strong>${total}</strong><span>📦 Presentaciones totales</span></div>`;
+
+    actualizarIndicadoresStock();
+
+    const tbody = $('#stockList');
+    const emptyState = $('#stockEmptyState');
+    const countText = $('#stockCountText');
+
+    if (!rows.length) {
+      tbody.innerHTML = '';
+      emptyState.style.display = 'block';
+      countText.textContent = `0 de ${total} presentaciones`;
+      return;
+    }
+
+    emptyState.style.display = 'none';
+    countText.textContent = `Mostrando ${rows.length} de ${total} presentaciones`;
+
+    tbody.innerHTML = rows.map((r) => {
+      const et = etiquetaEstado(r.estado);
+      const catHtml = r.categoriaNombre
+        ? `<span class="cat-pill">${r.categoriaIcono || '🏷️'} ${r.categoriaNombre}</span>`
+        : '<span style="color:var(--admin-text-muted);font-size:12px;">—</span>';
+      const barcodeHtml = r.codigoBarras
+        ? `<span class="barcode-pill">🏷️ ${r.codigoBarras}</span>`
+        : '<span style="color:var(--admin-text-muted);font-size:12px;">—</span>';
+
+      return `
+        <tr>
+          <td>
+            <span class="prod-name">${r.nombre}</span>
+            ${r.activo ? '' : ' <small style="color:var(--admin-text-muted);">(inactivo)</small>'}
+          </td>
+          <td>${r.presentacion}</td>
+          <td>${catHtml}</td>
+          <td>${barcodeHtml}</td>
+          <td style="text-align:center;"><strong class="stock-num ${et.cls}">${r.stock}</strong></td>
+          <td><span class="badge-stock ${et.cls}">${et.icon} ${et.text}</span></td>
+        </tr>`;
+    }).join('');
+  }
+
+  async function cargarStock() {
+    if (!cacheProductos.length) {
+      const prods = await api('GET', '/api/admin/productos');
+      cacheProductos = prods || [];
+    }
+    $('#stockUmbral').value = getUmbral();
+    renderStockFiltrado();
+  }
+
+  function exportarStockCSV() {
+    const umbral = getUmbral();
+    const rows = buildStockRows().map((r) => ({ ...r, estado: estadoStock(r.stock, umbral) }));
+    rows.sort((a, b) => a.stock - b.stock || (a.nombre || '').localeCompare(b.nombre || ''));
+
+    const esc = (v) => `"${String(v == null ? '' : v).replace(/"/g, '""')}"`;
+    const encabezado = ['Producto', 'Presentación', 'Categoría', 'Código de Barras', 'Stock', 'Estado'];
+    const lineas = [encabezado.map(esc).join(';')];
+
+    rows.forEach((r) => {
+      const et = etiquetaEstado(r.estado);
+      lineas.push([r.nombre, r.presentacion, r.categoriaNombre || '', r.codigoBarras || '', r.stock, et.text]
+        .map(esc).join(';'));
+    });
+
+    const csv = '\uFEFF' + lineas.join('\r\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const fecha = new Date().toISOString().slice(0, 10);
+    a.href = url;
+    a.download = `stock-aroma-a-limpio-${fecha}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast('⬇️ Lista de stock exportada');
   }
 
   async function cargarCategorias() {
@@ -585,6 +750,7 @@
     $('#tabCountProds').textContent = cacheProductos.length;
     $('#statProds').textContent = cacheProductos.length;
     $('#statOfertas').textContent = cacheProductos.filter(p => p.destacado).length;
+    actualizarIndicadoresStock();
     renderProductosFiltrados();
   }
 
@@ -765,6 +931,20 @@
     });
     $('#prodFilterCat').addEventListener('change', renderProductosFiltrados);
     $('#prodFilterStatus').addEventListener('change', renderProductosFiltrados);
+
+    $('#stockSearch').addEventListener('input', renderStockFiltrado);
+    $('#clearStockSearch').addEventListener('click', () => {
+      $('#stockSearch').value = '';
+      renderStockFiltrado();
+      $('#stockSearch').focus();
+    });
+    $('#stockFilterEstado').addEventListener('change', renderStockFiltrado);
+    $('#stockUmbral').addEventListener('input', () => {
+      setUmbral($('#stockUmbral').value);
+      renderStockFiltrado();
+    });
+    $('#btnExportCsv').addEventListener('click', exportarStockCSV);
+    $('#btnPrintStock').addEventListener('click', () => window.print());
 
     $('#nuevaCat').addEventListener('click', () => abrirCatModal(null));
     $('#catList').addEventListener('click', async (e) => {
