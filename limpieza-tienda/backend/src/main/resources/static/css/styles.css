@@ -1075,3 +1075,162 @@ footer .admin-link:hover { border-color: rgba(255, 255, 255, .55); background: r
   font-size: 14px;
   line-height: 1.5;
 }
+
+/* ===================== NUEVO: FOTO/VIDEO DEL LOCAL ======================= */
+
+.hero-local {
+  width: min(100%, var(--ancho-contenido));
+  margin: 16px auto 0;
+  padding: 0 16px;
+}
+
+.hero-local-inner {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.hero-media {
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radio);
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--celeste-suave), #f7fbfe);
+  border: 1.5px dashed rgba(29, 158, 216, .45);
+  box-shadow: var(--sombra-card);
+}
+
+.hero-media-placeholder {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 12px;
+  text-align: center;
+  color: var(--celeste-profundo);
+}
+
+.hero-media-icon {
+  margin-bottom: 4px;
+  font-size: 30px;
+  opacity: .85;
+}
+
+.hero-media-placeholder strong {
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.hero-media-placeholder span {
+  color: var(--texto-suave);
+  font-size: 12px;
+  max-width: 220px;
+}
+
+@media (max-width: 560px) {
+  .hero-local-inner { grid-template-columns: 1fr; }
+}
+
+/* ============================= NUEVO: SORTEO ============================= */
+
+.sorteo-banner {
+  display: flex;
+  width: min(100%, var(--ancho-contenido));
+  margin: 16px auto 0;
+  padding: 13px 20px;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border-radius: var(--radio);
+  background: linear-gradient(135deg, var(--ambar), #f0a52a);
+  box-shadow: 0 10px 24px rgba(180, 128, 10, .22);
+  color: #4a3204;
+  text-align: center;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.sorteo-banner:hover {
+  box-shadow: 0 14px 30px rgba(180, 128, 10, .3);
+  transform: translateY(-1px);
+}
+
+.sorteo-icon {
+  flex: 0 0 auto;
+  font-size: 26px;
+  line-height: 1;
+}
+
+.sorteo-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sorteo-text strong {
+  font-size: 15px;
+  font-weight: 850;
+  letter-spacing: -.2px;
+}
+
+.sorteo-text span {
+  font-size: 12.5px;
+  font-weight: 600;
+  opacity: .85;
+}
+
+@media (max-width: 560px) {
+  .sorteo-banner { flex-wrap: wrap; padding: 12px 14px; }
+  .sorteo-text { text-align: left; }
+}
+
+/* ========================= NUEVO: MARCAS/PUBLICIDAD ======================= */
+
+.brands-strip {
+  width: min(100%, var(--ancho-contenido));
+  margin: 18px auto 0;
+  padding: 0 16px;
+}
+
+.brands-strip-label {
+  display: block;
+  margin: 0 2px 9px;
+  color: var(--texto-suave);
+  font-size: 12.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+}
+
+.brands-row {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+}
+
+.brands-row::-webkit-scrollbar { display: none; }
+
+.brand-ad-slot {
+  display: flex;
+  flex: 0 0 auto;
+  width: 150px;
+  height: 72px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1.5px dashed var(--borde);
+  border-radius: var(--radio-sm);
+  background: rgba(255, 255, 255, .7);
+  color: var(--texto-suave);
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.brand-ad-slot span:first-child { font-size: 16px; }
+
+@media (max-width: 560px) {
+  .brand-ad-slot { width: 128px; height: 64px; font-size: 11px; }
+}
