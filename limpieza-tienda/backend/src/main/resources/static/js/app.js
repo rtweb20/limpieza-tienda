@@ -79,20 +79,63 @@
   }
 
   function renderHeroMedia(medios) {
-    const foto = medios.find((m) => m.destino === 'LOCAL' && m.formato === 'FOTO' && m.activo !== false);
-    const video = medios.find((m) => m.destino === 'LOCAL' && m.formato === 'VIDEO' && m.activo !== false);
+    const fotos = medios.filter((m) => m.destino === 'LOCAL' && m.formato === 'FOTO' && m.activo !== false);
+    const videos = medios.filter((m) => m.destino === 'LOCAL' && m.formato === 'VIDEO' && m.activo !== false);
 
-    const elFoto = $('#heroFoto');
-    if (elFoto && foto) {
-      elFoto.classList.add('tiene-contenido');
-      elFoto.innerHTML = `<img src="${foto.url}" alt="${foto.titulo || 'Foto del local'}" loading="lazy">`;
+    montarCarruselFotos($('#heroFoto'), fotos);
+    montarCarruselVideos($('#heroVideo'), videos);
+  }
+
+  /** Carrusel de fotos del local: si hay varias, las va rotando solo. */
+  function montarCarruselFotos(el, fotos) {
+    if (!el || !fotos.length) return;
+    el.classList.add('tiene-contenido');
+    el.innerHTML = fotos.map((f, i) =>
+      `<img class="hero-slide${i === 0 ? ' activo' : ''}" src="${f.url}" alt="${f.titulo || 'Foto del local'}" loading="${i === 0 ? 'eager' : 'lazy'}">`
+    ).join('');
+
+    if (fotos.length < 2) return;
+    const slides = Array.from(el.querySelectorAll('.hero-slide'));
+    let i = 0;
+    setInterval(() => {
+      slides[i].classList.remove('activo');
+      i = (i + 1) % slides.length;
+      slides[i].classList.add('activo');
+    }, 4500);
+  }
+
+  /** Carrusel de videos del local: se reproducen solos y pasan al siguiente al terminar. */
+  function montarCarruselVideos(el, videos) {
+    if (!el || !videos.length) return;
+    el.classList.add('tiene-contenido');
+    el.innerHTML = videos.map((v, i) =>
+      `<video class="hero-slide${i === 0 ? ' activo' : ''}" muted playsinline></video>`
+    ).join('');
+
+    const nodes = Array.from(el.querySelectorAll('video'));
+    let i = 0;
+
+    function reproducir(idx) {
+      const v = nodes[idx];
+      if (!v.src) v.src = videos[idx].url;
+      v.currentTime = 0;
+      v.play().catch(() => {}); // el navegador puede bloquear el autoplay; queda igual como primer cuadro
     }
 
-    const elVideo = $('#heroVideo');
-    if (elVideo && video) {
-      elVideo.classList.add('tiene-contenido');
-      elVideo.innerHTML = `<video src="${video.url}" controls playsinline preload="metadata"></video>`;
+    function avanzar() {
+      nodes[i].classList.remove('activo');
+      nodes[i].pause();
+      i = (i + 1) % nodes.length;
+      nodes[i].classList.add('activo');
+      reproducir(i);
     }
+
+    if (nodes.length === 1) {
+      nodes[0].loop = true;
+    } else {
+      nodes.forEach((v) => v.addEventListener('ended', avanzar));
+    }
+    reproducir(0);
   }
 
   function renderBrandsStrip(medios) {

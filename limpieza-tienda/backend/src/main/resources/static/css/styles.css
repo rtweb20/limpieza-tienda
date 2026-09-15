@@ -1091,6 +1091,7 @@ footer .admin-link:hover { border-color: rgba(255, 255, 255, .55); background: r
 }
 
 .hero-media {
+  position: relative;
   aspect-ratio: 16 / 9;
   border-radius: var(--radio);
   overflow: hidden;
@@ -1141,6 +1142,22 @@ footer .admin-link:hover { border-color: rgba(255, 255, 255, .55); background: r
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+/* Carrusel: varias fotos/videos apilados, solo se ve el ".activo" */
+.hero-media .hero-slide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity .6s ease;
+}
+
+.hero-media .hero-slide.activo {
+  z-index: 1;
+  opacity: 1;
 }
 
 @media (max-width: 560px) {
