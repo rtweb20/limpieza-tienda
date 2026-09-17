@@ -27,7 +27,10 @@ public class AromaCatalogoService {
     public List<AromaCatalogoDto> listar(String marca, String categoria, String texto) {
         AromaMarca marcaEnum = parseMarca(marca);
         AromaCategoria categoriaEnum = parseCategoria(categoria);
-        String textoNormalizado = (texto == null || texto.isBlank()) ? null : texto.trim();
+        // Nunca null: participa en LOWER(CONCAT('%', :texto, '%')) en el repositorio,
+        // y Postgres no puede resolver el tipo de un parámetro null ahí (termina
+        // tratándolo como bytea). "" hace que el LIKE '%%' matchee todo.
+        String textoNormalizado = (texto == null) ? "" : texto.trim();
 
         return aromaCatalogoRepository.buscar(marcaEnum, categoriaEnum, textoNormalizado).stream()
                 .map(AromaCatalogoDto::from)
