@@ -575,6 +575,28 @@
           ➕ Agregar otra variante
         </button>
 
+        <details class="bulk-variants">
+          <summary>📋 Carga masiva de aromas (pegar lista)</summary>
+          <div class="bulk-variants-body">
+            <p class="sub-hint">Pegá un aroma por línea (podés copiar una columna directo del Excel). Se crea una variante nueva por cada línea, con el precio y stock de abajo.</p>
+            <textarea id="bulkAromaText" rows="6" placeholder="Ananá coco&#10;Azahares&#10;Burbujas de jabón&#10;Flor de loto&#10;..."></textarea>
+            <div class="bulk-variants-fields">
+              <label>Precio ($)
+                <input type="number" id="bulkPrecio" step="0.01" min="0" placeholder="Ej: 2500">
+              </label>
+              <label>Oferta (opc.)
+                <input type="number" id="bulkOferta" step="0.01" min="0">
+              </label>
+              <label>Stock inicial
+                <input type="number" id="bulkStock" min="0" value="20">
+              </label>
+            </div>
+            <button type="button" id="bulkGenerar" class="btn-add-variant">
+              ➕ Generar variantes desde la lista
+            </button>
+          </div>
+        </details>
+
         <div class="modal-foot">
           <button type="button" class="btn-cancel" onclick="document.getElementById('prodModal').classList.remove('open');document.getElementById('prodOverlay').classList.remove('open')">Cancelar</button>
           <button type="submit" class="btn-primary-admin" id="btnGuardarProd">Guardar Producto</button>

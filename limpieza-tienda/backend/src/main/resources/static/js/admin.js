@@ -1180,6 +1180,64 @@
       box.insertAdjacentHTML('beforeend', filaVariante({ presentacion: '', precio: '', precioOferta: '', stock: 20 }, n));
     });
 
+    $('#bulkGenerar').addEventListener('click', () => {
+      const nombres = $('#bulkAromaText').value
+        .split('\n')
+        .map((s) => s.trim())
+        .filter(Boolean);
+
+      if (!nombres.length) {
+        toast('⚠️ Pegá al menos un aroma en la lista');
+        return;
+      }
+
+      const precio = $('#bulkPrecio').value;
+      if (!precio || Number(precio) <= 0) {
+        toast('⚠️ Ingresá el precio para las variantes nuevas');
+        return;
+      }
+      const oferta = $('#bulkOferta').value;
+      const stock = $('#bulkStock').value || 20;
+
+      const box = $('#variantesBox');
+
+      // Si queda una única fila vacía por default ("Unidad" sin editar), la saco
+      // para no dejar una variante basura junto a los aromas cargados.
+      const filas = $$('#variantesBox .variant-row');
+      if (filas.length === 1) {
+        const pres = filas[0].querySelector('.v-pres').value.trim();
+        const prec = filas[0].querySelector('.v-precio').value;
+        if ((!pres || pres === 'Unidad') && !prec) filas[0].remove();
+      }
+
+      let n = $('#variantesBox').querySelectorAll('.variant-row').length;
+      let agregadas = 0;
+      const existentes = new Set(
+        $$('#variantesBox .v-pres').map((i) => i.value.trim().toLowerCase())
+      );
+
+      nombres.forEach((nombre) => {
+        if (existentes.has(nombre.toLowerCase())) return; // evita duplicar aromas ya cargados
+        existentes.add(nombre.toLowerCase());
+        box.insertAdjacentHTML('beforeend', filaVariante({
+          presentacion: nombre,
+          precio,
+          precioOferta: oferta || '',
+          stock,
+        }, n));
+        n++;
+        agregadas++;
+      });
+
+      $('#bulkAromaText').value = '';
+
+      if (agregadas < nombres.length) {
+        toast(`✅ ${agregadas} variantes nuevas (${nombres.length - agregadas} ya estaban cargadas)`);
+      } else {
+        toast(`✅ ${agregadas} variantes generadas — revisá y guardá el producto`);
+      }
+    });
+
     $('#variantesBox').addEventListener('click', (e) => {
       const rm = e.target.closest('[data-rm]');
       if (rm && $('#variantesBox').querySelectorAll('.variant-row').length > 1) {
