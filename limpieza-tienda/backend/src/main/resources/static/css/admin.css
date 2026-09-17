@@ -1739,3 +1739,148 @@ body.admin-body {
   .caja-layout { grid-template-columns: 1fr; }
   .caja-stats-grid { grid-template-columns: 1fr 1fr; }
 }
+
+/* ============================================================================
+   AROMAS — catálogo por marca y tipo (letra grande, botones grandes,
+   pensado para que lo use cómodamente una persona mayor, con el dedo)
+   ============================================================================ */
+
+.aromas-marca-botones {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.aromas-marca-btn {
+  padding: 22px 14px;
+  border: 2px solid var(--admin-border);
+  border-radius: var(--admin-radius-lg);
+  background: var(--admin-card);
+  color: var(--admin-dark);
+  font-size: 22px;
+  font-weight: 800;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: var(--admin-shadow-sm);
+  transition: border-color .15s ease, background .15s ease, transform .1s ease;
+}
+
+.aromas-marca-btn:hover { border-color: var(--admin-primary); transform: translateY(-1px); }
+
+.aromas-marca-btn.active {
+  border-color: var(--admin-primary);
+  background: var(--admin-primary);
+  color: #ffffff;
+  box-shadow: var(--admin-shadow);
+}
+
+.aromas-buscador-wrap {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.aromas-buscador-icon {
+  position: absolute;
+  top: 50%;
+  left: 20px;
+  transform: translateY(-50%);
+  font-size: 24px;
+  pointer-events: none;
+}
+
+.aromas-buscador-input {
+  width: 100%;
+  padding: 20px 20px 20px 58px;
+  border: 2px solid var(--admin-border);
+  border-radius: var(--admin-radius-lg);
+  background: var(--admin-card);
+  color: var(--admin-text);
+  font: inherit;
+  font-size: 22px;
+  font-weight: 600;
+  box-shadow: var(--admin-shadow-sm);
+}
+
+.aromas-buscador-input:focus {
+  border-color: var(--admin-primary);
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.14);
+}
+
+.aromas-categoria-botones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.aromas-cat-btn {
+  padding: 13px 20px;
+  border: 2px solid var(--admin-border);
+  border-radius: 999px;
+  background: var(--admin-card);
+  color: var(--admin-text);
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color .15s ease, background .15s ease, color .15s ease;
+}
+
+.aromas-cat-btn:hover { border-color: var(--admin-primary); }
+
+.aromas-cat-btn.active {
+  border-color: var(--admin-primary);
+  background: var(--admin-primary-light);
+  color: var(--admin-primary-hover);
+}
+
+.aromas-contador {
+  margin-bottom: 12px;
+  color: var(--admin-text-muted);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.aromas-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.aroma-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 18px 22px;
+  border: 1.5px solid var(--admin-border);
+  border-radius: var(--admin-radius);
+  background: var(--admin-card);
+  box-shadow: var(--admin-shadow-sm);
+}
+
+.aroma-item-nombre {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--admin-dark);
+}
+
+.aroma-item-estado {
+  flex-shrink: 0;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 14.5px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.aroma-item-estado.cargado { background: var(--admin-success-light); color: #059669; }
+.aroma-item-estado.sin-cargar { background: #f1f5f9; color: #64748b; }
+
+@media (max-width: 640px) {
+  .aromas-marca-btn { font-size: 19px; padding: 18px 10px; }
+  .aromas-buscador-input { font-size: 19px; padding: 17px 17px 17px 52px; }
+  .aroma-item-nombre { font-size: 18px; }
+}

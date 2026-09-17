@@ -223,6 +223,7 @@
     if (tab === 'multimedia') cargarMedios();
     if (tab === 'pedidos') cargarPedidos();
     if (tab === 'caja') cargarCaja();
+    if (tab === 'aromas') cargarAromas();
   }
 
   /* ------------------------------------------------------------------------
@@ -1312,6 +1313,118 @@
     }
   }
 
+  /* ------------------------------------------------------------------------
+     AROMAS — catálogo de referencia por marca y tipo de producto (versión
+     digital de la planilla de Excel). Pensado para una persona mayor: pocos
+     pasos, letra grande, búsqueda que perdona errores de tipeo y acentos.
+     ------------------------------------------------------------------------ */
+
+  const AROMA_MARCA_LABEL = { SAPHIRUS: 'Saphirus', SANDRA_MARZAN: 'Sandra Marzán' };
+
+  const AROMA_CATEGORIA_LABEL = {
+    AEROSOL: 'Aerosol',
+    TEXTIL_120CC: 'Textil 120cc',
+    TEXTIL_500CC: 'Textil 500cc',
+    DIFUSOR_AUTO: 'Difusor de auto',
+    HOME_SPRAY: 'Home spray',
+    ACEITES: 'Aceites',
+    DIFUSOR: 'Difusor',
+  };
+
+  const AROMA_CATEGORIA_ORDEN = [
+    'AEROSOL', 'TEXTIL_120CC', 'TEXTIL_500CC', 'DIFUSOR_AUTO', 'HOME_SPRAY', 'ACEITES', 'DIFUSOR',
+  ];
+
+  let cacheAromas = [];
+  let aromaMarcaActual = 'SAPHIRUS';
+  let aromaCategoriaActual = '';
+
+  /** Sin tildes, minúscula y sin espacios de más — para que el buscador perdone errores de tipeo. */
+  function normalizarTexto(s) {
+    return (s || '').toString().normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
+  }
+
+  function construirNombresCargados() {
+    const set = new Set();
+    cacheProductos.forEach((p) => {
+      (p.variantes || []).forEach((v) => {
+        if (v.presentacion) set.add(normalizarTexto(v.presentacion));
+      });
+    });
+    return set;
+  }
+
+  function renderAromasCategoriaBotones() {
+    const cats = AROMA_CATEGORIA_ORDEN.filter((c) => cacheAromas.some((a) => a.categoria === c));
+    const cont = $('#aromasCategoriaBotones');
+    if (!cont) return;
+
+    const botones = [`<button type="button" class="aromas-cat-btn ${aromaCategoriaActual === '' ? 'active' : ''}" data-categoria="">Todos</button>`]
+      .concat(cats.map((c) => `<button type="button" class="aromas-cat-btn ${aromaCategoriaActual === c ? 'active' : ''}" data-categoria="${c}">${AROMA_CATEGORIA_LABEL[c] || c}</button>`));
+
+    cont.innerHTML = botones.join('');
+  }
+
+  function renderAromasLista() {
+    const textoBuscado = normalizarTexto($('#aromasBuscar').value);
+    const nombresCargados = construirNombresCargados();
+
+    const enCategoria = aromaCategoriaActual
+      ? cacheAromas.filter((a) => a.categoria === aromaCategoriaActual)
+      : cacheAromas;
+
+    let filas = enCategoria;
+    if (textoBuscado) {
+      filas = filas.filter((a) => normalizarTexto(a.nombre).includes(textoBuscado));
+    }
+
+    const cargadosEnVista = enCategoria.filter((a) => nombresCargados.has(normalizarTexto(a.nombre))).length;
+    $('#aromasContador').textContent = `${cargadosEnVista} de ${enCategoria.length} cargados`;
+
+    const lista = $('#aromasLista');
+    const empty = $('#aromasEmpty');
+
+    if (!filas.length) {
+      lista.innerHTML = '';
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+
+    lista.innerHTML = filas.map((a) => {
+      const cargado = nombresCargados.has(normalizarTexto(a.nombre));
+      return `
+        <div class="aroma-item">
+          <span class="aroma-item-nombre">${a.nombre}</span>
+          <span class="aroma-item-estado ${cargado ? 'cargado' : 'sin-cargar'}">
+            ${cargado ? '✅ Cargado' : 'Sin cargar todavía'}
+          </span>
+        </div>`;
+    }).join('');
+  }
+
+  async function cargarAromas() {
+    if (!cacheProductos.length) {
+      try {
+        const prods = await api('GET', '/api/admin/productos');
+        cacheProductos = prods || [];
+      } catch (_) { /* si falla, igual mostramos el catálogo de aromas */ }
+    }
+
+    $('#aromasContador').textContent = 'Cargando…';
+    try {
+      const data = await api('GET', '/api/admin/aromas-catalogo?marca=' + encodeURIComponent(aromaMarcaActual));
+      cacheAromas = data || [];
+    } catch (err) {
+      cacheAromas = [];
+      toast('⚠️ ' + err.message);
+    }
+
+    aromaCategoriaActual = '';
+    renderAromasCategoriaBotones();
+    renderAromasLista();
+  }
+
   function init() {
     window.__fallbackImg = fallbackImg;
 
@@ -1594,6 +1707,27 @@
     });
 
     $('#cajaCobrarBtn').addEventListener('click', cobrarVenta);
+
+    // ---------------- Aromas ----------------
+
+    $('.aromas-marca-botones').addEventListener('click', (e) => {
+      const btn = e.target.closest('.aromas-marca-btn');
+      if (!btn) return;
+      $$('.aromas-marca-btn').forEach((b) => b.classList.toggle('active', b === btn));
+      aromaMarcaActual = btn.dataset.marca;
+      $('#aromasBuscar').value = '';
+      cargarAromas();
+    });
+
+    $('#aromasCategoriaBotones').addEventListener('click', (e) => {
+      const btn = e.target.closest('.aromas-cat-btn');
+      if (!btn) return;
+      aromaCategoriaActual = btn.dataset.categoria || '';
+      renderAromasCategoriaBotones();
+      renderAromasLista();
+    });
+
+    $('#aromasBuscar').addEventListener('input', renderAromasLista);
   }
 
   document.addEventListener('DOMContentLoaded', init);
