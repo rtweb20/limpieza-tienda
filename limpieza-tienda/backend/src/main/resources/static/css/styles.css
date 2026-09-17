@@ -789,6 +789,18 @@ main {
 .modal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
 .modal-head h2 { margin: 0; color: var(--celeste-profundo); font-size: 20px; letter-spacing: -.25px; }
 
+/* La ficha de producto (#productModal) ya repite el nombre debajo del
+   breadcrumb, así que el título de arriba queda solo para lectores de
+   pantalla y el modal-head se reduce a la X de cerrar. */
+#productModal .modal-head { justify-content: flex-end; margin-bottom: 4px; }
+#productModal .modal-head h2 {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
 .field { margin-bottom: 15px; }
 .field label { display: block; margin-bottom: 7px; color: var(--texto); font-size: 13px; font-weight: 750; }
 .field label .req { color: var(--rojo); }
@@ -1001,6 +1013,72 @@ footer .admin-link:hover { border-color: rgba(255, 255, 255, .55); background: r
 }
 
 /* ============================ DETALLE DE PRODUCTO ========================= */
+
+/* Modal más ancho en escritorio para poder mostrar la foto y la info en
+   dos columnas, estilo ficha de producto (igual que otros sitios de
+   perfumería/aromatizantes). En celular sigue siendo una sola columna. */
+@media (min-width: 860px) {
+  #productModal .modal-card { max-width: 900px; }
+}
+
+.detail-breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+  color: var(--texto-suave);
+  font-size: 12.5px;
+}
+.detail-breadcrumb .crumb-link {
+  border: none;
+  background: none;
+  padding: 0;
+  color: var(--celeste-profundo);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.detail-breadcrumb .crumb-sep { opacity: .5; }
+.detail-breadcrumb .crumb-actual { color: var(--texto); font-weight: 700; }
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+}
+@media (min-width: 640px) {
+  .detail-grid { grid-template-columns: 1fr 1fr; gap: 26px; align-items: start; }
+  .detail-grid .detail-media { margin-bottom: 0; }
+}
+
+.detail-nombre {
+  margin: 0 0 8px;
+  color: var(--celeste-profundo);
+  font-size: 22px;
+  line-height: 1.2;
+  letter-spacing: -.3px;
+}
+
+.detail-caract {
+  width: 100%;
+  margin: 12px 0 16px;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+.detail-caract tr { border-bottom: 1px solid var(--borde); }
+.detail-caract tr:last-child { border-bottom: none; }
+.detail-caract th, .detail-caract td {
+  padding: 9px 4px;
+  text-align: left;
+  font-weight: 400;
+}
+.detail-caract th {
+  width: 46%;
+  color: var(--texto-suave);
+  font-weight: 700;
+}
+.detail-caract td { color: var(--texto); }
 
 .detail-media {
   position: relative;

@@ -245,23 +245,60 @@
                     <option value="${variantes[0].id}">${variantes[0].presentacion}</option></select></div>`;
     }
 
+    // Tabla de características: solo con datos que realmente tenemos, sin
+    // inventar nada (nada de "familia olfativa" u otros datos que no
+    // cargamos en el sistema).
+    const filasCaract = [];
+    if (p.categoriaNombre) {
+      filasCaract.push(['Categoría', `${p.categoriaIcono || ''} ${p.categoriaNombre}`.trim()]);
+    }
+    if (variantes.length > 1) {
+      filasCaract.push(['Presentaciones disponibles', variantes.map((v) => v.presentacion).join(', ')]);
+    } else if (variantes.length === 1) {
+      filasCaract.push(['Presentación', variantes[0].presentacion]);
+    }
+    if (primerVariante && primerVariante.stock != null) {
+      filasCaract.push(['Disponibilidad', primerVariante.stock > 0 ? 'En stock' : 'Sin stock']);
+    }
+
+    const caractHTML = filasCaract.length
+      ? `<table class="detail-caract">
+           <tbody>
+             ${filasCaract.map(([k, v]) => `<tr><th>${k}</th><td>${v}</td></tr>`).join('')}
+           </tbody>
+         </table>`
+      : '';
+
     return `
-      <div class="detail-media" data-img="${p.imagenUrl}" data-nombre="${p.nombre}">
-        ${enOferta ? '<span class="tag-oferta">OFERTA</span>' : ''}
-        <img src="${p.imagenUrl}" alt="${p.nombre}" loading="lazy"
-             onerror="window.__fallbackImg?.(this,'${p.nombre.slice(0, 16)}')">
-        <span class="zoom-hint">🔍 Ampliar</span>
-      </div>
-      <span class="cat">${p.categoriaIcono || ''} ${p.categoriaNombre || ''}</span>
-      ${p.descripcion ? `<p class="detail-desc">${p.descripcion}</p>` : ''}
-      <div class="price-row">
-        ${enOferta ? `<span class="price old">${money(primerVariante ? primerVariante.precio : precio)}</span>` : ''}
-        <span class="price ${enOferta ? 'oferta' : ''}" data-role="detail-precio">${money(precio)}</span>
-      </div>
-      ${selector}
-      <button id="detailAddBtn" class="add-btn" data-id="${p.id}" ${variantes.length ? '' : 'disabled'}>
-        ${variantes.length ? '➕ Agregar al carrito' : 'Sin stock'}
-      </button>`;
+      <nav class="detail-breadcrumb" aria-label="Ruta">
+        <button type="button" class="crumb-link" data-cerrar-detalle>Inicio</button>
+        <span class="crumb-sep">/</span>
+        ${p.categoriaNombre ? `<span>${p.categoriaNombre}</span><span class="crumb-sep">/</span>` : ''}
+        <span class="crumb-actual">${p.nombre}</span>
+      </nav>
+
+      <div class="detail-grid">
+        <div class="detail-media" data-img="${p.imagenUrl}" data-nombre="${p.nombre}">
+          ${enOferta ? '<span class="tag-oferta">OFERTA</span>' : ''}
+          <img src="${p.imagenUrl}" alt="${p.nombre}" loading="lazy"
+               onerror="window.__fallbackImg?.(this,'${p.nombre.slice(0, 16)}')">
+          <span class="zoom-hint">🔍 Ampliar</span>
+        </div>
+
+        <div class="detail-info">
+          <h1 class="detail-nombre">${p.nombre}</h1>
+          <div class="price-row">
+            ${enOferta ? `<span class="price old">${money(primerVariante ? primerVariante.precio : precio)}</span>` : ''}
+            <span class="price ${enOferta ? 'oferta' : ''}" data-role="detail-precio">${money(precio)}</span>
+          </div>
+          ${p.descripcion ? `<p class="detail-desc">${p.descripcion}</p>` : ''}
+          ${caractHTML}
+          ${selector}
+          <button id="detailAddBtn" class="add-btn" data-id="${p.id}" ${variantes.length ? '' : 'disabled'}>
+            ${variantes.length ? '➕ Agregar al carrito' : 'Sin stock'}
+          </button>
+        </div>
+      </div>`;
   }
 
   function abrirDetalle(productoId) {
@@ -650,6 +687,10 @@
     });
 
     $('#productDetailBody').addEventListener('click', (e) => {
+      if (e.target.closest('[data-cerrar-detalle]')) {
+        cerrarDetalle();
+        return;
+      }
       const media = e.target.closest('.detail-media');
       if (media) {
         abrirLightbox(media.dataset.img, media.dataset.nombre);
