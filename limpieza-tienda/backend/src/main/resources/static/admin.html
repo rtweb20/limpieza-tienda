@@ -137,6 +137,10 @@
           <span>Pedidos</span>
           <span id="tabCountPedidos" class="tab-badge">0</span>
         </button>
+        <button class="tab-btn" data-tab="caja">
+          <span class="tab-icon">💰</span>
+          <span>Caja del día</span>
+        </button>
       </nav>
 
       <!-- TAB PRODUCTOS -->
@@ -344,6 +348,100 @@
             <div class="empty-icon">🧾</div>
             <h3>No hay pedidos registrados todavía</h3>
             <p>Los pedidos realizados por los clientes en la tienda aparecerán aquí.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB CAJA DEL DÍA -->
+      <section id="panel-caja" class="panel-section" style="display:none">
+        <div class="toolbar-card justify-between">
+          <div>
+            <h2 class="panel-title">Caja del día</h2>
+            <p class="panel-subtitle">Buscá o escaneá el producto, armá el carrito y cobrá — el stock se descuenta solo.</p>
+          </div>
+        </div>
+
+        <section class="stats-grid caja-stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon-wrap bg-green">💵</div>
+            <div class="stat-info">
+              <span class="stat-label">Total vendido hoy</span>
+              <span id="cajaTotalHoy" class="stat-value">$ 0</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon-wrap bg-blue">🧾</div>
+            <div class="stat-info">
+              <span class="stat-label">Ventas de hoy</span>
+              <span id="cajaCantidadHoy" class="stat-value">0</span>
+            </div>
+          </div>
+        </section>
+
+        <div class="caja-layout">
+          <!-- Columna: buscar/escanear + carrito + cobrar -->
+          <div class="caja-venta-col">
+            <div class="toolbar-card caja-buscador-card">
+              <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input id="cajaBuscar" type="text" placeholder="Escaneá el código de barras o escribí el nombre del producto…" autocomplete="off">
+                <button id="cajaBuscarClear" class="btn-clear-search" style="display:none" title="Limpiar">✕</button>
+              </div>
+              <div id="cajaResultados" class="caja-resultados" style="display:none"></div>
+            </div>
+
+            <div class="card-table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Producto</th>
+                    <th style="text-align:center;width:110px;">Cantidad</th>
+                    <th style="width:110px;">Precio</th>
+                    <th style="width:110px;">Subtotal</th>
+                    <th class="th-actions" style="width:60px;"></th>
+                  </tr>
+                </thead>
+                <tbody id="cajaCarritoList"></tbody>
+              </table>
+
+              <div id="cajaCarritoEmpty" class="empty-placeholder">
+                <div class="empty-icon">🛒</div>
+                <h3>El carrito está vacío</h3>
+                <p>Buscá o escaneá un producto para empezar la venta.</p>
+              </div>
+            </div>
+
+            <div class="caja-cobrar-box">
+              <div class="caja-medio-pago">
+                <span class="caja-medio-label">Medio de pago</span>
+                <div class="caja-medio-seg">
+                  <input type="radio" id="cajaMedioEfectivo" name="cajaMedioPago" value="EFECTIVO" checked>
+                  <label for="cajaMedioEfectivo">💵 Efectivo</label>
+                  <input type="radio" id="cajaMedioTransferencia" name="cajaMedioPago" value="TRANSFERENCIA">
+                  <label for="cajaMedioTransferencia">🏦 Transferencia</label>
+                  <input type="radio" id="cajaMedioMP" name="cajaMedioPago" value="MERCADO_PAGO">
+                  <label for="cajaMedioMP">📲 Mercado Pago</label>
+                </div>
+              </div>
+
+              <div class="caja-total-row">
+                <span>Total a cobrar</span>
+                <strong id="cajaCarritoTotal">$ 0</strong>
+              </div>
+
+              <button id="cajaCobrarBtn" class="btn-primary-admin w-full" disabled>💰 Cobrar venta</button>
+            </div>
+          </div>
+
+          <!-- Columna: ventas ya cobradas hoy -->
+          <div class="caja-historial-col">
+            <h3 class="media-section-title">🧾 Ventas de hoy</h3>
+            <div id="cajaVentasHoyList" class="caja-ventas-list"></div>
+            <div id="cajaVentasHoyEmpty" class="empty-placeholder" style="display:none">
+              <div class="empty-icon">🧾</div>
+              <h3>Todavía no hay ventas hoy</h3>
+              <p>Las ventas que cobres en la caja van a aparecer acá.</p>
+            </div>
           </div>
         </div>
       </section>

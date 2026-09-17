@@ -50,6 +50,7 @@
   let cacheProductos = [];
   let cacheCategorias = [];
   let cachePedidos = [];
+  let cajaCarrito = [];
 
   const demoDB = {
     categorias: (window.DEMO && window.DEMO.categorias) ? window.DEMO.categorias.map((c) => ({ ...c, activa: true, orden: 0 })) : [],
@@ -221,6 +222,7 @@
     if (tab === 'categorias') cargarCategorias();
     if (tab === 'multimedia') cargarMedios();
     if (tab === 'pedidos') cargarPedidos();
+    if (tab === 'caja') cargarCaja();
   }
 
   /* ------------------------------------------------------------------------
@@ -1080,6 +1082,236 @@
     }
   }
 
+  /* ------------------------------------------------------------------------
+     CAJA DEL DÍA — ventas de mostrador: buscar/escanear producto, armar
+     carrito con cantidades editables y cobrar descontando stock. Sistema
+     independiente del carrito de Pedidos (que va por WhatsApp).
+     ------------------------------------------------------------------------ */
+
+  const medioPagoLabel = (m) => {
+    if (m === 'EFECTIVO') return '💵 Efectivo';
+    if (m === 'TRANSFERENCIA') return '🏦 Transferencia';
+    if (m === 'MERCADO_PAGO') return '📲 Mercado Pago';
+    return m || '';
+  };
+
+  /** Un UPC-A de 12 dígitos equivale al EAN-13 con un 0 delante (igual que en el backend). */
+  function normalizarCodigoBarras(codigo) {
+    const c = (codigo || '').trim();
+    if (/^\d{12}$/.test(c)) return '0' + c;
+    return c;
+  }
+
+  function buildCajaIndex() {
+    const filas = [];
+    cacheProductos.forEach((p) => {
+      (p.variantes || []).forEach((v) => {
+        if (v.activa === false) return;
+        filas.push({
+          productoId: p.id,
+          productoNombre: p.nombre,
+          varianteId: v.id,
+          varianteNombre: v.presentacion || 'Unidad',
+          precioVenta: Number(v.precioVenta != null ? v.precioVenta : v.precio) || 0,
+          stock: Number(v.stock || 0),
+          codigoBarras: p.codigoBarras || '',
+        });
+      });
+    });
+    return filas;
+  }
+
+  function buscarCajaTexto(q) {
+    const texto = (q || '').trim().toLowerCase();
+    if (!texto) return [];
+    return buildCajaIndex().filter((f) =>
+      f.productoNombre.toLowerCase().includes(texto) ||
+      (f.varianteNombre || '').toLowerCase().includes(texto) ||
+      (f.codigoBarras || '').toLowerCase().includes(texto));
+  }
+
+  function renderCajaResultados(filas) {
+    const cont = $('#cajaResultados');
+    if (!filas.length) {
+      cont.style.display = 'none';
+      cont.innerHTML = '';
+      return;
+    }
+    cont.style.display = 'block';
+    cont.innerHTML = filas.slice(0, 8).map((f) => `
+      <button type="button" class="caja-resultado-item" data-add-venta="${f.varianteId}">
+        <span class="caja-resultado-nombre">${f.productoNombre}${f.varianteNombre ? ` — ${f.varianteNombre}` : ''}</span>
+        <span class="caja-resultado-meta">${money(f.precioVenta)} · Stock: ${f.stock}</span>
+      </button>`).join('');
+  }
+
+  function agregarAlCarrito(fila, cantidad) {
+    cantidad = cantidad || 1;
+    if (fila.stock <= 0) {
+      toast('⚠️ «' + fila.productoNombre + '» (' + fila.varianteNombre + ') no tiene stock disponible');
+      return;
+    }
+    const existente = cajaCarrito.find((i) => i.varianteId === fila.varianteId);
+    if (existente) {
+      if (existente.cantidad + cantidad > fila.stock) {
+        toast('⚠️ No hay más stock de «' + fila.productoNombre + '» (' + fila.varianteNombre + ')');
+        return;
+      }
+      existente.cantidad += cantidad;
+    } else {
+      cajaCarrito.push({
+        productoId: fila.productoId,
+        varianteId: fila.varianteId,
+        productoNombre: fila.productoNombre,
+        varianteNombre: fila.varianteNombre,
+        precioUnitario: fila.precioVenta,
+        cantidad: Math.min(cantidad, fila.stock),
+        stockDisponible: fila.stock,
+      });
+    }
+    renderCajaCarrito();
+    toast('✅ ' + fila.productoNombre + ' agregado al carrito');
+  }
+
+  function renderCajaCarrito() {
+    const tbody = $('#cajaCarritoList');
+    const empty = $('#cajaCarritoEmpty');
+    const cobrarBtn = $('#cajaCobrarBtn');
+
+    if (!cajaCarrito.length) {
+      tbody.innerHTML = '';
+      empty.style.display = 'block';
+      $('#cajaCarritoTotal').textContent = money(0);
+      cobrarBtn.disabled = true;
+      return;
+    }
+    empty.style.display = 'none';
+
+    tbody.innerHTML = cajaCarrito.map((it, i) => `
+      <tr>
+        <td>
+          <span class="prod-name">${it.productoNombre}</span>
+          ${it.varianteNombre ? `<br><small style="color:var(--admin-text-muted);">${it.varianteNombre}</small>` : ''}
+        </td>
+        <td style="text-align:center;">
+          <input type="number" class="caja-qty-input" min="1" max="${it.stockDisponible}" value="${it.cantidad}" data-i="${i}" aria-label="Cantidad">
+        </td>
+        <td>${money(it.precioUnitario)}</td>
+        <td><strong>${money(it.precioUnitario * it.cantidad)}</strong></td>
+        <td>
+          <button class="btn-action delete" data-quitar-item="${i}" title="Quitar del carrito">🗑️</button>
+        </td>
+      </tr>`).join('');
+
+    const total = cajaCarrito.reduce((acc, it) => acc + it.precioUnitario * it.cantidad, 0);
+    $('#cajaCarritoTotal').textContent = money(total);
+    cobrarBtn.disabled = false;
+  }
+
+  function renderResumenCaja(resumen) {
+    const r = resumen || { totalVendido: 0, cantidadVentas: 0, ventas: [] };
+    $('#cajaTotalHoy').textContent = money(r.totalVendido);
+    $('#cajaCantidadHoy').textContent = r.cantidadVentas || 0;
+
+    const cont = $('#cajaVentasHoyList');
+    const empty = $('#cajaVentasHoyEmpty');
+    const ventas = r.ventas || [];
+
+    if (!ventas.length) {
+      cont.innerHTML = '';
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+
+    cont.innerHTML = ventas.map((v) => {
+      const hora = v.createdAt
+        ? new Date(v.createdAt).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })
+        : '';
+      const itemsHtml = (v.items || []).map((it) => `
+        <div class="order-item-line">
+          <span class="order-item-qty">${it.cantidad}x</span>
+          <span>${it.productoNombre}${it.varianteNombre ? ` (${it.varianteNombre})` : ''}</span>
+        </div>`).join('');
+
+      return `
+        <div class="caja-venta-card">
+          <div class="caja-venta-card-top">
+            <span class="caja-venta-hora">🕒 ${hora}</span>
+            <span class="caja-venta-medio">${medioPagoLabel(v.medioPago)}</span>
+            <strong class="caja-venta-total">${money(v.total)}</strong>
+          </div>
+          <div class="caja-venta-items">${itemsHtml}</div>
+        </div>`;
+    }).join('');
+  }
+
+  async function refrescarResumenCaja() {
+    try {
+      const resumen = await api('GET', '/api/admin/ventas/hoy');
+      renderResumenCaja(resumen);
+    } catch (err) {
+      toast('⚠️ ' + err.message);
+    }
+  }
+
+  async function cargarCaja() {
+    if (!cacheProductos.length) {
+      const prods = await api('GET', '/api/admin/productos');
+      cacheProductos = prods || [];
+    }
+    renderCajaCarrito();
+    renderCajaResultados([]);
+    await refrescarResumenCaja();
+    const buscar = $('#cajaBuscar');
+    if (buscar) {
+      buscar.value = '';
+      setTimeout(() => buscar.focus(), 50);
+    }
+  }
+
+  async function cobrarVenta() {
+    if (!cajaCarrito.length) return;
+    const medioInput = $('input[name="cajaMedioPago"]:checked');
+    if (!medioInput) {
+      toast('⚠️ Elegí el medio de pago');
+      return;
+    }
+
+    const body = {
+      medioPago: medioInput.value,
+      items: cajaCarrito.map((it) => ({
+        productoId: it.productoId,
+        varianteId: it.varianteId,
+        cantidad: it.cantidad,
+      })),
+    };
+
+    const btn = $('#cajaCobrarBtn');
+    btn.disabled = true;
+    btn.textContent = '⏳ Cobrando…';
+
+    try {
+      await api('POST', '/api/admin/ventas', body);
+      cajaCarrito = [];
+      renderCajaCarrito();
+      toast('✅ Venta cobrada con éxito');
+
+      const prods = await api('GET', '/api/admin/productos');
+      cacheProductos = prods || [];
+      actualizarIndicadoresStock();
+      if ($('#panel-stock').style.display !== 'none') renderStockFiltrado();
+      if ($('#panel-productos').style.display !== 'none') renderProductosFiltrados();
+
+      await refrescarResumenCaja();
+    } catch (err) {
+      toast('⚠️ ' + err.message);
+    } finally {
+      btn.textContent = '💰 Cobrar venta';
+      btn.disabled = cajaCarrito.length === 0;
+    }
+  }
+
   function init() {
     window.__fallbackImg = fallbackImg;
 
@@ -1275,6 +1507,93 @@
         actualizarMedioCampo(id, campo, valor);
       });
     });
+
+    // ---------------- Caja del día ----------------
+
+    const cajaBuscar = $('#cajaBuscar');
+    cajaBuscar.addEventListener('input', () => {
+      const val = cajaBuscar.value;
+      $('#cajaBuscarClear').style.display = val ? 'block' : 'none';
+      renderCajaResultados(val.trim() ? buscarCajaTexto(val) : []);
+    });
+
+    $('#cajaBuscarClear').addEventListener('click', () => {
+      cajaBuscar.value = '';
+      renderCajaResultados([]);
+      cajaBuscar.focus();
+    });
+
+    cajaBuscar.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter') return;
+      e.preventDefault();
+      const val = cajaBuscar.value.trim();
+      if (!val) return;
+
+      const codigo = normalizarCodigoBarras(val);
+      const porCodigo = buildCajaIndex().filter((f) =>
+        f.codigoBarras && normalizarCodigoBarras(f.codigoBarras) === codigo);
+
+      if (porCodigo.length === 1) {
+        agregarAlCarrito(porCodigo[0], 1);
+        cajaBuscar.value = '';
+        renderCajaResultados([]);
+        return;
+      }
+      if (porCodigo.length > 1) {
+        renderCajaResultados(porCodigo);
+        toast('Ese código tiene varias presentaciones — elegí una de la lista');
+        return;
+      }
+
+      const porNombre = buscarCajaTexto(val);
+      if (porNombre.length === 1) {
+        agregarAlCarrito(porNombre[0], 1);
+        cajaBuscar.value = '';
+        renderCajaResultados([]);
+      } else if (porNombre.length > 1) {
+        renderCajaResultados(porNombre);
+      } else {
+        toast('⚠️ No se encontró ningún producto con ese código o nombre');
+      }
+    });
+
+    $('#cajaResultados').addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-add-venta]');
+      if (!btn) return;
+      const varianteId = Number(btn.dataset.addVenta);
+      const fila = buildCajaIndex().find((f) => f.varianteId === varianteId);
+      if (fila) {
+        agregarAlCarrito(fila, 1);
+        cajaBuscar.value = '';
+        renderCajaResultados([]);
+        cajaBuscar.focus();
+      }
+    });
+
+    $('#cajaCarritoList').addEventListener('input', (e) => {
+      const inp = e.target.closest('.caja-qty-input');
+      if (!inp) return;
+      const i = Number(inp.dataset.i);
+      const item = cajaCarrito[i];
+      if (!item) return;
+      let val = Math.floor(Number(inp.value));
+      if (!Number.isFinite(val) || val < 1) val = 1;
+      if (val > item.stockDisponible) {
+        val = item.stockDisponible;
+        toast('⚠️ Stock máximo disponible: ' + item.stockDisponible);
+      }
+      item.cantidad = val;
+      renderCajaCarrito();
+    });
+
+    $('#cajaCarritoList').addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-quitar-item]');
+      if (!btn) return;
+      cajaCarrito.splice(Number(btn.dataset.quitarItem), 1);
+      renderCajaCarrito();
+    });
+
+    $('#cajaCobrarBtn').addEventListener('click', cobrarVenta);
   }
 
   document.addEventListener('DOMContentLoaded', init);

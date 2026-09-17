@@ -1579,3 +1579,163 @@ body.admin-body {
   font-size: 11.5px;
   line-height: 1.4;
 }
+
+/* ============================================================================
+   CAJA DEL DÍA — ventas de mostrador (búsqueda/escaneo, carrito y cobro)
+   ============================================================================ */
+
+.caja-stats-grid {
+  grid-template-columns: repeat(2, minmax(0, 260px));
+  margin-bottom: 18px;
+}
+
+.caja-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
+  gap: 18px;
+  align-items: start;
+}
+
+.caja-venta-col,
+.caja-historial-col { min-width: 0; }
+
+.caja-buscador-card { position: relative; flex-direction: column; align-items: stretch; }
+
+.caja-resultados {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--admin-border);
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.caja-resultado-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1.5px solid var(--admin-border);
+  border-radius: 10px;
+  background: var(--admin-card);
+  color: var(--admin-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .15s ease, background .15s ease;
+}
+
+.caja-resultado-item:hover {
+  border-color: var(--admin-primary);
+  background: var(--admin-primary-light);
+}
+
+.caja-resultado-nombre { font-weight: 700; font-size: 13.5px; }
+.caja-resultado-meta { flex-shrink: 0; color: var(--admin-text-muted); font-size: 12px; font-weight: 600; }
+
+.caja-qty-input {
+  width: 68px;
+  padding: 6px 8px;
+  border: 1.5px solid var(--admin-border);
+  border-radius: 8px;
+  text-align: center;
+  font: inherit;
+  font-weight: 700;
+}
+
+.caja-qty-input:focus { border-color: var(--admin-primary); outline: none; }
+
+.caja-cobrar-box {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 16px;
+  padding: 18px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-lg);
+  background: var(--admin-card);
+  box-shadow: var(--admin-shadow-sm);
+}
+
+.caja-medio-pago { display: flex; flex-direction: column; gap: 8px; }
+.caja-medio-label { font-size: 12.5px; font-weight: 700; color: var(--admin-text-muted); }
+
+.caja-medio-seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.caja-medio-seg input { position: absolute; opacity: 0; pointer-events: none; }
+.caja-medio-seg label {
+  display: block;
+  padding: 10px 6px;
+  border: 1.5px solid var(--admin-border);
+  border-radius: 10px;
+  background: #fbfdfe;
+  color: var(--admin-text);
+  text-align: center;
+  font-size: 12.5px;
+  font-weight: 650;
+  cursor: pointer;
+  transition: border-color .15s ease, background .15s ease, color .15s ease;
+}
+.caja-medio-seg label:hover { border-color: var(--admin-border-focus); }
+.caja-medio-seg input:checked + label {
+  border-color: var(--admin-primary);
+  background: var(--admin-primary-light);
+  color: var(--admin-primary-hover);
+  font-weight: 800;
+}
+
+.caja-total-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 6px;
+  border-top: 1px dashed var(--admin-border);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--admin-text-muted);
+}
+
+.caja-total-row strong { font-size: 22px; color: var(--admin-dark); }
+
+.caja-ventas-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 640px;
+  overflow-y: auto;
+}
+
+.caja-venta-card {
+  padding: 12px 14px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius);
+  background: var(--admin-card);
+  box-shadow: var(--admin-shadow-sm);
+}
+
+.caja-venta-card-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.caja-venta-hora { color: var(--admin-text-muted); font-size: 12px; font-weight: 600; }
+.caja-venta-medio {
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: var(--admin-primary-light);
+  color: var(--admin-primary-hover);
+  font-size: 11px;
+  font-weight: 800;
+}
+.caja-venta-total { margin-left: auto; color: var(--admin-primary); font-size: 15px; }
+.caja-venta-items { display: flex; flex-direction: column; gap: 2px; }
+
+@media (max-width: 980px) {
+  .caja-layout { grid-template-columns: 1fr; }
+  .caja-stats-grid { grid-template-columns: 1fr 1fr; }
+}
