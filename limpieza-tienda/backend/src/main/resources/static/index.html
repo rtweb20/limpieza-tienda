@@ -72,6 +72,28 @@
     </div>
   </section>
 
+  <!-- ==================== AROMAS POR MARCA (catálogo) =================== -->
+  <section class="aromas-publico" aria-label="Aromas disponibles por marca">
+    <button type="button" id="aromasPublicoToggle" class="aromas-publico-toggle">
+      <span class="rayitas">☰</span> Ver aromas por marca
+    </button>
+
+    <div id="aromasPublicoPanel" class="aromas-publico-panel">
+      <div class="aromas-publico-marcas">
+        <button type="button" class="aromas-publico-marca-btn active" data-marca="SAPHIRUS">Saphirus</button>
+        <button type="button" class="aromas-publico-marca-btn" data-marca="SANDRA_MARZAN">Sandra Marzán</button>
+      </div>
+
+      <div class="aromas-publico-buscador">
+        🔍 <input type="text" id="aromasPublicoBuscar" placeholder="Buscar aroma..." autocomplete="off">
+      </div>
+
+      <div id="aromasPublicoCategorias" class="aromas-publico-categorias"></div>
+
+      <div id="aromasPublicoLista" class="aromas-publico-lista"></div>
+    </div>
+  </section>
+
   <!-- =========================== CATEGORÍAS ============================ -->
   <nav id="cats" class="cats" aria-label="Categorías"></nav>
 

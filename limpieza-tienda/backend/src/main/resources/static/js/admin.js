@@ -1243,8 +1243,36 @@
             <strong class="caja-venta-total">${money(v.total)}</strong>
           </div>
           <div class="caja-venta-items">${itemsHtml}</div>
+          <button type="button" class="caja-venta-anular-btn" data-venta-id="${v.id}">
+            🗑️ Anular venta (devolver stock)
+          </button>
         </div>`;
     }).join('');
+  }
+
+  async function anularVenta(ventaId, btn) {
+    if (!confirm('¿Anular esta venta? Se va a devolver la cantidad vendida al stock. Esta acción no se puede deshacer.')) {
+      return;
+    }
+    const textoOriginal = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = '⏳ Anulando…';
+    try {
+      await api('DELETE', `/api/admin/ventas/${ventaId}`);
+      toast('✅ Venta anulada, stock devuelto');
+
+      const prods = await api('GET', '/api/admin/productos');
+      cacheProductos = prods || [];
+      actualizarIndicadoresStock();
+      if ($('#panel-stock').style.display !== 'none') renderStockFiltrado();
+      if ($('#panel-productos').style.display !== 'none') renderProductosFiltrados();
+
+      await refrescarResumenCaja();
+    } catch (err) {
+      toast('⚠️ ' + err.message);
+      btn.disabled = false;
+      btn.textContent = textoOriginal;
+    }
   }
 
   async function refrescarResumenCaja() {
@@ -1707,6 +1735,12 @@
     });
 
     $('#cajaCobrarBtn').addEventListener('click', cobrarVenta);
+
+    $('#cajaVentasHoyList').addEventListener('click', (e) => {
+      const btn = e.target.closest('.caja-venta-anular-btn');
+      if (!btn) return;
+      anularVenta(Number(btn.dataset.ventaId), btn);
+    });
 
     // ---------------- Aromas ----------------
 

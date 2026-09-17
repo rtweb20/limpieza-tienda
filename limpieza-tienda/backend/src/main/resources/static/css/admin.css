@@ -1735,6 +1735,22 @@ body.admin-body {
 .caja-venta-total { margin-left: auto; color: var(--admin-primary); font-size: 15px; }
 .caja-venta-items { display: flex; flex-direction: column; gap: 2px; }
 
+.caja-venta-anular-btn {
+  margin-top: 10px;
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--admin-danger-light);
+  border-radius: var(--admin-radius);
+  background: var(--admin-danger-light);
+  color: var(--admin-danger);
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease, opacity 0.15s ease;
+}
+.caja-venta-anular-btn:hover { background: var(--admin-danger); color: #fff; }
+.caja-venta-anular-btn:disabled { opacity: 0.6; cursor: default; }
+
 @media (max-width: 980px) {
   .caja-layout { grid-template-columns: 1fr; }
   .caja-stats-grid { grid-template-columns: 1fr 1fr; }

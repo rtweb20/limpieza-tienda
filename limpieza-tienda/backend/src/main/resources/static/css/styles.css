@@ -1379,3 +1379,135 @@ footer .admin-link:hover { border-color: rgba(255, 255, 255, .55); background: r
 @media (max-width: 560px) {
   .brand-ad-slot { width: 128px; height: 64px; font-size: 11px; }
 }
+
+/* ========================= NUEVO: AROMAS POR MARCA (público) ============== */
+
+.aromas-publico {
+  width: min(100%, var(--ancho-contenido));
+  margin: 16px auto 0;
+  padding: 0 16px;
+}
+
+.aromas-publico-toggle {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 13px 18px;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-sm);
+  background: #fff;
+  box-shadow: var(--sombra-card);
+  color: var(--texto);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.aromas-publico-toggle .rayitas { font-size: 18px; line-height: 1; }
+.aromas-publico-toggle:active { background: #f4fbff; }
+
+.aromas-publico-panel {
+  display: none;
+  margin-top: 12px;
+  padding: 16px;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-sm);
+  background: #fff;
+  box-shadow: var(--sombra-card);
+}
+.aromas-publico-panel.abierto { display: block; animation: aromasPublicoDesplegar .18s ease; }
+
+@keyframes aromasPublicoDesplegar {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.aromas-publico-marcas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.aromas-publico-marca-btn {
+  padding: 12px 10px;
+  border: 1.5px solid var(--borde);
+  border-radius: var(--radio-sm);
+  background: #fff;
+  color: var(--texto);
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.aromas-publico-marca-btn.active {
+  border-color: var(--celeste);
+  background: var(--celeste);
+  color: #fff;
+}
+
+.aromas-publico-buscador {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  border: 1px solid var(--borde);
+  border-radius: 999px;
+  background: #fbfdfe;
+}
+.aromas-publico-buscador input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14.5px;
+  color: var(--texto);
+}
+
+.aromas-publico-categorias {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.aromas-publico-cat-btn {
+  padding: 8px 14px;
+  border: 1.5px solid var(--borde);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--texto);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.aromas-publico-cat-btn.active {
+  border-color: var(--celeste);
+  background: var(--celeste-suave);
+  color: var(--celeste-profundo);
+}
+
+.aromas-publico-lista {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  max-height: 360px;
+  overflow-y: auto;
+}
+@media (max-width: 620px) {
+  .aromas-publico-lista { grid-template-columns: repeat(2, 1fr); }
+}
+.aromas-publico-item {
+  padding: 10px 12px;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  background: #fbfdfe;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--texto);
+}
+.aromas-publico-vacio, .aromas-publico-cargando {
+  grid-column: 1 / -1;
+  padding: 18px 0;
+  text-align: center;
+  color: var(--texto-suave);
+  font-size: 13.5px;
+}

@@ -114,6 +114,31 @@ public class VentaService {
         return VentaResponse.from(venta, itemResponses);
     }
 
+    /**
+     * Anula una venta de mostrador ya cobrada (por error de carga, producto
+     * equivocado, etc.) y devuelve al stock la cantidad de cada ítem vendido.
+     */
+    @Transactional
+    public void anularVenta(Long ventaId) {
+        Venta venta = ventaRepository.findById(ventaId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Venta no encontrada: " + ventaId));
+
+        List<VentaItem> items = ventaItemRepository.findByVentaId(ventaId);
+        for (VentaItem item : items) {
+            if (item.getVarianteId() == null) {
+                continue;
+            }
+            varianteRepository.findById(item.getVarianteId()).ifPresent(variante -> {
+                int stockActual = variante.getStock() == null ? 0 : variante.getStock();
+                variante.setStock(stockActual + item.getCantidad());
+                varianteRepository.save(variante);
+            });
+        }
+
+        ventaItemRepository.deleteAll(items);
+        ventaRepository.delete(venta);
+    }
+
     /** Resumen de ventas del día en curso, en horario de Argentina. */
     @Transactional(readOnly = true)
     public CajaResumenResponse resumenHoy() {

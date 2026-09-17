@@ -315,6 +315,100 @@
     $('#productOverlay').classList.remove('open');
   }
 
+  // -------------------- Aromas por marca (catálogo público) ----------------
+
+  const AROMA_CATEGORIA_LABEL = {
+    AEROSOL: 'Aerosol', TEXTIL_120CC: 'Textil 120cc', TEXTIL_500CC: 'Textil 500cc',
+    DIFUSOR_AUTO: 'Difusor para auto', HOME_SPRAY: 'Home Spray', ACEITES: 'Aceites',
+    DIFUSOR: 'Difusores',
+  };
+  const AROMA_CATEGORIA_ORDEN = [
+    'AEROSOL', 'TEXTIL_120CC', 'TEXTIL_500CC', 'DIFUSOR_AUTO', 'HOME_SPRAY', 'ACEITES', 'DIFUSOR',
+  ];
+
+  let aromasPublicoCache = [];
+  let aromasPublicoMarca = 'SAPHIRUS';
+  let aromasPublicoCategoria = '';
+  let aromasPublicoCargados = { SAPHIRUS: false, SANDRA_MARZAN: false };
+
+  function normalizarTexto(s) {
+    return (s || '').toString().normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
+  }
+
+  async function cargarAromasPublico(marca) {
+    const lista = $('#aromasPublicoLista');
+    lista.innerHTML = '<div class="aromas-publico-cargando">Cargando aromas…</div>';
+    try {
+      aromasPublicoCache = await API.get('/api/aromas-catalogo?marca=' + encodeURIComponent(marca));
+      aromasPublicoCargados[marca] = true;
+    } catch (e) {
+      aromasPublicoCache = [];
+    }
+    aromasPublicoCategoria = '';
+    renderAromasPublicoCategorias();
+    renderAromasPublicoLista();
+  }
+
+  function renderAromasPublicoCategorias() {
+    const cats = AROMA_CATEGORIA_ORDEN.filter((c) => aromasPublicoCache.some((a) => a.categoria === c));
+    const cont = $('#aromasPublicoCategorias');
+    if (!cont) return;
+    const botones = [`<button type="button" class="aromas-publico-cat-btn ${aromasPublicoCategoria === '' ? 'active' : ''}" data-categoria="">Todos</button>`]
+      .concat(cats.map((c) => `<button type="button" class="aromas-publico-cat-btn ${aromasPublicoCategoria === c ? 'active' : ''}" data-categoria="${c}">${AROMA_CATEGORIA_LABEL[c] || c}</button>`));
+    cont.innerHTML = botones.join('');
+  }
+
+  function renderAromasPublicoLista() {
+    const textoBuscado = normalizarTexto($('#aromasPublicoBuscar').value);
+    const enCategoria = aromasPublicoCategoria
+      ? aromasPublicoCache.filter((a) => a.categoria === aromasPublicoCategoria)
+      : aromasPublicoCache;
+    const filas = textoBuscado
+      ? enCategoria.filter((a) => normalizarTexto(a.nombre).includes(textoBuscado))
+      : enCategoria;
+
+    const lista = $('#aromasPublicoLista');
+    if (!filas.length) {
+      lista.innerHTML = '<div class="aromas-publico-vacio">No encontramos ese aroma.</div>';
+      return;
+    }
+    lista.innerHTML = filas.map((a) => `<div class="aromas-publico-item">${a.nombre}</div>`).join('');
+  }
+
+  function initAromasPublico() {
+    const toggle = $('#aromasPublicoToggle');
+    const panel = $('#aromasPublicoPanel');
+    if (!toggle || !panel) return;
+
+    toggle.addEventListener('click', async () => {
+      const abierto = panel.classList.toggle('abierto');
+      toggle.innerHTML = abierto
+        ? '<span class="rayitas">✕</span> Ocultar aromas'
+        : '<span class="rayitas">☰</span> Ver aromas por marca';
+      if (abierto && !aromasPublicoCargados[aromasPublicoMarca]) {
+        await cargarAromasPublico(aromasPublicoMarca);
+      }
+    });
+
+    $('.aromas-publico-marcas').addEventListener('click', async (e) => {
+      const btn = e.target.closest('.aromas-publico-marca-btn');
+      if (!btn) return;
+      $$('.aromas-publico-marca-btn').forEach((b) => b.classList.toggle('active', b === btn));
+      aromasPublicoMarca = btn.dataset.marca;
+      await cargarAromasPublico(aromasPublicoMarca);
+    });
+
+    $('#aromasPublicoCategorias').addEventListener('click', (e) => {
+      const btn = e.target.closest('.aromas-publico-cat-btn');
+      if (!btn) return;
+      aromasPublicoCategoria = btn.dataset.categoria;
+      renderAromasPublicoCategorias();
+      renderAromasPublicoLista();
+    });
+
+    $('#aromasPublicoBuscar').addEventListener('input', renderAromasPublicoLista);
+  }
+
   function abrirLightbox(src, alt) {
     $('#lightboxImg').src = src;
     $('#lightboxImg').alt = alt || '';
@@ -724,6 +818,7 @@
     toggleDireccion();
     cargarDatos();
     cargarMedios();
+    initAromasPublico();
   }
 
   document.addEventListener('DOMContentLoaded', init);
