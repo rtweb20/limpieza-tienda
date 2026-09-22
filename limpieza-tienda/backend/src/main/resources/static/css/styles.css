@@ -1291,12 +1291,12 @@ footer .admin-link:hover { border-color: rgba(255, 255, 255, .55); background: r
   opacity: 1;
 }
 
-/* La foto del local se ve completa (sin recortar el cartel de arriba ni
-   ningún otro borde); el video de al lado sigue llenando el recuadro. */
-#heroFoto.tiene-contenido { background: var(--celeste-suave); }
+/* La foto del local llena el recuadro (como el video), pero recortando
+   desde abajo para no tapar el cartel que se ve arriba de la foto. */
 #heroFoto img,
 #heroFoto .hero-slide {
-  object-fit: contain;
+  object-fit: cover;
+  object-position: top;
 }
 
 @media (max-width: 560px) {
