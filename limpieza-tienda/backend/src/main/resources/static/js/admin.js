@@ -1544,17 +1544,6 @@
     $('#catOverlay').addEventListener('click', cerrarCatModal);
     $('#catForm').addEventListener('submit', guardarCategoria);
 
-    $('#vaciarProd').addEventListener('click', async () => {
-      const ok = confirm('⚠️ ¿Eliminar TODOS los productos del catálogo?\n\nEsta acción borrará todos los productos cargados para que puedas cargar la lista limpia de nuevo.');
-      if (!ok) return;
-      try {
-        const r = await api('DELETE', '/api/admin/productos');
-        await cargarProductos();
-        actualizarMetricas();
-        toast('🗑️ ' + (r && r.mensaje ? r.mensaje : 'Catálogo vaciado'));
-      } catch (err) { toast('⚠️ ' + err.message); }
-    });
-
     $('#nuevoProd').addEventListener('click', () => abrirProdModal(null));
     $('#prodList').addEventListener('click', (e) => {
       const ed = e.target.closest('[data-editar-prod]');
