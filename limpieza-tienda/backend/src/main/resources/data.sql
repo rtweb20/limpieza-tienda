@@ -451,7 +451,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-antitabaco'
+  SELECT id, 'Saphirus', 4200, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-antitabaco'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -459,7 +459,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-apple'
+  SELECT id, 'Saphirus', 4200, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-apple'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -467,7 +467,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 4, TRUE FROM productos WHERE slug = 'textil-saphirus-atlantis'
+  SELECT id, 'Saphirus', 4200, 4, TRUE FROM productos WHERE slug = 'textil-saphirus-atlantis'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -475,7 +475,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-bamboo'
+  SELECT id, 'Saphirus', 4200, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-bamboo'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -483,7 +483,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-bebe'
+  SELECT id, 'Saphirus', 4200, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-bebe'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -491,7 +491,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-bergamota-cedro'
+  SELECT id, 'Saphirus', 4200, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-bergamota-cedro'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -499,7 +499,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-blossom-rouge'
+  SELECT id, 'Saphirus', 4200, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-blossom-rouge'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -507,7 +507,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-breeze'
+  SELECT id, 'Saphirus', 4200, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-breeze'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -515,7 +515,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-bubblegum'
+  SELECT id, 'Saphirus', 4200, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-bubblegum'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -523,7 +523,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 0, TRUE FROM productos WHERE slug = 'textil-saphirus-capri-summer'
+  SELECT id, 'Saphirus', 4200, 0, TRUE FROM productos WHERE slug = 'textil-saphirus-capri-summer'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -531,7 +531,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-celebrity-shoe'
+  SELECT id, 'Saphirus', 4200, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-celebrity-shoe'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -539,7 +539,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-celestial-wings-olimpic'
+  SELECT id, 'Saphirus', 4200, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-celestial-wings-olimpic'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -547,7 +547,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-cereza-malbec'
+  SELECT id, 'Saphirus', 4200, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-cereza-malbec'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -555,7 +555,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-citrus'
+  SELECT id, 'Saphirus', 4200, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-citrus'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -563,7 +563,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 4, TRUE FROM productos WHERE slug = 'textil-saphirus-coco-vai'
+  SELECT id, 'Saphirus', 4200, 4, TRUE FROM productos WHERE slug = 'textil-saphirus-coco-vai'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -571,7 +571,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-cony'
+  SELECT id, 'Saphirus', 4200, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-cony'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -579,7 +579,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-cristobal'
+  SELECT id, 'Saphirus', 4200, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-cristobal'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -587,7 +587,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-daniel'
+  SELECT id, 'Saphirus', 4200, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-daniel'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -595,7 +595,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-due-fusion'
+  SELECT id, 'Saphirus', 4200, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-due-fusion'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -603,7 +603,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-duvet'
+  SELECT id, 'Saphirus', 4200, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-duvet'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -611,7 +611,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-erba'
+  SELECT id, 'Saphirus', 4200, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-erba'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -619,7 +619,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-etiqueta'
+  SELECT id, 'Saphirus', 4200, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-etiqueta'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -627,7 +627,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-flores-blancas'
+  SELECT id, 'Saphirus', 4200, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-flores-blancas'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -635,7 +635,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-flores-silvestres'
+  SELECT id, 'Saphirus', 4200, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-flores-silvestres'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -643,7 +643,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-fresias-y-bergamota'
+  SELECT id, 'Saphirus', 4200, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-fresias-y-bergamota'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -651,7 +651,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-frutilla'
+  SELECT id, 'Saphirus', 4200, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-frutilla'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -659,7 +659,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-frutos-patagonicos'
+  SELECT id, 'Saphirus', 4200, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-frutos-patagonicos'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -667,7 +667,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-glitter-bot'
+  SELECT id, 'Saphirus', 4200, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-glitter-bot'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -675,7 +675,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-golden-lady'
+  SELECT id, 'Saphirus', 4200, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-golden-lady'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -683,7 +683,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-golden-lord'
+  SELECT id, 'Saphirus', 4200, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-golden-lord'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -691,7 +691,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 4, TRUE FROM productos WHERE slug = 'textil-saphirus-gossip-king'
+  SELECT id, 'Saphirus', 4200, 4, TRUE FROM productos WHERE slug = 'textil-saphirus-gossip-king'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -699,7 +699,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-gossip-princess'
+  SELECT id, 'Saphirus', 4200, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-gossip-princess'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -707,7 +707,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-green'
+  SELECT id, 'Saphirus', 4200, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-green'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -715,7 +715,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-guarana'
+  SELECT id, 'Saphirus', 4200, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-guarana'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -723,7 +723,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-hawai'
+  SELECT id, 'Saphirus', 4200, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-hawai'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -731,7 +731,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-indiana'
+  SELECT id, 'Saphirus', 4200, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-indiana'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -739,7 +739,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-jade-horse-polo'
+  SELECT id, 'Saphirus', 4200, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-jade-horse-polo'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -747,7 +747,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-jazmin'
+  SELECT id, 'Saphirus', 4200, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-jazmin'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -755,7 +755,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-last-shot'
+  SELECT id, 'Saphirus', 4200, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-last-shot'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -763,7 +763,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-lilas'
+  SELECT id, 'Saphirus', 4200, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-lilas'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -771,7 +771,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-limon'
+  SELECT id, 'Saphirus', 4200, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-limon'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -779,7 +779,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-limon-dulce-y-vainilla'
+  SELECT id, 'Saphirus', 4200, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-limon-dulce-y-vainilla'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -787,7 +787,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-linah'
+  SELECT id, 'Saphirus', 4200, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-linah'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -795,7 +795,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-lavanda'
+  SELECT id, 'Saphirus', 4200, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-lavanda'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -803,7 +803,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-lola'
+  SELECT id, 'Saphirus', 4200, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-lola'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -811,7 +811,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-lucy'
+  SELECT id, 'Saphirus', 4200, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-lucy'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -819,7 +819,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-man'
+  SELECT id, 'Saphirus', 4200, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-man'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -827,7 +827,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-marino'
+  SELECT id, 'Saphirus', 4200, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-marino'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -835,7 +835,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-new-york'
+  SELECT id, 'Saphirus', 4200, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-new-york'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -843,7 +843,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-nocturnal-shadow'
+  SELECT id, 'Saphirus', 4200, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-nocturnal-shadow'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -851,7 +851,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-oriente'
+  SELECT id, 'Saphirus', 4200, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-oriente'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -859,7 +859,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-palace'
+  SELECT id, 'Saphirus', 4200, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-palace'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -867,7 +867,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-papaya'
+  SELECT id, 'Saphirus', 4200, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-papaya'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -875,7 +875,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-patio'
+  SELECT id, 'Saphirus', 4200, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-patio'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -883,7 +883,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-paula'
+  SELECT id, 'Saphirus', 4200, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-paula'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -891,7 +891,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 4, TRUE FROM productos WHERE slug = 'textil-saphirus-peonias-y-cedro'
+  SELECT id, 'Saphirus', 4200, 4, TRUE FROM productos WHERE slug = 'textil-saphirus-peonias-y-cedro'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -899,7 +899,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-pistacho-caramel'
+  SELECT id, 'Saphirus', 4200, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-pistacho-caramel'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -907,7 +907,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-pitanga'
+  SELECT id, 'Saphirus', 4200, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-pitanga'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -915,7 +915,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 4, TRUE FROM productos WHERE slug = 'textil-saphirus-petalos-de-orquideas'
+  SELECT id, 'Saphirus', 4200, 4, TRUE FROM productos WHERE slug = 'textil-saphirus-petalos-de-orquideas'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -923,7 +923,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-red-vanilla'
+  SELECT id, 'Saphirus', 4200, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-red-vanilla'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -931,7 +931,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-rocio'
+  SELECT id, 'Saphirus', 4200, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-rocio'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -939,7 +939,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-rosas'
+  SELECT id, 'Saphirus', 4200, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-rosas'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -947,7 +947,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-sailor-man-male'
+  SELECT id, 'Saphirus', 4200, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-sailor-man-male'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -955,7 +955,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 0, TRUE FROM productos WHERE slug = 'textil-saphirus-salvaje'
+  SELECT id, 'Saphirus', 4200, 0, TRUE FROM productos WHERE slug = 'textil-saphirus-salvaje'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -963,7 +963,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-snake-roses'
+  SELECT id, 'Saphirus', 4200, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-snake-roses'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -971,7 +971,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-sunset-fire'
+  SELECT id, 'Saphirus', 4200, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-sunset-fire'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -979,7 +979,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-sandalo-y-violetas'
+  SELECT id, 'Saphirus', 4200, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-sandalo-y-violetas'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -987,7 +987,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-teakwood'
+  SELECT id, 'Saphirus', 4200, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-teakwood'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -995,7 +995,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-tokyo'
+  SELECT id, 'Saphirus', 4200, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-tokyo'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -1003,7 +1003,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-tropical'
+  SELECT id, 'Saphirus', 4200, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-tropical'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -1011,7 +1011,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-uva'
+  SELECT id, 'Saphirus', 4200, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-uva'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -1019,7 +1019,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-vainilla'
+  SELECT id, 'Saphirus', 4200, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-vainilla'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -1027,7 +1027,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-velocity'
+  SELECT id, 'Saphirus', 4200, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-velocity'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -1035,7 +1035,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-verbena'
+  SELECT id, 'Saphirus', 4200, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-verbena'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -1043,7 +1043,7 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-violetas'
+  SELECT id, 'Saphirus', 4200, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-violetas'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
 
 INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
@@ -1051,6 +1051,26 @@ INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
   ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
-  SELECT id, 'Saphirus', 6100, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-suit-yourself'
+  SELECT id, 'Saphirus', 4200, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-suit-yourself'
   ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+-- Arreglo puntual: estos 6 productos se editaron desde el panel después de la
+-- carga inicial (para probar el precio $4.200), lo que les cambió el slug
+-- automáticamente al guardar (el panel siempre regenera el slug a partir del
+-- nombre al editar). Se restaura el slug con el prefijo "textil-saphirus-"
+-- para que quede igual que el resto del catálogo Saphirus, y se deja el
+-- precio ya corregido en $4.200 (por si se vuelve a correr este script).
+UPDATE productos SET slug = 'textil-saphirus-antitabaco' WHERE slug = 'antitabaco';
+UPDATE productos SET slug = 'textil-saphirus-apple' WHERE slug = 'apple';
+UPDATE productos SET slug = 'textil-saphirus-atlantis' WHERE slug = 'atlantis';
+UPDATE productos SET slug = 'textil-saphirus-bamboo' WHERE slug = 'bamboo';
+UPDATE productos SET slug = 'textil-saphirus-bebe' WHERE slug = 'bebe';
+UPDATE productos SET slug = 'textil-saphirus-bergamota-cedro' WHERE slug = 'bergamota-cedro';
+
+UPDATE variantes v SET precio = 4200
+  FROM productos p
+  WHERE v.producto_id = p.id
+    AND p.categoria_id = (SELECT id FROM categorias WHERE slug = 'textiles')
+    AND v.presentacion = 'Saphirus'
+    AND v.precio <> 4200;
 COMMIT;
