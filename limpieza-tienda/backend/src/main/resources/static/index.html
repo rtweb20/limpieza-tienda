@@ -75,7 +75,7 @@
   <!-- ==================== AROMAS POR MARCA (catálogo) =================== -->
   <section class="aromas-publico" aria-label="Aromas disponibles por marca">
     <button type="button" id="aromasPublicoToggle" class="aromas-publico-toggle">
-      <span class="rayitas">☰</span> Ver aromas por marca
+      Ver aromas por marca
     </button>
 
     <div id="aromasPublicoPanel" class="aromas-publico-panel">
@@ -156,6 +156,9 @@
         <h4>Resumen del pedido</h4>
         <div id="resumenItems"></div>
         <div class="line grand"><span>Total</span><span id="resumenTotal">$ 0</span></div>
+        <p id="resumenNotaPrecios" class="resumen-nota-precios" style="display:none">
+          💡 Este total ya refleja el precio según el medio de pago elegido abajo.
+        </p>
       </div>
 
       <form id="checkoutForm" novalidate>

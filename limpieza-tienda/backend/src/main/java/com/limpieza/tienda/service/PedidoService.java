@@ -83,7 +83,7 @@ public class PedidoService {
                                 + "» (" + variante.getPresentacion() + ").");
             }
 
-            BigDecimal precioUnitario = variante.precioVenta();
+            BigDecimal precioUnitario = variante.precioVenta(medioPago);
             BigDecimal subtotal = precioUnitario.multiply(BigDecimal.valueOf(itemReq.cantidad()));
 
             PedidoItem item = new PedidoItem();

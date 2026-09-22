@@ -174,6 +174,37 @@
       </button>`).join('');
   }
 
+  /** Texto de una opción del selector de presentación: agrega el precio de
+   * transferencia solo si es distinto del de efectivo. */
+  function opcionPrecioTexto(v) {
+    const transf = v.precioVentaTransferencia;
+    if (transf != null && transf !== v.precioVenta) {
+      return `${v.presentacion} — ${money(v.precioVenta)} efvo. / ${money(transf)} transf.`;
+    }
+    return `${v.presentacion} — ${money(v.precioVenta)}`;
+  }
+
+  function opcionAtributos(v) {
+    return `data-precio="${v.precioVenta}" data-oferta="${v.precioOferta || ''}" ` +
+      `data-normal="${v.precio}" data-transferencia="${v.precioVentaTransferencia != null ? v.precioVentaTransferencia : ''}"`;
+  }
+
+  /** Bloque de precio(s): si la variante tiene precio de transferencia
+   * distinto al de efectivo, muestra los dos; si no, un único precio (como
+   * siempre). */
+  function priceRowHTML(precioEfectivo, precioTransferencia, precioNormal, enOferta) {
+    const oldPriceHtml = enOferta ? `<span class="price old">${money(precioNormal)}</span>` : '';
+    const dual = precioTransferencia != null && precioTransferencia !== precioEfectivo;
+    if (dual) {
+      return `${oldPriceHtml}
+        <div class="price-dual">
+          <div class="price-dual-item"><span class="price-dual-tag">💵 Efectivo</span><span class="price">${money(precioEfectivo)}</span></div>
+          <div class="price-dual-item"><span class="price-dual-tag">🏦 Transferencia</span><span class="price">${money(precioTransferencia)}</span></div>
+        </div>`;
+    }
+    return `${oldPriceHtml}<span class="price ${enOferta ? 'oferta' : ''}" data-role="precio">${money(precioEfectivo)}</span>`;
+  }
+
   function productoCard(p) {
     const variantes = p.variantes || [];
     const primerVariante = variantes[0];
@@ -187,9 +218,7 @@
         <div class="select-wrap">
           <select class="var-select" data-id="${p.id}" aria-label="Presentación de ${p.nombre}">
             ${variantes.map((v) =>
-              `<option value="${v.id}" data-precio="${v.precioVenta}" data-oferta="${v.precioOferta || ''}">
-                ${v.presentacion} — ${money(v.precioVenta)}
-              </option>`).join('')}
+              `<option value="${v.id}" ${opcionAtributos(v)}>${opcionPrecioTexto(v)}</option>`).join('')}
           </select>
         </div>`;
     } else if (variantes.length === 1) {
@@ -209,9 +238,9 @@
           <span class="cat">${p.categoriaIcono || ''} ${p.categoriaNombre || ''}</span>
           <h3>${p.nombre}</h3>
           ${p.descripcion ? `<p class="desc">${p.descripcion}</p>` : ''}
-          <div class="price-row">
-            ${enOferta ? `<span class="price old">${money(primerVariante ? primerVariante.precio : precio)}</span>` : ''}
-            <span class="price ${enOferta ? 'oferta' : ''}" data-role="precio">${money(precio)}</span>
+          <div class="price-row" data-role="price-row">
+            ${priceRowHTML(precio, primerVariante ? primerVariante.precioVentaTransferencia : null,
+              primerVariante ? primerVariante.precio : precio, enOferta)}
           </div>
           ${selector}
           <button class="add-btn" data-id="${p.id}" ${variantes.length ? '' : 'disabled'}>
@@ -234,9 +263,7 @@
         <div class="select-wrap">
           <select id="detailVarSelect" class="var-select" aria-label="Presentación de ${p.nombre}">
             ${variantes.map((v) =>
-              `<option value="${v.id}" data-precio="${v.precioVenta}" data-oferta="${v.precioOferta || ''}">
-                ${v.presentacion} — ${money(v.precioVenta)}
-              </option>`).join('')}
+              `<option value="${v.id}" ${opcionAtributos(v)}>${opcionPrecioTexto(v)}</option>`).join('')}
           </select>
         </div>`;
     } else if (variantes.length === 1) {
@@ -287,9 +314,9 @@
 
         <div class="detail-info">
           <h1 class="detail-nombre">${p.nombre}</h1>
-          <div class="price-row">
-            ${enOferta ? `<span class="price old">${money(primerVariante ? primerVariante.precio : precio)}</span>` : ''}
-            <span class="price ${enOferta ? 'oferta' : ''}" data-role="detail-precio">${money(precio)}</span>
+          <div class="price-row" data-role="detail-price-row">
+            ${priceRowHTML(precio, primerVariante ? primerVariante.precioVentaTransferencia : null,
+              primerVariante ? primerVariante.precio : precio, enOferta)}
           </div>
           ${p.descripcion ? `<p class="detail-desc">${p.descripcion}</p>` : ''}
           ${caractHTML}
@@ -382,9 +409,7 @@
 
     toggle.addEventListener('click', async () => {
       const abierto = panel.classList.toggle('abierto');
-      toggle.innerHTML = abierto
-        ? '<span class="rayitas">✕</span> Ocultar aromas'
-        : '<span class="rayitas">☰</span> Ver aromas por marca';
+      toggle.innerHTML = abierto ? 'Ocultar aromas' : 'Ver aromas por marca';
       if (abierto && !aromasPublicoCargados[aromasPublicoMarca]) {
         await cargarAromasPublico(aromasPublicoMarca);
       }
@@ -455,8 +480,15 @@
     localStorage.setItem('carrito-limpieza', JSON.stringify(state.carrito));
   }
 
-  function totalCarrito() {
-    return state.carrito.reduce((acc, it) => acc + it.precio * it.cantidad, 0);
+  /** Total del carrito. Sin medioPago (o "EFECTIVO") usa el precio de
+   * siempre; con TRANSFERENCIA/MERCADO_PAGO usa el precio de transferencia
+   * de cada ítem (si tiene uno distinto cargado). */
+  function totalCarrito(medioPago) {
+    const usarTransferencia = medioPago && medioPago !== 'EFECTIVO';
+    return state.carrito.reduce((acc, it) => {
+      const precio = usarTransferencia && it.precioTransferencia != null ? it.precioTransferencia : it.precio;
+      return acc + precio * it.cantidad;
+    }, 0);
   }
 
   function totalItems() {
@@ -484,6 +516,7 @@
         nombre: p.nombre,
         variante: v.presentacion,
         precio: v.precioVenta,
+        precioTransferencia: v.precioVentaTransferencia != null ? v.precioVentaTransferencia : v.precioVenta,
         precioNormal: v.precio,
         imagen: p.imagenUrl,
         stock: v.stock,
@@ -568,11 +601,21 @@
   }
 
   function renderResumenCheckout() {
-    const lines = state.carrito.map((it) =>
-      `<div class="line"><span>${it.cantidad} × ${it.nombre} (${it.variante})</span>
-       <span>${money(it.precio * it.cantidad)}</span></div>`).join('');
+    const medioPago = ($$('input[name="medioPago"]:checked')[0] || {}).value || 'EFECTIVO';
+    const usarTransferencia = medioPago !== 'EFECTIVO';
+
+    const lines = state.carrito.map((it) => {
+      const precio = usarTransferencia && it.precioTransferencia != null ? it.precioTransferencia : it.precio;
+      return `<div class="line"><span>${it.cantidad} × ${it.nombre} (${it.variante})</span>
+       <span>${money(precio * it.cantidad)}</span></div>`;
+    }).join('');
     $('#resumenItems').innerHTML = lines;
-    $('#resumenTotal').textContent = money(totalCarrito());
+    $('#resumenTotal').textContent = money(totalCarrito(medioPago));
+
+    const hayPreciosDistintos = state.carrito.some((it) =>
+      it.precioTransferencia != null && it.precioTransferencia !== it.precio);
+    const nota = $('#resumenNotaPrecios');
+    if (nota) nota.style.display = hayPreciosDistintos ? 'block' : 'none';
   }
 
   function toggleDireccion() {
@@ -693,9 +736,13 @@
       const select = e.target.closest('.var-select');
       if (!select) return;
       const card = select.closest('.card');
-      const precioEl = card.querySelector('[data-role="precio"]');
       const opt = select.selectedOptions[0];
-      precioEl.textContent = money(Number(opt.dataset.precio));
+      const precio = Number(opt.dataset.precio);
+      const normal = Number(opt.dataset.normal);
+      const transferencia = opt.dataset.transferencia !== '' ? Number(opt.dataset.transferencia) : null;
+      const enOferta = opt.dataset.oferta !== '' && Number(opt.dataset.oferta) < normal;
+      card.querySelector('[data-role="price-row"]').innerHTML =
+        priceRowHTML(precio, transferencia, normal, enOferta);
     });
 
     $('#productGrid').addEventListener('click', (e) => {
@@ -768,6 +815,7 @@
     $('#checkoutOverlay').addEventListener('click', cerrarCheckout);
     $('#checkoutForm').addEventListener('submit', enviarPedido);
     $$('input[name="modalidad"]').forEach((r) => r.addEventListener('change', toggleDireccion));
+    $$('input[name="medioPago"]').forEach((r) => r.addEventListener('change', renderResumenCheckout));
 
     $('#closeProduct').addEventListener('click', cerrarDetalle);
     $('#productOverlay').addEventListener('click', cerrarDetalle);
@@ -776,8 +824,12 @@
       const select = e.target.closest('#detailVarSelect');
       if (!select) return;
       const opt = select.selectedOptions[0];
-      $('#productDetailBody').querySelector('[data-role="detail-precio"]').textContent =
-        money(Number(opt.dataset.precio));
+      const precio = Number(opt.dataset.precio);
+      const normal = Number(opt.dataset.normal);
+      const transferencia = opt.dataset.transferencia !== '' ? Number(opt.dataset.transferencia) : null;
+      const enOferta = opt.dataset.oferta !== '' && Number(opt.dataset.oferta) < normal;
+      $('#productDetailBody').querySelector('[data-role="detail-price-row"]').innerHTML =
+        priceRowHTML(precio, transferencia, normal, enOferta);
     });
 
     $('#productDetailBody').addEventListener('click', (e) => {

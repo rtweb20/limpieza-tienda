@@ -794,7 +794,7 @@
 
     const variantes = (prod && prod.variantes && prod.variantes.length)
       ? prod.variantes
-      : [{ presentacion: 'Unidad', precio: '', precioOferta: '', stock: 20 }];
+      : [{ presentacion: 'Unidad', precio: '', precioOferta: '', precioTransferencia: '', stock: 20 }];
     
     $('#variantesBox').innerHTML = variantes.map((v, i) => filaVariante(v, i)).join('');
 
@@ -808,6 +808,7 @@
         <input type="text" class="v-pres" placeholder="Ej: 750 ml, 2 L, Pack x3" value="${v.presentacion || ''}" required>
         <input type="number" class="v-precio" placeholder="Precio ($)" step="0.01" min="0" value="${v.precio ?? ''}" required>
         <input type="number" class="v-oferta" placeholder="Oferta (opc.)" step="0.01" min="0" value="${v.precioOferta ?? ''}">
+        <input type="number" class="v-transferencia" placeholder="Transferencia (opc.)" step="0.01" min="0" value="${v.precioTransferencia ?? ''}">
         <input type="number" class="v-stock" placeholder="Stock" min="0" value="${v.stock ?? 20}">
         <button type="button" class="rm" data-rm="${i}" title="Eliminar variante">✕</button>
       </div>`;
@@ -825,6 +826,7 @@
       presentacion: row.querySelector('.v-pres').value.trim(),
       precio: Number(row.querySelector('.v-precio').value),
       precioOferta: row.querySelector('.v-oferta').value ? Number(row.querySelector('.v-oferta').value) : null,
+      precioTransferencia: row.querySelector('.v-transferencia').value ? Number(row.querySelector('.v-transferencia').value) : null,
       stock: Number(row.querySelector('.v-stock').value || 0),
       activa: true,
       orden: Number(row.dataset.vi) + 1,
@@ -1108,18 +1110,34 @@
     cacheProductos.forEach((p) => {
       (p.variantes || []).forEach((v) => {
         if (v.activa === false) return;
+        const precioVenta = Number(v.precioVenta != null ? v.precioVenta : v.precio) || 0;
+        const precioTransferencia = v.precioVentaTransferencia != null
+          ? Number(v.precioVentaTransferencia)
+          : precioVenta;
         filas.push({
           productoId: p.id,
           productoNombre: p.nombre,
           varianteId: v.id,
           varianteNombre: v.presentacion || 'Unidad',
-          precioVenta: Number(v.precioVenta != null ? v.precioVenta : v.precio) || 0,
+          precioVenta,
+          precioTransferencia,
           stock: Number(v.stock || 0),
           codigoBarras: p.codigoBarras || '',
         });
       });
     });
     return filas;
+  }
+
+  /** Medio de pago tildado en la caja ("EFECTIVO" por defecto). */
+  function cajaMedioPagoActual() {
+    const input = $('input[name="cajaMedioPago"]:checked');
+    return input ? input.value : 'EFECTIVO';
+  }
+
+  /** Precio de un ítem de caja según el medio de pago elegido. */
+  function cajaPrecioSegunMedio(item) {
+    return cajaMedioPagoActual() === 'EFECTIVO' ? item.precioVenta : item.precioTransferencia;
   }
 
   function buscarCajaTexto(q) {
@@ -1139,11 +1157,16 @@
       return;
     }
     cont.style.display = 'block';
-    cont.innerHTML = filas.slice(0, 8).map((f) => `
+    cont.innerHTML = filas.slice(0, 8).map((f) => {
+      const precios = f.precioTransferencia !== f.precioVenta
+        ? `💵 ${money(f.precioVenta)} · 🏦 ${money(f.precioTransferencia)}`
+        : money(f.precioVenta);
+      return `
       <button type="button" class="caja-resultado-item" data-add-venta="${f.varianteId}">
         <span class="caja-resultado-nombre">${f.productoNombre}${f.varianteNombre ? ` — ${f.varianteNombre}` : ''}</span>
-        <span class="caja-resultado-meta">${money(f.precioVenta)} · Stock: ${f.stock}</span>
-      </button>`).join('');
+        <span class="caja-resultado-meta">${precios} · Stock: ${f.stock}</span>
+      </button>`;
+    }).join('');
   }
 
   function agregarAlCarrito(fila, cantidad) {
@@ -1165,7 +1188,8 @@
         varianteId: fila.varianteId,
         productoNombre: fila.productoNombre,
         varianteNombre: fila.varianteNombre,
-        precioUnitario: fila.precioVenta,
+        precioVenta: fila.precioVenta,
+        precioTransferencia: fila.precioTransferencia,
         cantidad: Math.min(cantidad, fila.stock),
         stockDisponible: fila.stock,
       });
@@ -1188,7 +1212,9 @@
     }
     empty.style.display = 'none';
 
-    tbody.innerHTML = cajaCarrito.map((it, i) => `
+    tbody.innerHTML = cajaCarrito.map((it, i) => {
+      const precioUnitario = cajaPrecioSegunMedio(it);
+      return `
       <tr>
         <td>
           <span class="prod-name">${it.productoNombre}</span>
@@ -1197,14 +1223,15 @@
         <td style="text-align:center;">
           <input type="number" class="caja-qty-input" min="1" max="${it.stockDisponible}" value="${it.cantidad}" data-i="${i}" aria-label="Cantidad">
         </td>
-        <td>${money(it.precioUnitario)}</td>
-        <td><strong>${money(it.precioUnitario * it.cantidad)}</strong></td>
+        <td>${money(precioUnitario)}</td>
+        <td><strong>${money(precioUnitario * it.cantidad)}</strong></td>
         <td>
           <button class="btn-action delete" data-quitar-item="${i}" title="Quitar del carrito">🗑️</button>
         </td>
-      </tr>`).join('');
+      </tr>`;
+    }).join('');
 
-    const total = cajaCarrito.reduce((acc, it) => acc + it.precioUnitario * it.cantidad, 0);
+    const total = cajaCarrito.reduce((acc, it) => acc + cajaPrecioSegunMedio(it) * it.cantidad, 0);
     $('#cajaCarritoTotal').textContent = money(total);
     cobrarBtn.disabled = false;
   }
@@ -1550,7 +1577,7 @@
     $('#agregarVariante').addEventListener('click', () => {
       const box = $('#variantesBox');
       const n = box.querySelectorAll('.variant-row').length;
-      box.insertAdjacentHTML('beforeend', filaVariante({ presentacion: '', precio: '', precioOferta: '', stock: 20 }, n));
+      box.insertAdjacentHTML('beforeend', filaVariante({ presentacion: '', precio: '', precioOferta: '', precioTransferencia: '', stock: 20 }, n));
     });
 
     $('#bulkGenerar').addEventListener('click', () => {
@@ -1570,6 +1597,7 @@
         return;
       }
       const oferta = $('#bulkOferta').value;
+      const transferencia = $('#bulkTransferencia').value;
       const stock = $('#bulkStock').value || 20;
 
       const box = $('#variantesBox');
@@ -1596,6 +1624,7 @@
           presentacion: nombre,
           precio,
           precioOferta: oferta || '',
+          precioTransferencia: transferencia || '',
           stock,
         }, n));
         n++;
@@ -1735,6 +1764,7 @@
     });
 
     $('#cajaCobrarBtn').addEventListener('click', cobrarVenta);
+    $$('input[name="cajaMedioPago"]').forEach((r) => r.addEventListener('change', renderCajaCarrito));
 
     $('#cajaVentasHoyList').addEventListener('click', (e) => {
       const btn = e.target.closest('.caja-venta-anular-btn');

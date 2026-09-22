@@ -15,6 +15,7 @@ public record VarianteUpsertRequest(
         @NotBlank(message = "Falta la presentación") @Size(max = 120) String presentacion,
         @NotNull(message = "Falta el precio") @DecimalMin(value = "0.0", message = "Precio inválido") BigDecimal precio,
         @DecimalMin(value = "0.0", message = "Precio de oferta inválido") BigDecimal precioOferta,
+        @DecimalMin(value = "0.0", message = "Precio de transferencia inválido") BigDecimal precioTransferencia,
         @NotNull(message = "Falta el stock") Integer stock,
         Boolean activa,
         Integer orden) {

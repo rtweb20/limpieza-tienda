@@ -184,6 +184,7 @@ public class AdminService {
             v.setPresentacion(vr.presentacion().trim());
             v.setPrecio(vr.precio());
             v.setPrecioOferta(vr.precioOferta());
+            v.setPrecioTransferencia(vr.precioTransferencia());
             v.setStock(vr.stock() != null ? vr.stock() : 0);
             v.setActiva(vr.activa() != null ? vr.activa() : true);
             v.setOrden(vr.orden() != null ? vr.orden() : orden++);

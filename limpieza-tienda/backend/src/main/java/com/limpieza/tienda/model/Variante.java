@@ -36,6 +36,13 @@ public class Variante {
     @Column(name = "precio_oferta", precision = 12, scale = 2)
     private BigDecimal precioOferta;
 
+    /**
+     * Precio para transferencia/Mercado Pago, si es distinto del de efectivo
+     * ({@link #precio}). Si es null, se cobra lo mismo que en efectivo.
+     */
+    @Column(name = "precio_transferencia", precision = 12, scale = 2)
+    private BigDecimal precioTransferencia;
+
     @Column(nullable = false)
     private Integer stock = 0;
 
@@ -88,6 +95,14 @@ public class Variante {
         this.precioOferta = precioOferta;
     }
 
+    public BigDecimal getPrecioTransferencia() {
+        return precioTransferencia;
+    }
+
+    public void setPrecioTransferencia(BigDecimal precioTransferencia) {
+        this.precioTransferencia = precioTransferencia;
+    }
+
     public Integer getStock() {
         return stock;
     }
@@ -121,5 +136,21 @@ public class Variante {
             return precioOferta;
         }
         return precio;
+    }
+
+    /**
+     * Precio efectivo de venta según el medio de pago: en efectivo es
+     * {@link #precioVenta()} de siempre; en transferencia o Mercado Pago usa
+     * {@link #precioTransferencia} si el dueño cargó uno, y si no cobra lo
+     * mismo que en efectivo.
+     */
+    public BigDecimal precioVenta(MedioPago medioPago) {
+        if (medioPago == MedioPago.EFECTIVO) {
+            return precioVenta();
+        }
+        if (precioTransferencia != null && precioTransferencia.compareTo(BigDecimal.ZERO) >= 0) {
+            return precioTransferencia;
+        }
+        return precioVenta();
     }
 }

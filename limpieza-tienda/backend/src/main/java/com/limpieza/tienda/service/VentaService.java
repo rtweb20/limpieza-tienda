@@ -86,7 +86,7 @@ public class VentaService {
 
         for (ItemValidado validado : validados) {
             Variante variante = validado.variante();
-            BigDecimal precioUnitario = variante.precioVenta();
+            BigDecimal precioUnitario = variante.precioVenta(medioPago);
             BigDecimal subtotal = precioUnitario.multiply(BigDecimal.valueOf(validado.cantidad()));
 
             VentaItem item = new VentaItem();
