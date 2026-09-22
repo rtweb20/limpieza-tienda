@@ -1291,11 +1291,10 @@ footer .admin-link:hover { border-color: rgba(255, 255, 255, .55); background: r
   opacity: 1;
 }
 
-/* La foto del local es vertical (sacada con celular, 2252x4000), no
-   panorámica. El recuadro usa la misma proporción exacta de la foto para
-   que entre completa, sin recortar nada y sin espacios vacíos alrededor. */
+/* El recuadro de la foto del local toma la proporción real de la foto
+   subida (la ajusta app.js al cargarla): puede ser vertical u horizontal,
+   siempre entra completa sin recortar nada ni dejar espacios vacíos. */
 #heroFoto {
-  aspect-ratio: 2252 / 4000;
   align-self: start;
 }
 #heroVideo {

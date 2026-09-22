@@ -94,6 +94,20 @@
       `<img class="hero-slide${i === 0 ? ' activo' : ''}" src="${f.url}" alt="${f.titulo || 'Foto del local'}" loading="${i === 0 ? 'eager' : 'lazy'}">`
     ).join('');
 
+    // El recuadro toma la proporción real de la primera foto (vertical,
+    // horizontal, lo que sea) para que entre completa sin recortar nada,
+    // sin depender de un aspect-ratio fijo en el CSS.
+    const primera = el.querySelector('.hero-slide');
+    if (primera) {
+      const ajustarProporcion = () => {
+        if (primera.naturalWidth && primera.naturalHeight) {
+          el.style.aspectRatio = `${primera.naturalWidth} / ${primera.naturalHeight}`;
+        }
+      };
+      if (primera.complete) ajustarProporcion();
+      else primera.addEventListener('load', ajustarProporcion, { once: true });
+    }
+
     if (fotos.length < 2) return;
     const slides = Array.from(el.querySelectorAll('.hero-slide'));
     let i = 0;
