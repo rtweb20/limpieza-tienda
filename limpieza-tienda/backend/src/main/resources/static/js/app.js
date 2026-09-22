@@ -96,12 +96,16 @@
 
     // El recuadro toma la proporción real de la primera foto (vertical,
     // horizontal, lo que sea) para que entre completa sin recortar nada,
-    // sin depender de un aspect-ratio fijo en el CSS.
+    // sin depender de un aspect-ratio fijo en el CSS. El video de al lado
+    // copia esa misma proporción para quedar del mismo tamaño que la foto.
     const primera = el.querySelector('.hero-slide');
     if (primera) {
       const ajustarProporcion = () => {
         if (primera.naturalWidth && primera.naturalHeight) {
-          el.style.aspectRatio = `${primera.naturalWidth} / ${primera.naturalHeight}`;
+          const ratio = `${primera.naturalWidth} / ${primera.naturalHeight}`;
+          el.style.aspectRatio = ratio;
+          const video = $('#heroVideo');
+          if (video) video.style.aspectRatio = ratio;
         }
       };
       if (primera.complete) ajustarProporcion();
