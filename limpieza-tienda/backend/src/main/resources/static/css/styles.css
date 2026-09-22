@@ -1291,12 +1291,11 @@ footer .admin-link:hover { border-color: rgba(255, 255, 255, .55); background: r
   opacity: 1;
 }
 
-/* La foto del local es vertical (sacada con celular), no panorámica: un
-   recuadro 16:9 recortaba casi todo sin importar la posición. Se le da un
-   recuadro más alto (formato retrato) para que entre el cartel, el local
-   y la puerta, recortando como mucho la vereda de abajo. */
+/* La foto del local es vertical (sacada con celular, 2252x4000), no
+   panorámica. El recuadro usa la misma proporción exacta de la foto para
+   que entre completa, sin recortar nada y sin espacios vacíos alrededor. */
 #heroFoto {
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 2252 / 4000;
   align-self: start;
 }
 #heroVideo {
@@ -1305,7 +1304,6 @@ footer .admin-link:hover { border-color: rgba(255, 255, 255, .55); background: r
 #heroFoto img,
 #heroFoto .hero-slide {
   object-fit: cover;
-  object-position: top;
 }
 
 @media (max-width: 560px) {
