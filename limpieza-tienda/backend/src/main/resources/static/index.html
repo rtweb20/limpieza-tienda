@@ -7,6 +7,16 @@
   <title>Aroma a Limpio — Artículos de limpieza</title>
   <link rel="stylesheet" href="css/styles.css?v=20260914b">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🫧</text></svg>">
+
+  <!-- Open Graph / vista previa al compartir el link (WhatsApp, Instagram, etc.) -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="es_AR">
+  <meta property="og:site_name" content="Aroma a Limpio">
+  <meta property="og:title" content="Aroma a Limpio — Artículos de limpieza">
+  <meta property="og:description" content="Artículos de limpieza, cuidado personal y aromas. Armá tu pedido y envialo por WhatsApp.">
+  <meta property="og:url" content="https://limpieza-tienda.onrender.com/">
+  <meta property="og:image" content="https://placehold.co/1200x630/1d9ed8/ffffff/png?text=Aroma+a+Limpio&font=poppins">
+  <meta name="twitter:card" content="summary_large_image">
 </head>
 <body>
 
@@ -95,7 +105,11 @@
   </section>
 
   <!-- =========================== CATEGORÍAS ============================ -->
-  <nav id="cats" class="cats" aria-label="Categorías"></nav>
+  <nav id="cats" class="cats" aria-label="Categorías">
+    <button class="cat-chip skeleton-chip" disabled>Todos</button>
+    <button class="cat-chip skeleton-chip" disabled>Categoría</button>
+    <button class="cat-chip skeleton-chip" disabled>Categoría</button>
+  </nav>
 
   <!-- ============================ CATÁLOGO ============================= -->
   <main>
@@ -106,7 +120,13 @@
       </div>
       <span class="catalog-note">Elegí tu presentación y agregala a tu pedido</span>
     </div>
-    <div id="productGrid" class="grid"></div>
+    <div id="productGrid" class="grid">
+      <!-- Placeholder mientras carga el catálogo (se reemplaza solo al llegar los datos) -->
+      <article class="card skeleton-card"><div class="img-wrap skeleton-block"></div><div class="body"><div class="skeleton-line skeleton-block w60" style="margin-top:14px"></div><div class="skeleton-line skeleton-block w85" style="margin-top:8px"></div><div class="skeleton-line tall skeleton-block"></div></div></article>
+      <article class="card skeleton-card"><div class="img-wrap skeleton-block"></div><div class="body"><div class="skeleton-line skeleton-block w60" style="margin-top:14px"></div><div class="skeleton-line skeleton-block w85" style="margin-top:8px"></div><div class="skeleton-line tall skeleton-block"></div></div></article>
+      <article class="card skeleton-card"><div class="img-wrap skeleton-block"></div><div class="body"><div class="skeleton-line skeleton-block w60" style="margin-top:14px"></div><div class="skeleton-line skeleton-block w85" style="margin-top:8px"></div><div class="skeleton-line tall skeleton-block"></div></div></article>
+      <article class="card skeleton-card"><div class="img-wrap skeleton-block"></div><div class="body"><div class="skeleton-line skeleton-block w60" style="margin-top:14px"></div><div class="skeleton-line skeleton-block w85" style="margin-top:8px"></div><div class="skeleton-line tall skeleton-block"></div></div></article>
+    </div>
   </main>
 
   <!-- ============================== FOOTER ============================= -->
