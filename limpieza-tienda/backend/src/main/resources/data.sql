@@ -1073,4 +1073,925 @@ UPDATE variantes v SET precio = 4200
     AND p.categoria_id = (SELECT id FROM categorias WHERE slug = 'textiles')
     AND v.presentacion = 'Saphirus'
     AND v.precio <> 4200;
+
+-- ============================================================================
+-- CARGA: Aerosoles y Difusores de Varilla Saphirus (variante 'Saphirus')
+-- Generado a partir de la planilla de stock del dueño + fotos de Drive.
+-- Idempotente: se puede correr las veces que haga falta sin duplicar nada.
+-- Nombres cargados sin tildes, a pedido del dueño.
+-- ============================================================================
+
+INSERT INTO categorias (nombre, slug, icono, orden, activa, destacada) VALUES
+  ('Aerosoles', 'aerosoles', '🧴', 5, TRUE, FALSE),
+  ('Difusores', 'difusores', '🪔', 6, TRUE, FALSE)
+  ON CONFLICT (slug) DO NOTHING;
+
+-- ---------------- AEROSOLES ----------------
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Angel', 'aerosol-saphirus-angel', 'img/aerosoles/angel.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'aerosol-saphirus-angel'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Antitabaco', 'aerosol-saphirus-antitabaco', 'img/aerosoles/antitabaco.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'aerosol-saphirus-antitabaco'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Apple', 'aerosol-saphirus-apple', 'img/aerosoles/apple.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'aerosol-saphirus-apple'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Bamboo', 'aerosol-saphirus-bamboo', 'img/aerosoles/bamboo.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'aerosol-saphirus-bamboo'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Bebe', 'aerosol-saphirus-bebe', 'img/aerosoles/bebe.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'aerosol-saphirus-bebe'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Bouquet Floral', 'aerosol-saphirus-bouquet-floral', 'img/aerosoles/bouquet-floral.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'aerosol-saphirus-bouquet-floral'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Breeze', 'aerosol-saphirus-breeze', 'img/aerosoles/breeze.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'aerosol-saphirus-breeze'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Cafe au Chocolat', 'aerosol-saphirus-cafe-au-chocolat', 'img/aerosoles/cafe-au-chocolat.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'aerosol-saphirus-cafe-au-chocolat'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Capri Summer', 'aerosol-saphirus-capri-summer', 'img/aerosoles/capri-summer.png', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'aerosol-saphirus-capri-summer'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Ciruela', 'aerosol-saphirus-ciruela', 'img/aerosoles/ciruela.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'aerosol-saphirus-ciruela'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Citrus', 'aerosol-saphirus-citrus', 'img/aerosoles/citrus.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'aerosol-saphirus-citrus'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Clean Cotton', 'aerosol-saphirus-clean-cotton', 'img/aerosoles/clean-cotton.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'aerosol-saphirus-clean-cotton'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Coco Maracuya', 'aerosol-saphirus-coco-maracuya', 'img/aerosoles/coco-maracuya.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'aerosol-saphirus-coco-maracuya'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Coco Vai', 'aerosol-saphirus-coco-vai', 'img/aerosoles/coco-vai.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'aerosol-saphirus-coco-vai'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Cony', 'aerosol-saphirus-cony', 'img/aerosoles/cony.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'aerosol-saphirus-cony'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Cristobal', 'aerosol-saphirus-cristobal', 'img/aerosoles/cristobal.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'aerosol-saphirus-cristobal'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Damasco', 'aerosol-saphirus-damasco', 'img/aerosoles/damasco.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'aerosol-saphirus-damasco'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Daniel', 'aerosol-saphirus-daniel', 'img/aerosoles/daniel.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 4, TRUE FROM productos WHERE slug = 'aerosol-saphirus-daniel'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Duvet', 'aerosol-saphirus-duvet', 'img/aerosoles/duvet.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 3, TRUE FROM productos WHERE slug = 'aerosol-saphirus-duvet'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Etiqueta', 'aerosol-saphirus-etiqueta', 'img/aerosoles/etiqueta.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 5, TRUE FROM productos WHERE slug = 'aerosol-saphirus-etiqueta'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Fantasia', 'aerosol-saphirus-fantasia', 'img/aerosoles/fantasia.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'aerosol-saphirus-fantasia'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Flowers', 'aerosol-saphirus-flowers', 'img/textiles/sin-foto.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'aerosol-saphirus-flowers'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Flores Blancas', 'aerosol-saphirus-flores-blancas', 'img/aerosoles/flores-blancas.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'aerosol-saphirus-flores-blancas'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Frutilla', 'aerosol-saphirus-frutilla', 'img/aerosoles/frutilla.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'aerosol-saphirus-frutilla'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Golden Lady', 'aerosol-saphirus-golden-lady', 'img/aerosoles/golden-lady.webp', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 4, TRUE FROM productos WHERE slug = 'aerosol-saphirus-golden-lady'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Gossip King', 'aerosol-saphirus-gossip-king', 'img/aerosoles/gossip-king.webp', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'aerosol-saphirus-gossip-king'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Guarana', 'aerosol-saphirus-guarana', 'img/aerosoles/guarana.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'aerosol-saphirus-guarana'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Jazmin', 'aerosol-saphirus-jazmin', 'img/aerosoles/jazmin.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'aerosol-saphirus-jazmin'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Lavanda', 'aerosol-saphirus-lavanda', 'img/aerosoles/lavanda.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 3, TRUE FROM productos WHERE slug = 'aerosol-saphirus-lavanda'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Life In Petals', 'aerosol-saphirus-life-in-petals', 'img/aerosoles/life-in-petals.webp', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'aerosol-saphirus-life-in-petals'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Limon', 'aerosol-saphirus-limon', 'img/aerosoles/limon.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'aerosol-saphirus-limon'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Limon Dulce y Vainilla', 'aerosol-saphirus-limon-dulce-y-vainilla', 'img/aerosoles/limon-dulce-y-vainilla.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'aerosol-saphirus-limon-dulce-y-vainilla'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Linah', 'aerosol-saphirus-linah', 'img/aerosoles/linah.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 3, TRUE FROM productos WHERE slug = 'aerosol-saphirus-linah'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Lola', 'aerosol-saphirus-lola', 'img/aerosoles/lola.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'aerosol-saphirus-lola'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'London', 'aerosol-saphirus-london', 'img/textiles/sin-foto.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'aerosol-saphirus-london'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Magnolia y Fresias', 'aerosol-saphirus-magnolia-y-fresias', 'img/aerosoles/magnolia-y-fresias.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'aerosol-saphirus-magnolia-y-fresias'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Mandarina', 'aerosol-saphirus-mandarina', 'img/aerosoles/mandarina.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'aerosol-saphirus-mandarina'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Mango', 'aerosol-saphirus-mango', 'img/aerosoles/mango.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'aerosol-saphirus-mango'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Manzana Canela', 'aerosol-saphirus-manzana-canela', 'img/aerosoles/manzana-canela.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'aerosol-saphirus-manzana-canela'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Marino', 'aerosol-saphirus-marino', 'img/textiles/sin-foto.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'aerosol-saphirus-marino'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Melon', 'aerosol-saphirus-melon', 'img/aerosoles/melon.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'aerosol-saphirus-melon'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Mery', 'aerosol-saphirus-mery', 'img/aerosoles/mery.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'aerosol-saphirus-mery'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Miel y Limon', 'aerosol-saphirus-miel-y-limon', 'img/aerosoles/miel-y-limon.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'aerosol-saphirus-miel-y-limon'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Mito', 'aerosol-saphirus-mito', 'img/aerosoles/mito.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'aerosol-saphirus-mito'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Mix Tropical', 'aerosol-saphirus-mix-tropical', 'img/textiles/sin-foto.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 3, TRUE FROM productos WHERE slug = 'aerosol-saphirus-mix-tropical'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Naranja Pimienta', 'aerosol-saphirus-naranja-pimienta', 'img/aerosoles/naranja-pimienta.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'aerosol-saphirus-naranja-pimienta'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Naranja y Chocolate', 'aerosol-saphirus-naranja-y-chocolate', 'img/textiles/sin-foto.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'aerosol-saphirus-naranja-y-chocolate'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Orange', 'aerosol-saphirus-orange', 'img/aerosoles/orange.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'aerosol-saphirus-orange'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Oriente', 'aerosol-saphirus-oriente', 'img/aerosoles/oriente.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'aerosol-saphirus-oriente'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Palace', 'aerosol-saphirus-palace', 'img/aerosoles/palace.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'aerosol-saphirus-palace'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Palo Santo', 'aerosol-saphirus-palo-santo', 'img/aerosoles/palo-santo.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'aerosol-saphirus-palo-santo'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Papaya', 'aerosol-saphirus-papaya', 'img/aerosoles/papaya.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'aerosol-saphirus-papaya'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Patio', 'aerosol-saphirus-patio', 'img/aerosoles/patio.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'aerosol-saphirus-patio'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Paula', 'aerosol-saphirus-paula', 'img/aerosoles/paula.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'aerosol-saphirus-paula'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Peonias y Cedro', 'aerosol-saphirus-peonias-y-cedro', 'img/aerosoles/peonias-y-cedro.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'aerosol-saphirus-peonias-y-cedro'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Pera y Durazno', 'aerosol-saphirus-pera-y-durazno', 'img/aerosoles/pera-y-durazno.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'aerosol-saphirus-pera-y-durazno'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Peras y Flores', 'aerosol-saphirus-peras-y-flores', 'img/aerosoles/peras-y-flores.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'aerosol-saphirus-peras-y-flores'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Pitanga', 'aerosol-saphirus-pitanga', 'img/aerosoles/pitanga.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'aerosol-saphirus-pitanga'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Pomelo Rosado', 'aerosol-saphirus-pomelo-rosado', 'img/aerosoles/pomelo-rosado.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 3, TRUE FROM productos WHERE slug = 'aerosol-saphirus-pomelo-rosado'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Rocio', 'aerosol-saphirus-rocio', 'img/aerosoles/rocio.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'aerosol-saphirus-rocio'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Rosas', 'aerosol-saphirus-rosas', 'img/aerosoles/rosas.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'aerosol-saphirus-rosas'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Sunset Fire', 'aerosol-saphirus-sunset-fire', 'img/aerosoles/sunset-fire.webp', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 3, TRUE FROM productos WHERE slug = 'aerosol-saphirus-sunset-fire'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Tilo', 'aerosol-saphirus-tilo', 'img/aerosoles/tilo.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 4, TRUE FROM productos WHERE slug = 'aerosol-saphirus-tilo'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Tokyo', 'aerosol-saphirus-tokyo', 'img/aerosoles/tokyo.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'aerosol-saphirus-tokyo'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Tropical', 'aerosol-saphirus-tropical', 'img/aerosoles/tropical.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'aerosol-saphirus-tropical'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Uva', 'aerosol-saphirus-uva', 'img/aerosoles/uva.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'aerosol-saphirus-uva'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Vainilla Tonka', 'aerosol-saphirus-vainilla-tonka', 'img/aerosoles/vainilla-tonka.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'aerosol-saphirus-vainilla-tonka'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Violetas', 'aerosol-saphirus-violetas', 'img/aerosoles/violetas.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 3, TRUE FROM productos WHERE slug = 'aerosol-saphirus-violetas'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Wanted', 'aerosol-saphirus-wanted', 'img/aerosoles/wanted.jpg', TRUE FROM categorias WHERE slug = 'aerosoles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'aerosol-saphirus-wanted'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+-- ---------------- DIFUSORES ----------------
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Adventure', 'difusor-saphirus-adventure', 'img/difusores/adventure.png', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 0, TRUE FROM productos WHERE slug = 'difusor-saphirus-adventure'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Amour', 'difusor-saphirus-amour', 'img/textiles/sin-foto.jpg', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 1, TRUE FROM productos WHERE slug = 'difusor-saphirus-amour'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Apple', 'difusor-saphirus-apple', 'img/difusores/apple.jpg', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 1, TRUE FROM productos WHERE slug = 'difusor-saphirus-apple'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Bamboo', 'difusor-saphirus-bamboo', 'img/difusores/bamboo.jpg', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 2, TRUE FROM productos WHERE slug = 'difusor-saphirus-bamboo'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Bubblegum', 'difusor-saphirus-bubblegum', 'img/difusores/bubblegum.jpg', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 1, TRUE FROM productos WHERE slug = 'difusor-saphirus-bubblegum'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Cappuccino', 'difusor-saphirus-cappuccino', 'img/difusores/cappuccino.jpg', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 1, TRUE FROM productos WHERE slug = 'difusor-saphirus-cappuccino'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Clean Cotton', 'difusor-saphirus-clean-cotton', 'img/difusores/clean-cotton.jpg', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 1, TRUE FROM productos WHERE slug = 'difusor-saphirus-clean-cotton'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Coco Vai', 'difusor-saphirus-coco-vai', 'img/difusores/coco-vai.jpg', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 1, TRUE FROM productos WHERE slug = 'difusor-saphirus-coco-vai'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Cony', 'difusor-saphirus-cony', 'img/difusores/cony.jpg', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 3, TRUE FROM productos WHERE slug = 'difusor-saphirus-cony'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Cookies and Cream', 'difusor-saphirus-cookies-and-cream', 'img/difusores/cookies-and-cream.jpg', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 1, TRUE FROM productos WHERE slug = 'difusor-saphirus-cookies-and-cream'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Cristobal', 'difusor-saphirus-cristobal', 'img/difusores/cristobal.jpg', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 2, TRUE FROM productos WHERE slug = 'difusor-saphirus-cristobal'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Flores Blancas', 'difusor-saphirus-flores-blancas', 'img/difusores/flores-blancas.jpg', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 3, TRUE FROM productos WHERE slug = 'difusor-saphirus-flores-blancas'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Flowers', 'difusor-saphirus-flowers', 'img/textiles/sin-foto.jpg', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 2, TRUE FROM productos WHERE slug = 'difusor-saphirus-flowers'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Fresias y Bergamota', 'difusor-saphirus-fresias-y-bergamota', 'img/difusores/fresias-y-bergamota.jpg', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 1, TRUE FROM productos WHERE slug = 'difusor-saphirus-fresias-y-bergamota'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Indiana', 'difusor-saphirus-indiana', 'img/difusores/indiana.jpg', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 3, TRUE FROM productos WHERE slug = 'difusor-saphirus-indiana'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Jazmin', 'difusor-saphirus-jazmin', 'img/difusores/jazmin.jpg', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 1, TRUE FROM productos WHERE slug = 'difusor-saphirus-jazmin'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Lavanda Vainilla', 'difusor-saphirus-lavanda-vainilla', 'img/difusores/lavanda-vainilla.jpg', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 3, TRUE FROM productos WHERE slug = 'difusor-saphirus-lavanda-vainilla'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Lavanda y Te Verde', 'difusor-saphirus-lavanda-y-te-verde', 'img/difusores/lavanda-y-te-verde.jpg', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 2, TRUE FROM productos WHERE slug = 'difusor-saphirus-lavanda-y-te-verde'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Limon', 'difusor-saphirus-limon', 'img/difusores/limon.jpg', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 2, TRUE FROM productos WHERE slug = 'difusor-saphirus-limon'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Linah', 'difusor-saphirus-linah', 'img/difusores/linah.jpg', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 3, TRUE FROM productos WHERE slug = 'difusor-saphirus-linah'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'London', 'difusor-saphirus-london', 'img/difusores/london.jpg', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 1, TRUE FROM productos WHERE slug = 'difusor-saphirus-london'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Magnolia y Fresias', 'difusor-saphirus-magnolia-y-fresias', 'img/difusores/magnolia-y-fresias.jpg', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 1, TRUE FROM productos WHERE slug = 'difusor-saphirus-magnolia-y-fresias'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Mango', 'difusor-saphirus-mango', 'img/difusores/mango.jpg', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 1, TRUE FROM productos WHERE slug = 'difusor-saphirus-mango'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Manzana Canela', 'difusor-saphirus-manzana-canela', 'img/difusores/manzana-canela.jpg', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 2, TRUE FROM productos WHERE slug = 'difusor-saphirus-manzana-canela'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Maracuya', 'difusor-saphirus-maracuya', 'img/difusores/maracuya.jpg', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 1, TRUE FROM productos WHERE slug = 'difusor-saphirus-maracuya'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Marino', 'difusor-saphirus-marino', 'img/difusores/marino.jpg', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 3, TRUE FROM productos WHERE slug = 'difusor-saphirus-marino'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Melocoton Blanco', 'difusor-saphirus-melocoton-blanco', 'img/difusores/melocoton-blanco.jpg', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 2, TRUE FROM productos WHERE slug = 'difusor-saphirus-melocoton-blanco'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Mery', 'difusor-saphirus-mery', 'img/difusores/mery.jpg', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 3, TRUE FROM productos WHERE slug = 'difusor-saphirus-mery'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Naranja y Chocolate', 'difusor-saphirus-naranja-y-chocolate', 'img/difusores/naranja-y-chocolate.jpg', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 1, TRUE FROM productos WHERE slug = 'difusor-saphirus-naranja-y-chocolate'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Orange', 'difusor-saphirus-orange', 'img/difusores/orange.jpg', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 2, TRUE FROM productos WHERE slug = 'difusor-saphirus-orange'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Oriente', 'difusor-saphirus-oriente', 'img/difusores/oriente.jpg', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 2, TRUE FROM productos WHERE slug = 'difusor-saphirus-oriente'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Palo Santo', 'difusor-saphirus-palo-santo', 'img/difusores/palo-santo.jpg', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 1, TRUE FROM productos WHERE slug = 'difusor-saphirus-palo-santo'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Patio', 'difusor-saphirus-patio', 'img/difusores/patio.jpg', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 2, TRUE FROM productos WHERE slug = 'difusor-saphirus-patio'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Paula', 'difusor-saphirus-paula', 'img/difusores/paula.jpg', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 2, TRUE FROM productos WHERE slug = 'difusor-saphirus-paula'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Peras y Flores', 'difusor-saphirus-peras-y-flores', 'img/difusores/peras-y-flores.jpg', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 1, TRUE FROM productos WHERE slug = 'difusor-saphirus-peras-y-flores'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Pomelo Rosado', 'difusor-saphirus-pomelo-rosado', 'img/difusores/pomelo-rosado.jpg', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 2, TRUE FROM productos WHERE slug = 'difusor-saphirus-pomelo-rosado'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Petalos de Orquideas', 'difusor-saphirus-petalos-de-orquideas', 'img/difusores/petalos-de-orquideas.jpg', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 1, TRUE FROM productos WHERE slug = 'difusor-saphirus-petalos-de-orquideas'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Rocio', 'difusor-saphirus-rocio', 'img/textiles/sin-foto.jpg', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 3, TRUE FROM productos WHERE slug = 'difusor-saphirus-rocio'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Tropical', 'difusor-saphirus-tropical', 'img/difusores/tropical.jpg', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 1, TRUE FROM productos WHERE slug = 'difusor-saphirus-tropical'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Uva', 'difusor-saphirus-uva', 'img/difusores/uva.jpg', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 1, TRUE FROM productos WHERE slug = 'difusor-saphirus-uva'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Vainilla Tonka', 'difusor-saphirus-vainilla-tonka', 'img/difusores/vainilla-tonka.jpg', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 1, TRUE FROM productos WHERE slug = 'difusor-saphirus-vainilla-tonka'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Verbena', 'difusor-saphirus-verbena', 'img/difusores/verbena.jpg', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 3, TRUE FROM productos WHERE slug = 'difusor-saphirus-verbena'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Violetas', 'difusor-saphirus-violetas', 'img/difusores/violetas.jpg', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 3, TRUE FROM productos WHERE slug = 'difusor-saphirus-violetas'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Wanted', 'difusor-saphirus-wanted', 'img/difusores/wanted.png', TRUE FROM categorias WHERE slug = 'difusores'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 5900, 3, TRUE FROM productos WHERE slug = 'difusor-saphirus-wanted'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
 COMMIT;
