@@ -436,4 +436,621 @@ INSERT INTO aromas_catalogo (marca, categoria, nombre) VALUES
   ('SAPHIRUS', 'TEXTIL_120CC', 'YOURSELF/SWEET YOURSELF')
   ON CONFLICT (marca, categoria, nombre) DO NOTHING;
 
+-- ============================================================================
+-- CARGA: Perfumes Textiles Saphirus (variante 'Saphirus', categoría 'Textiles')
+-- Generado a partir del Excel de stock del dueño + fotos de la carpeta de Drive.
+-- Idempotente: se puede correr las veces que haga falta sin duplicar nada.
+-- ============================================================================
+
+INSERT INTO categorias (nombre, slug, icono, orden, activa, destacada) VALUES
+  ('Textiles', 'textiles', '🌸', 4, TRUE, FALSE)
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Antitabaco', 'textil-saphirus-antitabaco', 'img/textiles/antitabaco.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-antitabaco'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Apple', 'textil-saphirus-apple', 'img/textiles/apple.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-apple'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Atlantis', 'textil-saphirus-atlantis', 'img/textiles/atlantis.webp', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 4, TRUE FROM productos WHERE slug = 'textil-saphirus-atlantis'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Bamboo', 'textil-saphirus-bamboo', 'img/textiles/bamboo.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-bamboo'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Bebé', 'textil-saphirus-bebe', 'img/textiles/bebe.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-bebe'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Bergamota & Cedro', 'textil-saphirus-bergamota-cedro', 'img/textiles/bergamota-cedro.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-bergamota-cedro'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Blossom Rouge', 'textil-saphirus-blossom-rouge', 'img/textiles/blossom-rouge.webp', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-blossom-rouge'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Breeze', 'textil-saphirus-breeze', 'img/textiles/breeze.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-breeze'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Bubblegum', 'textil-saphirus-bubblegum', 'img/textiles/bubblegum.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-bubblegum'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Capri Summer', 'textil-saphirus-capri-summer', 'img/textiles/capri-summer.webp', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 0, TRUE FROM productos WHERE slug = 'textil-saphirus-capri-summer'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Celebrity Shoe', 'textil-saphirus-celebrity-shoe', 'img/textiles/celebrity-shoe.webp', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-celebrity-shoe'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Celestial Wings (Olimpic)', 'textil-saphirus-celestial-wings-olimpic', 'img/textiles/celestial-wings-olimpic.webp', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-celestial-wings-olimpic'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Cereza Malbec', 'textil-saphirus-cereza-malbec', 'img/textiles/cereza-malbec.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-cereza-malbec'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Citrus', 'textil-saphirus-citrus', 'img/textiles/citrus.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-citrus'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Coco Vai', 'textil-saphirus-coco-vai', 'img/textiles/coco-vai.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 4, TRUE FROM productos WHERE slug = 'textil-saphirus-coco-vai'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Cony', 'textil-saphirus-cony', 'img/textiles/cony.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-cony'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Cristóbal', 'textil-saphirus-cristobal', 'img/textiles/cristobal.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-cristobal'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Daniel', 'textil-saphirus-daniel', 'img/textiles/daniel.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-daniel'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Due Fusion', 'textil-saphirus-due-fusion', 'img/textiles/due-fusion.webp', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-due-fusion'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Duvet', 'textil-saphirus-duvet', 'img/textiles/duvet.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-duvet'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Erba', 'textil-saphirus-erba', 'img/textiles/erba.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-erba'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Etiqueta', 'textil-saphirus-etiqueta', 'img/textiles/etiqueta.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-etiqueta'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Flores Blancas', 'textil-saphirus-flores-blancas', 'img/textiles/flores-blancas.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-flores-blancas'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Flores Silvestres', 'textil-saphirus-flores-silvestres', 'img/textiles/flores-silvestres.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-flores-silvestres'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Fresias y Bergamota', 'textil-saphirus-fresias-y-bergamota', 'img/textiles/fresias-y-bergamota.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-fresias-y-bergamota'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Frutilla', 'textil-saphirus-frutilla', 'img/textiles/frutilla.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-frutilla'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Frutos Patagónicos', 'textil-saphirus-frutos-patagonicos', 'img/textiles/sin-foto.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-frutos-patagonicos'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Glitter Bot', 'textil-saphirus-glitter-bot', 'img/textiles/glitter-bot.webp', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-glitter-bot'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Golden Lady', 'textil-saphirus-golden-lady', 'img/textiles/golden-lady.webp', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-golden-lady'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Golden Lord', 'textil-saphirus-golden-lord', 'img/textiles/golden-lord.webp', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-golden-lord'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Gossip King', 'textil-saphirus-gossip-king', 'img/textiles/gossip-king.webp', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 4, TRUE FROM productos WHERE slug = 'textil-saphirus-gossip-king'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Gossip Princess', 'textil-saphirus-gossip-princess', 'img/textiles/gossip-princess.webp', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-gossip-princess'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Green', 'textil-saphirus-green', 'img/textiles/green.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-green'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Guaraná', 'textil-saphirus-guarana', 'img/textiles/guarana.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-guarana'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Hawai', 'textil-saphirus-hawai', 'img/textiles/hawai.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-hawai'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Indiana', 'textil-saphirus-indiana', 'img/textiles/indiana.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-indiana'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Jade Horse (Polo)', 'textil-saphirus-jade-horse-polo', 'img/textiles/jade-horse-polo.webp', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-jade-horse-polo'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Jazmín', 'textil-saphirus-jazmin', 'img/textiles/jazmin.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-jazmin'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Last Shot', 'textil-saphirus-last-shot', 'img/textiles/last-shot.webp', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-last-shot'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Lilas', 'textil-saphirus-lilas', 'img/textiles/lilas.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-lilas'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Limón', 'textil-saphirus-limon', 'img/textiles/limon.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-limon'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Limón Dulce y Vainilla', 'textil-saphirus-limon-dulce-y-vainilla', 'img/textiles/limon-dulce-y-vainilla.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-limon-dulce-y-vainilla'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Linah', 'textil-saphirus-linah', 'img/textiles/linah.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-linah'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Lavanda', 'textil-saphirus-lavanda', 'img/textiles/lavanda.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-lavanda'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Lola', 'textil-saphirus-lola', 'img/textiles/lola.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-lola'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Lucy', 'textil-saphirus-lucy', 'img/textiles/lucy.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-lucy'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Man', 'textil-saphirus-man', 'img/textiles/man.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-man'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Marino', 'textil-saphirus-marino', 'img/textiles/marino.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-marino'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'New York', 'textil-saphirus-new-york', 'img/textiles/new-york.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-new-york'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Nocturnal Shadow', 'textil-saphirus-nocturnal-shadow', 'img/textiles/nocturnal-shadow.webp', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-nocturnal-shadow'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Oriente', 'textil-saphirus-oriente', 'img/textiles/oriente.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-oriente'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Palace', 'textil-saphirus-palace', 'img/textiles/palace.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-palace'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Papaya', 'textil-saphirus-papaya', 'img/textiles/papaya.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-papaya'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Patio', 'textil-saphirus-patio', 'img/textiles/patio.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-patio'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Paula', 'textil-saphirus-paula', 'img/textiles/paula.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-paula'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Peonias y Cedro', 'textil-saphirus-peonias-y-cedro', 'img/textiles/peonias-y-cedro.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 4, TRUE FROM productos WHERE slug = 'textil-saphirus-peonias-y-cedro'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Pistacho Caramel', 'textil-saphirus-pistacho-caramel', 'img/textiles/pistacho-caramel.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-pistacho-caramel'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Pitanga', 'textil-saphirus-pitanga', 'img/textiles/pitanga.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-pitanga'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Pétalos de Orquídeas', 'textil-saphirus-petalos-de-orquideas', 'img/textiles/petalos-de-orquideas.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 4, TRUE FROM productos WHERE slug = 'textil-saphirus-petalos-de-orquideas'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Red Vanilla', 'textil-saphirus-red-vanilla', 'img/textiles/red-vanilla.webp', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-red-vanilla'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Rocío', 'textil-saphirus-rocio', 'img/textiles/rocio.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-rocio'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Rosas', 'textil-saphirus-rosas', 'img/textiles/rosas.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-rosas'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Sailor Man (male)', 'textil-saphirus-sailor-man-male', 'img/textiles/sailor-man-male.webp', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-sailor-man-male'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Salvaje', 'textil-saphirus-salvaje', 'img/textiles/salvaje.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 0, TRUE FROM productos WHERE slug = 'textil-saphirus-salvaje'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Snake & Roses', 'textil-saphirus-snake-roses', 'img/textiles/snake-roses.webp', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-snake-roses'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Sunset Fire', 'textil-saphirus-sunset-fire', 'img/textiles/sunset-fire.webp', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-sunset-fire'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Sándalo y Violetas', 'textil-saphirus-sandalo-y-violetas', 'img/textiles/sandalo-y-violetas.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-sandalo-y-violetas'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Teakwood', 'textil-saphirus-teakwood', 'img/textiles/teakwood.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-teakwood'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Tokyo', 'textil-saphirus-tokyo', 'img/textiles/tokyo.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-tokyo'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Tropical', 'textil-saphirus-tropical', 'img/textiles/tropical.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-tropical'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Uva', 'textil-saphirus-uva', 'img/textiles/uva.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-uva'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Vainilla', 'textil-saphirus-vainilla', 'img/textiles/vainilla.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-vainilla'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Velocity', 'textil-saphirus-velocity', 'img/textiles/velocity.webp', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 1, TRUE FROM productos WHERE slug = 'textil-saphirus-velocity'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Verbena', 'textil-saphirus-verbena', 'img/textiles/verbena.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-verbena'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Violetas', 'textil-saphirus-violetas', 'img/textiles/violetas.jpg', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 2, TRUE FROM productos WHERE slug = 'textil-saphirus-violetas'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
+
+INSERT INTO productos (categoria_id, nombre, slug, imagen_url, activo)
+  SELECT id, 'Suit Yourself', 'textil-saphirus-suit-yourself', 'img/textiles/suit-yourself.webp', TRUE FROM categorias WHERE slug = 'textiles'
+  ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO variantes (producto_id, presentacion, precio, stock, activa)
+  SELECT id, 'Saphirus', 6100, 3, TRUE FROM productos WHERE slug = 'textil-saphirus-suit-yourself'
+  ON CONFLICT (producto_id, presentacion) DO NOTHING;
 COMMIT;
