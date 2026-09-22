@@ -1291,8 +1291,17 @@ footer .admin-link:hover { border-color: rgba(255, 255, 255, .55); background: r
   opacity: 1;
 }
 
-/* La foto del local llena el recuadro (como el video), pero recortando
-   desde abajo para no tapar el cartel que se ve arriba de la foto. */
+/* La foto del local es vertical (sacada con celular), no panorámica: un
+   recuadro 16:9 recortaba casi todo sin importar la posición. Se le da un
+   recuadro más alto (formato retrato) para que entre el cartel, el local
+   y la puerta, recortando como mucho la vereda de abajo. */
+#heroFoto {
+  aspect-ratio: 4 / 5;
+  align-self: start;
+}
+#heroVideo {
+  align-self: start;
+}
 #heroFoto img,
 #heroFoto .hero-slide {
   object-fit: cover;
