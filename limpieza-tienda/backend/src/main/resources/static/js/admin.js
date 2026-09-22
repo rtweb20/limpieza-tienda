@@ -913,6 +913,9 @@
                 `<option value="${e}" ${p.estado === e ? 'selected' : ''}>${e}</option>`).join('')}
             </select>
           </td>
+          <td>
+            <button class="btn-action delete" data-borrar-pedido="${p.id}" title="Eliminar pedido">🗑️</button>
+          </td>
         </tr>`;
     }).join('');
   }
@@ -924,6 +927,19 @@
       toast('✅ Estado de pedido actualizado');
     } catch (err) {
       toast('⚠️ ' + err.message);
+    }
+  }
+
+  async function eliminarPedido(id, btn) {
+    if (!confirm('¿Eliminar este pedido? Esta acción no se puede deshacer.')) return;
+    if (btn) btn.disabled = true;
+    try {
+      await api('DELETE', `/api/admin/pedidos/${id}`);
+      toast('✅ Pedido eliminado');
+      await cargarPedidos();
+    } catch (err) {
+      toast('⚠️ ' + err.message);
+      if (btn) btn.disabled = false;
     }
   }
 
@@ -1135,8 +1151,10 @@
     return input ? input.value : 'EFECTIVO';
   }
 
-  /** Precio de un ítem de caja según el medio de pago elegido. */
+  /** Precio de un ítem de caja según el medio de pago elegido, salvo que el
+   * cajero lo haya editado a mano (por si el precio cargado cambió). */
   function cajaPrecioSegunMedio(item) {
+    if (item.precioManual != null) return item.precioManual;
     return cajaMedioPagoActual() === 'EFECTIVO' ? item.precioVenta : item.precioTransferencia;
   }
 
@@ -1190,6 +1208,7 @@
         varianteNombre: fila.varianteNombre,
         precioVenta: fila.precioVenta,
         precioTransferencia: fila.precioTransferencia,
+        precioManual: null,
         cantidad: Math.min(cantidad, fila.stock),
         stockDisponible: fila.stock,
       });
@@ -1223,8 +1242,10 @@
         <td style="text-align:center;">
           <input type="number" class="caja-qty-input" min="1" max="${it.stockDisponible}" value="${it.cantidad}" data-i="${i}" aria-label="Cantidad">
         </td>
-        <td>${money(precioUnitario)}</td>
-        <td><strong>${money(precioUnitario * it.cantidad)}</strong></td>
+        <td>
+          <input type="number" class="caja-precio-input" min="0" step="0.01" value="${precioUnitario}" data-i="${i}" aria-label="Precio unitario" title="Editar precio (por si cambió)">
+        </td>
+        <td><strong data-role="subtotal">${money(precioUnitario * it.cantidad)}</strong></td>
         <td>
           <button class="btn-action delete" data-quitar-item="${i}" title="Quitar del carrito">🗑️</button>
         </td>
@@ -1340,6 +1361,7 @@
         productoId: it.productoId,
         varianteId: it.varianteId,
         cantidad: it.cantidad,
+        precioUnitario: cajaPrecioSegunMedio(it),
       })),
     };
 
@@ -1643,6 +1665,11 @@
       if (sel) cambiarEstado(Number(sel.dataset.pedido), sel.value, sel);
     });
 
+    $('#pedList').addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-borrar-pedido]');
+      if (btn) eliminarPedido(Number(btn.dataset.borrarPedido), btn);
+    });
+
     $('#nuevoMedio').addEventListener('click', abrirMedioModal);
     $('#medioOverlay').addEventListener('click', cerrarMedioModal);
     $('#medioForm').addEventListener('submit', guardarMedio);
@@ -1730,6 +1757,23 @@
     });
 
     $('#cajaCarritoList').addEventListener('input', (e) => {
+      const precioInp = e.target.closest('.caja-precio-input');
+      if (precioInp) {
+        const i = Number(precioInp.dataset.i);
+        const item = cajaCarrito[i];
+        if (!item) return;
+        item.precioManual = Number(precioInp.value) || 0;
+        // Actualiza solo el subtotal de esa fila y el total general: si
+        // re-renderizáramos toda la tabla acá, el input perdería el foco
+        // en cada tecla que escribe el cajero.
+        const fila = precioInp.closest('tr');
+        const subtotalEl = fila && fila.querySelector('[data-role="subtotal"]');
+        if (subtotalEl) subtotalEl.textContent = money(item.precioManual * item.cantidad);
+        const total = cajaCarrito.reduce((acc, it) => acc + cajaPrecioSegunMedio(it) * it.cantidad, 0);
+        $('#cajaCarritoTotal').textContent = money(total);
+        return;
+      }
+
       const inp = e.target.closest('.caja-qty-input');
       if (!inp) return;
       const i = Number(inp.dataset.i);

@@ -216,4 +216,10 @@ public class AdminService {
         }
         return pedidoRepository.save(pedido);
     }
+
+    public void eliminarPedido(Long id) {
+        Pedido pedido = pedidoRepository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Pedido no encontrado: " + id));
+        pedidoRepository.delete(pedido);
+    }
 }

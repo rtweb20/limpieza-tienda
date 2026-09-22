@@ -1648,6 +1648,16 @@ body.admin-body {
 
 .caja-qty-input:focus { border-color: var(--admin-primary); outline: none; }
 
+.caja-precio-input {
+  width: 90px;
+  padding: 6px 8px;
+  border: 1.5px solid var(--admin-border);
+  border-radius: 8px;
+  font: inherit;
+  font-weight: 700;
+}
+.caja-precio-input:focus { border-color: var(--admin-primary); outline: none; }
+
 .caja-cobrar-box {
   display: flex;
   flex-direction: column;

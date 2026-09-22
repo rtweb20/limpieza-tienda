@@ -75,7 +75,7 @@ public class VentaService {
                                 + "» (" + variante.getPresentacion() + ").");
             }
 
-            validados.add(new ItemValidado(variante, itemReq.cantidad()));
+            validados.add(new ItemValidado(variante, itemReq.cantidad(), itemReq.precioUnitario()));
         }
 
         Venta venta = new Venta();
@@ -86,7 +86,9 @@ public class VentaService {
 
         for (ItemValidado validado : validados) {
             Variante variante = validado.variante();
-            BigDecimal precioUnitario = variante.precioVenta(medioPago);
+            BigDecimal precioUnitario = validado.precioUnitario() != null
+                    ? validado.precioUnitario()
+                    : variante.precioVenta(medioPago);
             BigDecimal subtotal = precioUnitario.multiply(BigDecimal.valueOf(validado.cantidad()));
 
             VentaItem item = new VentaItem();
@@ -174,6 +176,6 @@ public class VentaService {
         }
     }
 
-    private record ItemValidado(Variante variante, Integer cantidad) {
+    private record ItemValidado(Variante variante, Integer cantidad, BigDecimal precioUnitario) {
     }
 }

@@ -189,4 +189,10 @@ public class AdminController {
                                         @Valid @RequestBody PedidoEstadoRequest request) {
         return PedidoResponse.from(adminService.cambiarEstado(id, request), List.of(), null);
     }
+
+    @DeleteMapping("/pedidos/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void eliminarPedido(@PathVariable Long id) {
+        adminService.eliminarPedido(id);
+    }
 }
