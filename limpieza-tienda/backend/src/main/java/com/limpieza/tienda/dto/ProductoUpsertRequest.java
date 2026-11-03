@@ -14,6 +14,7 @@ public record ProductoUpsertRequest(
         @NotBlank(message = "Falta el nombre") @Size(max = 120) String nombre,
         String descripcion,
         @NotBlank(message = "Falta la URL de la imagen") String imagenUrl,
+        @Size(max = 64, message = "El código de barras no puede superar 64 caracteres") String codigoBarras,
         @NotNull(message = "Falta la categoría") Long categoriaId,
         Boolean destacado,
         Boolean activo,

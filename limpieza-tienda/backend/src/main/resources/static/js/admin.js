@@ -777,6 +777,7 @@
     $('#prodModalTitle').textContent = prod ? 'Editar producto' : 'Nuevo producto';
     $('#prodId').value = prod ? prod.id : '';
     $('#prodNombre').value = prod ? prod.nombre : '';
+    $('#prodCodigoBarras').value = prod ? (prod.codigoBarras || '') : '';
     $('#prodDesc').value = prod ? (prod.descripcion || '') : '';
     $('#prodImagen').value = prod ? prod.imagenUrl : '';
     
@@ -803,9 +804,12 @@
   }
 
   function filaVariante(v, i) {
+    const pres = String(v.presentacion || '').replace(/"/g, '&quot;');
+    const vid = v.id != null ? v.id : '';
+    const activa = v.activa !== false ? 'true' : 'false';
     return `
-      <div class="variant-row" data-vi="${i}">
-        <input type="text" class="v-pres" placeholder="Ej: 750 ml, 2 L, Pack x3" value="${v.presentacion || ''}" required>
+      <div class="variant-row" data-vi="${i}" data-vid="${vid}" data-activa="${activa}">
+        <input type="text" class="v-pres" placeholder="Ej: 750 ml, 2 L, Pack x3" value="${pres}" required>
         <input type="number" class="v-precio" placeholder="Precio ($)" step="0.01" min="0" value="${v.precio ?? ''}" required>
         <input type="number" class="v-oferta" placeholder="Oferta (opc.)" step="0.01" min="0" value="${v.precioOferta ?? ''}">
         <input type="number" class="v-transferencia" placeholder="Transferencia (opc.)" step="0.01" min="0" value="${v.precioTransferencia ?? ''}">
@@ -822,15 +826,21 @@
   async function guardarProducto(e) {
     e.preventDefault();
     const id = $('#prodId').value;
-    const variantes = $$('#variantesBox .variant-row').map((row) => ({
-      presentacion: row.querySelector('.v-pres').value.trim(),
-      precio: Number(row.querySelector('.v-precio').value),
-      precioOferta: row.querySelector('.v-oferta').value ? Number(row.querySelector('.v-oferta').value) : null,
-      precioTransferencia: row.querySelector('.v-transferencia').value ? Number(row.querySelector('.v-transferencia').value) : null,
-      stock: Number(row.querySelector('.v-stock').value || 0),
-      activa: true,
-      orden: Number(row.dataset.vi) + 1,
-    })).filter((v) => v.presentacion && v.precio >= 0);
+    const variantes = $$('#variantesBox .variant-row').map((row, idx) => {
+      const ofertaVal = row.querySelector('.v-oferta').value;
+      const transfVal = row.querySelector('.v-transferencia').value;
+      const stockVal = row.querySelector('.v-stock').value;
+      return {
+        id: row.dataset.vid ? Number(row.dataset.vid) : null,
+        presentacion: row.querySelector('.v-pres').value.trim(),
+        precio: Number(row.querySelector('.v-precio').value),
+        precioOferta: ofertaVal !== '' ? Number(ofertaVal) : null,
+        precioTransferencia: transfVal !== '' ? Number(transfVal) : null,
+        stock: stockVal !== '' ? Number(stockVal) : 0,
+        activa: row.dataset.activa !== 'false',
+        orden: idx + 1,
+      };
+    }).filter((v) => v.presentacion && v.precio >= 0);
 
     if (!variantes.length) {
       toast('⚠️ Agregá al menos una variante con precio');
@@ -838,11 +848,14 @@
     }
 
     const imgUrl = $('#prodImagen').value.trim() || 'https://placehold.co/600x600/EFE6D4/6B5130?text=Aroma+a+Limpio';
+    const codigoBarras = normalizarCodigoBarras($('#prodCodigoBarras').value);
+    $('#prodCodigoBarras').value = codigoBarras;
 
     const body = {
       nombre: $('#prodNombre').value.trim(),
       descripcion: $('#prodDesc').value.trim() || null,
       imagenUrl: imgUrl,
+      codigoBarras,
       categoriaId: Number($('#prodCategoria').value),
       destacado: $('#prodDestacado').checked,
       activo: $('#prodActivo').checked,
@@ -1659,6 +1672,12 @@
     });
 
     $('#prodForm').addEventListener('submit', guardarProducto);
+    $('#prodCodigoBarras').addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter') return;
+      e.preventDefault();
+      $('#prodCodigoBarras').value = normalizarCodigoBarras($('#prodCodigoBarras').value);
+      toast('🏷️ Código leído — tocá Guardar Producto para confirmar');
+    });
 
     $('#pedList').addEventListener('change', (e) => {
       const sel = e.target.closest('.estado-select');

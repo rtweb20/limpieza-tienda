@@ -25,7 +25,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -148,13 +152,52 @@ public class AdminService {
     private void aplicarProducto(Producto p, ProductoUpsertRequest r, Long id) {
         Categoria categoria = categoriaRepository.findById(r.categoriaId())
                 .orElseThrow(() -> new RecursoNoEncontradoException("Categoría no encontrada: " + r.categoriaId()));
+        String nombreNuevo = r.nombre().trim();
         p.setCategoria(categoria);
-        p.setNombre(r.nombre().trim());
-        p.setSlug(slugUnicoProducto(SlugUtil.slugify(r.nombre()), id));
+        p.setNombre(nombreNuevo);
+
+        // Si el producto ya existe y ya tiene slug, lo conservamos intacto para no
+        // romper enlaces ni hacer que data.sql duplique productos precargados al reiniciar.
+        if (id == null || p.getSlug() == null || p.getSlug().isBlank()) {
+            p.setSlug(slugUnicoProducto(SlugUtil.slugify(nombreNuevo), id));
+        }
+
         p.setDescripcion(r.descripcion());
         p.setImagenUrl(r.imagenUrl().trim());
         p.setDestacado(r.destacado() != null ? r.destacado() : false);
         p.setActivo(r.activo() != null ? r.activo() : true);
+
+        if (r.codigoBarras() != null) {
+            String codigo = normalizarCodigoBarras(r.codigoBarras());
+            if (codigo != null) {
+                productoRepository.findByCodigoBarras(codigo).ifPresent(otro -> {
+                    if (id == null || !otro.getId().equals(id)) {
+                        throw new PeticionInvalidaException(
+                                "El código de barras «" + codigo + "» ya está asignado al producto «"
+                                        + otro.getNombre() + "».");
+                    }
+                });
+            }
+            p.setCodigoBarras(codigo);
+        }
+    }
+
+    /**
+     * Normaliza el código de barras igual que CargaProductoService:
+     * un UPC-A de 12 dígitos equivale al EAN-13 con un 0 delante.
+     */
+    private String normalizarCodigoBarras(String codigo) {
+        if (codigo == null) {
+            return null;
+        }
+        String limpio = codigo.trim();
+        if (limpio.isEmpty()) {
+            return null;
+        }
+        if (limpio.matches("\\d{12}")) {
+            return "0" + limpio;
+        }
+        return limpio;
     }
 
     private String slugUnicoProducto(String base, Long id) {
@@ -171,28 +214,111 @@ public class AdminService {
 
     private void reemplazarVariantes(Producto producto, List<VarianteUpsertRequest> variantesReq) {
         List<Variante> actuales = varianteRepository.findByProductoIdOrderByOrdenAsc(producto.getId());
-        if (actuales != null && !actuales.isEmpty()) {
-            varianteRepository.deleteAllInBatch(actuales);
-            varianteRepository.flush(); // Elimina de inmediato antes del INSERT para no violar uq_variantes_producto_presentacion
+        if (actuales == null) {
+            actuales = List.of();
         }
 
-        List<Variante> nuevas = new ArrayList<>();
-        int orden = 1;
+        Map<Long, Variante> porId = new HashMap<>();
+        for (Variante actual : actuales) {
+            if (actual.getId() != null) {
+                porId.put(actual.getId(), actual);
+            }
+        }
+
+        // Emparejamos cada fila enviada con su variante existente (por id o, si no vino id,
+        // por nombre de presentación) para conservar sus IDs y no perder referencias en
+        // ventas/pedidos ni ningún dato ya cargado.
+        Set<Long> idsConservados = new HashSet<>();
+        List<Variante> emparejadas = new ArrayList<>(variantesReq.size());
+
         for (VarianteUpsertRequest vr : variantesReq) {
-            Variante v = new Variante();
-            v.setProducto(producto);
+            Variante match = null;
+            if (vr.id() != null && porId.containsKey(vr.id()) && !idsConservados.contains(vr.id())) {
+                match = porId.get(vr.id());
+                idsConservados.add(match.getId());
+            }
+            emparejadas.add(match);
+        }
+
+        for (int i = 0; i < variantesReq.size(); i++) {
+            if (emparejadas.get(i) != null) {
+                continue;
+            }
+            String pres = variantesReq.get(i).presentacion().trim();
+            for (Variante actual : actuales) {
+                if (actual.getId() != null && !idsConservados.contains(actual.getId())
+                        && actual.getPresentacion() != null
+                        && actual.getPresentacion().trim().equalsIgnoreCase(pres)) {
+                    emparejadas.set(i, actual);
+                    idsConservados.add(actual.getId());
+                    break;
+                }
+            }
+        }
+
+        // Eliminamos únicamente las variantes que el usuario quitó del formulario.
+        List<Variante> eliminadas = actuales.stream()
+                .filter(v -> v.getId() != null && !idsConservados.contains(v.getId()))
+                .toList();
+        if (!eliminadas.isEmpty()) {
+            varianteRepository.deleteAllInBatch(eliminadas);
+            varianteRepository.flush();
+        }
+
+        // Si dos variantes conservadas intercambian nombres entre sí, liberamos primero
+        // los nombres temporales para no chocar con uq_variantes_producto_presentacion.
+        Set<String> nombresActualesConservados = new HashSet<>();
+        for (Variante v : emparejadas) {
+            if (v != null && v.getPresentacion() != null) {
+                nombresActualesConservados.add(v.getPresentacion().trim().toLowerCase());
+            }
+        }
+        boolean hayCruceNombres = false;
+        for (int i = 0; i < variantesReq.size(); i++) {
+            Variante existente = emparejadas.get(i);
+            String nuevoNombre = variantesReq.get(i).presentacion().trim().toLowerCase();
+            if (existente != null && !existente.getPresentacion().trim().equalsIgnoreCase(nuevoNombre)
+                    && nombresActualesConservados.contains(nuevoNombre)) {
+                hayCruceNombres = true;
+                break;
+            }
+        }
+        if (hayCruceNombres) {
+            for (Variante v : emparejadas) {
+                if (v != null) {
+                    v.setPresentacion("__tmp_" + v.getId());
+                }
+            }
+            varianteRepository.flush();
+        }
+
+        List<Variante> resultado = new ArrayList<>(variantesReq.size());
+        int orden = 1;
+        for (int i = 0; i < variantesReq.size(); i++) {
+            VarianteUpsertRequest vr = variantesReq.get(i);
+            Variante v = emparejadas.get(i);
+            if (v == null) {
+                v = new Variante();
+                v.setProducto(producto);
+            }
             v.setPresentacion(vr.presentacion().trim());
             v.setPrecio(vr.precio());
             v.setPrecioOferta(vr.precioOferta());
             v.setPrecioTransferencia(vr.precioTransferencia());
             v.setStock(vr.stock() != null ? vr.stock() : 0);
-            v.setActiva(vr.activa() != null ? vr.activa() : true);
-            v.setOrden(vr.orden() != null ? vr.orden() : orden++);
-            nuevas.add(v);
+            if (vr.activa() != null) {
+                v.setActiva(vr.activa());
+            } else if (v.getActiva() == null) {
+                v.setActiva(true);
+            }
+            v.setOrden(vr.orden() != null ? vr.orden() : orden);
+            orden++;
+            resultado.add(v);
         }
-        varianteRepository.saveAll(nuevas);
+
+        varianteRepository.saveAll(resultado);
         varianteRepository.flush();
-        producto.setVariantes(nuevas);
+        producto.setVariantes(resultado);
     }
 
     // ---------------- Pedidos ----------------

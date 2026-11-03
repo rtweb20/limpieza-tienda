@@ -18,7 +18,9 @@ public record VarianteDto(
         BigDecimal precioTransferencia,
         BigDecimal precioVenta,
         BigDecimal precioVentaTransferencia,
-        Integer stock) {
+        Integer stock,
+        Boolean activa,
+        Integer orden) {
 
     public static VarianteDto from(Variante v) {
         return new VarianteDto(
@@ -29,6 +31,8 @@ public record VarianteDto(
                 v.getPrecioTransferencia(),
                 v.precioVenta(),
                 v.precioVenta(MedioPago.TRANSFERENCIA),
-                v.getStock());
+                v.getStock(),
+                v.getActiva(),
+                v.getOrden());
     }
 }
