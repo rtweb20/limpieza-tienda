@@ -38,6 +38,7 @@
     categorias: [],
     productos: [],
     filtro: 'todos', // 'todos' | slug de categoría | 'busqueda'
+    marcaCatalogo: null, // Marca inferida desde el nombre/slug/descripción del producto
     query: '',
     whatsappUrl: '#',
     carrito: JSON.parse(localStorage.getItem('carrito-limpieza') || '[]'),
@@ -156,6 +157,13 @@
     reproducir(0);
   }
 
+  function marcaCatalogoDesdeNombre(nombre) {
+    const marca = normalizarTexto(nombre);
+    if (marca.includes('saphirus')) return 'SAPHIRUS';
+    if (marca.includes('sandra') || marca.includes('marzan') || marca.includes('marzzan')) return 'SANDRA_MARZAN';
+    return null;
+  }
+
   function renderBrandsStrip(medios) {
     const marcas = medios.filter((m) => m.destino === 'MARCA' && m.activo !== false);
     if (!marcas.length) return; // deja los 4 casilleros "Espacio para marca" del HTML
@@ -167,9 +175,26 @@
         ? `<video src="${m.url}" muted loop playsinline autoplay preload="metadata"></video>`
         : `<img src="${m.url}" alt="${m.marcaNombre || 'Marca'}" loading="lazy">`;
       const caption = m.marcaNombre ? `<span class="brand-ad-caption">${m.marcaNombre}</span>` : '';
-      return `<div class="brand-ad-slot tiene-contenido">${media}${caption}</div>`;
+      const marca = m.formato === 'VIDEO' ? marcaCatalogoDesdeNombre(m.marcaNombre) : null;
+      const marcaLabel = marca === 'SAPHIRUS' ? 'Saphirus' : 'Sandra Marzán';
+      const interactivo = marca
+        ? ` data-marca-catalogo="${marca}" role="button" tabindex="0" aria-label="Ver productos de ${marcaLabel}" style="cursor:pointer"`
+        : '';
+      return `<div class="brand-ad-slot tiene-contenido"${interactivo}>${media}${caption}</div>`;
     }).join('');
   }
+
+  function mostrarProductosDeMarca(marca) {
+    state.marcaCatalogo = marca;
+    state.filtro = 'todos';
+    state.query = '';
+    $('#searchInput').value = '';
+    $('#suggestions').classList.remove('open');
+    renderCategorias();
+    renderGrid();
+    $('#productGrid').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
 
   // ----------------------------- Render ------------------------------------
 
@@ -190,6 +215,20 @@
       `<button class="cat-chip ${state.filtro === c.slug ? 'active' : ''}" data-slug="${c.slug}">
         ${c.icono ? c.icono + ' ' : ''}${c.nombre}
       </button>`).join('');
+    actualizarFlechasCategorias();
+  }
+
+  function actualizarFlechasCategorias() {
+    const nav = $('#cats');
+    const anterior = $('#catsPrev');
+    const siguiente = $('#catsNext');
+    if (!nav || !anterior || !siguiente) return;
+
+    const hayDesborde = nav.scrollWidth > nav.clientWidth + 2;
+    anterior.hidden = !hayDesborde;
+    siguiente.hidden = !hayDesborde;
+    anterior.disabled = nav.scrollLeft <= 1;
+    siguiente.disabled = nav.scrollLeft + nav.clientWidth >= nav.scrollWidth - 1;
   }
 
   /** Texto de una opción del selector de presentación: agrega el precio de
@@ -469,7 +508,16 @@
     const titulo = $('#sectionTitle');
     let lista = state.productos;
 
-    if (state.filtro === 'busqueda') {
+    if (state.marcaCatalogo) {
+      const esSaphirus = state.marcaCatalogo === 'SAPHIRUS';
+      const marcaLabel = esSaphirus ? 'Saphirus' : 'Sandra Marzán';
+      const palabrasMarca = esSaphirus ? ['saphirus'] : ['sandra', 'marzan', 'marzzan'];
+      lista = state.productos.filter((p) => {
+        const texto = normalizarTexto([p.nombre, p.slug, p.descripcion].filter(Boolean).join(' '));
+        return palabrasMarca.some((palabra) => texto.includes(palabra));
+      });
+      titulo.textContent = `Productos ${marcaLabel}`;
+    } else if (state.filtro === 'busqueda') {
       const q = state.query.toLowerCase();
       lista = state.productos.filter((p) =>
         p.nombre.toLowerCase().includes(q) ||
@@ -484,8 +532,11 @@
     }
 
     if (!lista.length) {
+      const mensajeVacio = state.marcaCatalogo
+        ? `No encontramos productos identificados como ${state.marcaCatalogo === 'SAPHIRUS' ? 'Saphirus' : 'Sandra Marzán'}. Para que aparezcan, esa marca debe figurar en el nombre o la descripción del producto.`
+        : 'No encontramos productos. Probá con otra búsqueda.';
       grid.innerHTML = `<div class="empty-state">
-        <div class="big">🔍</div>No encontramos productos. Probá con otra búsqueda.
+        <div class="big">🔍</div>${mensajeVacio}
       </div>`;
       return;
     }
@@ -730,6 +781,7 @@
   }
 
   function aplicarBusqueda(q) {
+    state.marcaCatalogo = null;
     state.filtro = 'busqueda';
     state.query = q;
     $('#searchInput').value = q;
@@ -745,9 +797,35 @@
     $('#cats').addEventListener('click', (e) => {
       const chip = e.target.closest('.cat-chip');
       if (!chip) return;
+      state.marcaCatalogo = null;
       state.filtro = chip.dataset.slug;
       renderCategorias();
       renderGrid();
+    });
+
+    const cats = $('#cats');
+    $('#catsPrev').addEventListener('click', () => {
+      cats.scrollBy({ left: -Math.max(160, cats.clientWidth * 0.75), behavior: 'smooth' });
+    });
+    $('#catsNext').addEventListener('click', () => {
+      cats.scrollBy({ left: Math.max(160, cats.clientWidth * 0.75), behavior: 'smooth' });
+    });
+    cats.addEventListener('scroll', actualizarFlechasCategorias, { passive: true });
+    window.addEventListener('resize', actualizarFlechasCategorias);
+
+    const brandsRow = $('#brandsRow');
+    const activarMarcaDesdeVideo = (e) => {
+      const anuncio = e.target.closest('.brand-ad-slot[data-marca-catalogo]');
+      if (!anuncio) return;
+      mostrarProductosDeMarca(anuncio.dataset.marcaCatalogo);
+    };
+    brandsRow.addEventListener('click', activarMarcaDesdeVideo);
+    brandsRow.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      const anuncio = e.target.closest('.brand-ad-slot[data-marca-catalogo]');
+      if (!anuncio) return;
+      e.preventDefault();
+      mostrarProductosDeMarca(anuncio.dataset.marcaCatalogo);
     });
 
     $('#productGrid').addEventListener('change', (e) => {

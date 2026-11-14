@@ -105,11 +105,15 @@
   </section>
 
   <!-- =========================== CATEGORÍAS ============================ -->
-  <nav id="cats" class="cats" aria-label="Categorías">
-    <button class="cat-chip skeleton-chip" disabled>Todos</button>
-    <button class="cat-chip skeleton-chip" disabled>Categoría</button>
-    <button class="cat-chip skeleton-chip" disabled>Categoría</button>
-  </nav>
+  <div class="cats-carousel" aria-label="Navegación de categorías">
+    <button type="button" id="catsPrev" class="cats-arrow" aria-label="Ver categorías anteriores" hidden>‹</button>
+    <nav id="cats" class="cats" aria-label="Categorías">
+      <button class="cat-chip skeleton-chip" disabled>Todos</button>
+      <button class="cat-chip skeleton-chip" disabled>Categoría</button>
+      <button class="cat-chip skeleton-chip" disabled>Categoría</button>
+    </nav>
+    <button type="button" id="catsNext" class="cats-arrow" aria-label="Ver más categorías" hidden>›</button>
+  </div>
 
   <!-- ============================ CATÁLOGO ============================= -->
   <main>
@@ -261,6 +265,6 @@
 
   <script src="js/api.js"></script>
   <script src="js/demo-data.js"></script>
-  <script src="js/app.js?v=20260922a"></script>
+  <script src="js/app.js?v=20261102c"></script>
 </body>
 </html>
