@@ -171,11 +171,14 @@
     const row = $('#brandsRow');
     if (!row) return;
     row.innerHTML = marcas.map((m) => {
-      const media = m.formato === 'VIDEO'
+      const esVideo = normalizarTexto(m.formato) === 'video';
+      const media = esVideo
         ? `<video src="${m.url}" muted loop playsinline autoplay preload="metadata"></video>`
         : `<img src="${m.url}" alt="${m.marcaNombre || 'Marca'}" loading="lazy">`;
       const caption = m.marcaNombre ? `<span class="brand-ad-caption">${m.marcaNombre}</span>` : '';
-      const marca = m.formato === 'VIDEO' ? marcaCatalogoDesdeNombre(m.marcaNombre) : null;
+      const marca = esVideo
+        ? marcaCatalogoDesdeNombre([m.marcaNombre, m.titulo, m.url].filter(Boolean).join(' '))
+        : null;
       const marcaLabel = marca === 'SAPHIRUS' ? 'Saphirus' : 'Sandra Marzán';
       const interactivo = marca
         ? ` data-marca-catalogo="${marca}" role="button" tabindex="0" aria-label="Ver productos de ${marcaLabel}" style="cursor:pointer"`

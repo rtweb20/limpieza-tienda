@@ -1483,6 +1483,8 @@ footer .admin-link:hover { border-color: rgba(255, 255, 255, .55); background: r
 
 .brand-ad-slot.tiene-contenido { position: relative; }
 
+.brand-ad-slot[data-marca-catalogo] { cursor: pointer; }
+
 @media (max-width: 560px) {
   .brand-ad-slot { width: 128px; height: 64px; font-size: 11px; }
 }
