@@ -176,9 +176,9 @@
         ? `<video src="${m.url}" muted loop playsinline autoplay preload="metadata"></video>`
         : `<img src="${m.url}" alt="${m.marcaNombre || 'Marca'}" loading="lazy">`;
       const caption = m.marcaNombre ? `<span class="brand-ad-caption">${m.marcaNombre}</span>` : '';
-      const marca = esVideo
-        ? marcaCatalogoDesdeNombre([m.marcaNombre, m.titulo, m.url].filter(Boolean).join(' '))
-        : null;
+      // En la tienda real Sandra Marzzan está cargada como FOTO, no VIDEO.
+      // La navegación debe aplicarse según la marca del medio, sin depender del formato.
+      const marca = marcaCatalogoDesdeNombre([m.marcaNombre, m.titulo, m.url].filter(Boolean).join(' '));
       const marcaLabel = marca === 'SAPHIRUS' ? 'Saphirus' : 'Sandra Marzán';
       const interactivo = marca
         ? ` data-marca-catalogo="${marca}" role="button" tabindex="0" aria-label="Ver productos de ${marcaLabel}" style="cursor:pointer"`
