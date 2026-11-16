@@ -1641,3 +1641,9 @@ footer .admin-link:hover { border-color: rgba(255, 255, 255, .55); background: r
   color: var(--texto-suave);
   font-size: 13.5px;
 }
+
+/* Filtros dependientes de marca y tipo de producto. */
+.catalog-classification { display: flex; flex-wrap: wrap; gap: 14px; margin: 0 0 22px; padding: 16px; border: 1px solid var(--borde); border-radius: 16px; background: #fff; }
+.catalog-classification label { display: grid; gap: 6px; flex: 1 1 220px; color: var(--texto-suave); font-size: 13px; font-weight: 700; }
+.catalog-classification select { width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid var(--borde); border-radius: 10px; background: #f4fbff; color: var(--texto); font: inherit; }
+.product-classification { display: block; margin: 5px 0 8px; color: #237b9e; font-size: 12px; font-weight: 700; }

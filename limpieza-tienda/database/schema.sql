@@ -121,3 +121,7 @@ CREATE INDEX idx_pedido_items_pedido  ON pedido_items (pedido_id);
 CREATE INDEX idx_pedidos_created      ON pedidos (created_at DESC);
 
 COMMIT;
+
+-- Clasificación por marca y tipo; conserva los productos existentes.
+ALTER TABLE productos ADD COLUMN IF NOT EXISTS marca VARCHAR(80);
+ALTER TABLE productos ADD COLUMN IF NOT EXISTS subcategoria VARCHAR(80);

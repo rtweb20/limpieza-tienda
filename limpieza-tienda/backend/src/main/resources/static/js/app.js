@@ -38,6 +38,7 @@
     categorias: [],
     productos: [],
     filtro: 'todos', // 'todos' | slug de categoría | 'busqueda'
+    subcategoria: '',
     marcaCatalogo: null, // Marca inferida desde el nombre/slug/descripción del producto
     query: '',
     whatsappUrl: '#',
@@ -164,6 +165,29 @@
     return null;
   }
 
+  function claveMarca(marca) {
+    return marcaCatalogoDesdeNombre(marca || '') || normalizarTexto(marca || '').trim();
+  }
+
+  function textoSeguro(valor) {
+    return String(valor || '').replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
+  }
+
+  function renderClasificacion(lista) {
+    const marcas = new Map();
+    state.productos.forEach(p => { if (p.marca) marcas.set(claveMarca(p.marca), p.marca); });
+    const selector = $('#filterMarca');
+    selector.replaceChildren(new Option('Todas las marcas', ''), ...[...marcas].sort((a, b) => a[1].localeCompare(b[1], 'es')).map(([clave, nombre]) => new Option(nombre, clave)));
+    selector.value = state.marcaCatalogo || '';
+    const tipos = new Map();
+    lista.forEach(p => { if (p.subcategoria) tipos.set(normalizarTexto(p.subcategoria), p.subcategoria); });
+    if (!tipos.has(state.subcategoria)) state.subcategoria = '';
+    const sub = $('#filterSubcategoria');
+    sub.replaceChildren(new Option('Todos los tipos', ''), ...[...tipos].sort((a, b) => a[1].localeCompare(b[1], 'es')).map(([clave, nombre]) => new Option(nombre, clave)));
+    sub.value = state.subcategoria;
+    sub.disabled = tipos.size === 0;
+  }
+
   function renderBrandsStrip(medios) {
     const marcas = medios.filter((m) => m.destino === 'MARCA' && m.activo !== false);
     if (!marcas.length) return; // deja los 4 casilleros "Espacio para marca" del HTML
@@ -178,10 +202,10 @@
       const caption = m.marcaNombre ? `<span class="brand-ad-caption">${m.marcaNombre}</span>` : '';
       // En la tienda real Sandra Marzzan está cargada como FOTO, no VIDEO.
       // La navegación debe aplicarse según la marca del medio, sin depender del formato.
-      const marca = marcaCatalogoDesdeNombre([m.marcaNombre, m.titulo, m.url].filter(Boolean).join(' '));
-      const marcaLabel = marca === 'SAPHIRUS' ? 'Saphirus' : 'Sandra Marzán';
+      const marca = m.marcaNombre ? claveMarca(m.marcaNombre) : marcaCatalogoDesdeNombre([m.titulo, m.url].filter(Boolean).join(' '));
+      const marcaLabel = m.marcaNombre || (marca === 'SAPHIRUS' ? 'Saphirus' : 'Sandra Marzán');
       const interactivo = marca
-        ? ` data-marca-catalogo="${marca}" role="button" tabindex="0" aria-label="Ver productos de ${marcaLabel}" style="cursor:pointer"`
+        ? ` data-marca-catalogo="${textoSeguro(marca)}" role="button" tabindex="0" aria-label="Ver productos de ${textoSeguro(marcaLabel)}" style="cursor:pointer"`
         : '';
       return `<div class="brand-ad-slot tiene-contenido"${interactivo}>${media}${caption}</div>`;
     }).join('');
@@ -189,6 +213,7 @@
 
   function mostrarProductosDeMarca(marca) {
     state.marcaCatalogo = marca;
+    state.subcategoria = '';
     state.filtro = 'todos';
     state.query = '';
     $('#searchInput').value = '';
@@ -296,6 +321,7 @@
         </div>
         <div class="body">
           <span class="cat">${p.categoriaIcono || ''} ${p.categoriaNombre || ''}</span>
+          ${p.marca || p.subcategoria ? `<span class="product-classification">${textoSeguro([p.marca, p.subcategoria].filter(Boolean).join(' · '))}</span>` : ''}
           <h3>${p.nombre}</h3>
           ${p.descripcion ? `<p class="desc">${p.descripcion}</p>` : ''}
           <div class="price-row" data-role="price-row">
@@ -336,6 +362,8 @@
     // inventar nada (nada de "familia olfativa" u otros datos que no
     // cargamos en el sistema).
     const filasCaract = [];
+    if (p.marca) filasCaract.push(['Marca', textoSeguro(p.marca)]);
+    if (p.subcategoria) filasCaract.push(['Tipo de producto', textoSeguro(p.subcategoria)]);
     if (p.categoriaNombre) {
       filasCaract.push(['Categoría', `${p.categoriaIcono || ''} ${p.categoriaNombre}`.trim()]);
     }
@@ -511,16 +539,7 @@
     const titulo = $('#sectionTitle');
     let lista = state.productos;
 
-    if (state.marcaCatalogo) {
-      const esSaphirus = state.marcaCatalogo === 'SAPHIRUS';
-      const marcaLabel = esSaphirus ? 'Saphirus' : 'Sandra Marzán';
-      const palabrasMarca = esSaphirus ? ['saphirus'] : ['sandra', 'marzan', 'marzzan'];
-      lista = state.productos.filter((p) => {
-        const texto = normalizarTexto([p.nombre, p.slug, p.descripcion].filter(Boolean).join(' '));
-        return palabrasMarca.some((palabra) => texto.includes(palabra));
-      });
-      titulo.textContent = `Productos ${marcaLabel}`;
-    } else if (state.filtro === 'busqueda') {
+    if (state.filtro === 'busqueda') {
       const q = state.query.toLowerCase();
       lista = state.productos.filter((p) =>
         p.nombre.toLowerCase().includes(q) ||
@@ -534,9 +553,20 @@
       titulo.textContent = 'Todos los productos';
     }
 
+    if (state.marcaCatalogo) {
+      lista = lista.filter(p => claveMarca(p.marca || p.nombre + ' ' + (p.descripcion || '')) === state.marcaCatalogo);
+      const marcaLabel = lista.find(p => p.marca)?.marca || $('#filterMarca').selectedOptions[0]?.textContent || 'esta marca';
+      titulo.textContent = `Productos ${marcaLabel}`;
+    }
+    renderClasificacion(lista);
+    if (state.subcategoria) {
+      lista = lista.filter(p => normalizarTexto(p.subcategoria || '') === state.subcategoria);
+      titulo.textContent += ` · ${$('#filterSubcategoria').selectedOptions[0].textContent}`;
+    }
+
     if (!lista.length) {
       const mensajeVacio = state.marcaCatalogo
-        ? `No encontramos productos identificados como ${state.marcaCatalogo === 'SAPHIRUS' ? 'Saphirus' : 'Sandra Marzán'}. Para que aparezcan, esa marca debe figurar en el nombre o la descripción del producto.`
+        ? 'No encontramos productos para esta marca y estos filtros.'
         : 'No encontramos productos. Probá con otra búsqueda.';
       grid.innerHTML = `<div class="empty-state">
         <div class="big">🔍</div>${mensajeVacio}
@@ -785,6 +815,7 @@
 
   function aplicarBusqueda(q) {
     state.marcaCatalogo = null;
+    state.subcategoria = '';
     state.filtro = 'busqueda';
     state.query = q;
     $('#searchInput').value = q;
@@ -797,10 +828,20 @@
   // ----------------------------- Eventos -----------------------------------
 
   function init() {
+    $('#filterMarca').addEventListener('change', e => {
+      state.marcaCatalogo = e.target.value || null;
+      state.subcategoria = '';
+      renderGrid();
+    });
+    $('#filterSubcategoria').addEventListener('change', e => {
+      state.subcategoria = e.target.value;
+      renderGrid();
+    });
     $('#cats').addEventListener('click', (e) => {
       const chip = e.target.closest('.cat-chip');
       if (!chip) return;
       state.marcaCatalogo = null;
+    state.subcategoria = '';
       state.filtro = chip.dataset.slug;
       renderCategorias();
       renderGrid();

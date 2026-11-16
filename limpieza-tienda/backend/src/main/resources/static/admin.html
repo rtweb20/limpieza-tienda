@@ -620,6 +620,17 @@
             <label for="prodCategoria">Categoría <span class="req">*</span></label>
             <select id="prodCategoria" required></select>
           </div>
+          <div class="form-group">
+            <label for="prodMarca">Marca</label>
+            <input id="prodMarca" type="text" maxlength="80" list="productoMarcas" placeholder="Ej: Saphirus, Poett, Aromanza">
+            <datalist id="productoMarcas"></datalist>
+          </div>
+          <div class="form-group">
+            <label for="prodSubcategoria">Subcategoría / tipo de producto</label>
+            <input id="prodSubcategoria" type="text" maxlength="80" list="productoTipos" placeholder="Ej: Aerosoles, Difusores, Limpiadores">
+            <datalist id="productoTipos"></datalist>
+            <small>Elegí un tipo existente o escribí uno nuevo para esta marca.</small>
+          </div>
         </div>
 
         <div class="form-group">

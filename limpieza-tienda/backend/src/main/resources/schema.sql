@@ -151,3 +151,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS uq_productos_codigo_barras
 -- Índice único para que el alta masiva de variantes sea idempotente
 CREATE UNIQUE INDEX IF NOT EXISTS uq_variantes_producto_presentacion
     ON variantes (producto_id, presentacion);
+
+-- Clasificación por marca y tipo; conserva los productos existentes.
+ALTER TABLE productos ADD COLUMN IF NOT EXISTS marca VARCHAR(80);
+ALTER TABLE productos ADD COLUMN IF NOT EXISTS subcategoria VARCHAR(80);

@@ -779,6 +779,19 @@
     $('#prodNombre').value = prod ? prod.nombre : '';
     $('#prodCodigoBarras').value = prod ? (prod.codigoBarras || '') : '';
     $('#prodDesc').value = prod ? (prod.descripcion || '') : '';
+    $('#prodMarca').value = prod?.marca || '';
+    $('#prodSubcategoria').value = prod?.subcategoria || '';
+    const marcas = [...new Set(['Saphirus', 'Sandra Marzán', 'Poett', 'Aromanza', ...cacheProductos.map(p => p.marca).filter(Boolean)])];
+    $('#productoMarcas').replaceChildren(...marcas.map(m => new Option(m, m)));
+    const actualizarTipos = () => {
+      const marca = $('#prodMarca').value.trim().toLocaleLowerCase('es');
+      const tipos = [...new Set(cacheProductos.filter(p => (p.marca || '').toLocaleLowerCase('es') === marca).map(p => p.subcategoria).filter(Boolean))];
+      const sugeridos = ['Aerosoles', 'Difusores', 'Difusores para auto', 'Aromatizantes textiles', 'Home spray', 'Aceites aromáticos', 'Esencias', 'Sahumerios', 'Repuestos', 'Limpiadores', 'Desinfectantes', 'Jabones', 'Detergentes', 'Suavizantes'];
+      sugeridos.forEach(t => { if (!tipos.includes(t)) tipos.push(t); });
+      $('#productoTipos').replaceChildren(...tipos.map(t => new Option(t, t)));
+    };
+    $('#prodMarca').oninput = actualizarTipos;
+    actualizarTipos();
     $('#prodImagen').value = prod ? prod.imagenUrl : '';
     
     if (prod && prod.imagenUrl) {
@@ -857,6 +870,8 @@
       imagenUrl: imgUrl,
       codigoBarras,
       categoriaId: Number($('#prodCategoria').value),
+      marca: $('#prodMarca').value.trim(),
+      subcategoria: $('#prodSubcategoria').value.trim(),
       destacado: $('#prodDestacado').checked,
       activo: $('#prodActivo').checked,
       variantes,

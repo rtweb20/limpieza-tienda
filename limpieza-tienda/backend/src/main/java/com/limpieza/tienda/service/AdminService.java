@@ -155,6 +155,8 @@ public class AdminService {
         String nombreNuevo = r.nombre().trim();
         p.setCategoria(categoria);
         p.setNombre(nombreNuevo);
+        if (r.marca() != null) p.setMarca(r.marca().trim());
+        if (r.subcategoria() != null) p.setSubcategoria(r.subcategoria().trim());
 
         // Si el producto ya existe y ya tiene slug, lo conservamos intacto para no
         // romper enlaces ni hacer que data.sql duplique productos precargados al reiniciar.

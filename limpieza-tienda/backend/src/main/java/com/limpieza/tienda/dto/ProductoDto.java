@@ -20,6 +20,8 @@ public record ProductoDto(
         Long categoriaId,
         String categoriaNombre,
         String categoriaIcono,
+        String marca,
+        String subcategoria,
         List<VarianteDto> variantes,
         BigDecimal precioDesde,
         Boolean enOferta) {
@@ -50,6 +52,8 @@ public record ProductoDto(
                 p.getCategoria() != null ? p.getCategoria().getId() : null,
                 p.getCategoria() != null ? p.getCategoria().getNombre() : null,
                 p.getCategoria() != null ? p.getCategoria().getIcono() : null,
+                com.limpieza.tienda.service.ClasificacionProducto.marca(p),
+                com.limpieza.tienda.service.ClasificacionProducto.subcategoria(p),
                 variantes,
                 precioDesde,
                 enOferta);

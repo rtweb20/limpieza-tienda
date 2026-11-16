@@ -35,6 +35,17 @@ public class Producto {
     @Column(nullable = false, length = 120)
     private String nombre;
 
+    @Column(length = 80)
+    private String marca;
+
+    @Column(length = 80)
+    private String subcategoria;
+
+    public String getMarca() { return marca; }
+    public void setMarca(String marca) { this.marca = marca; }
+    public String getSubcategoria() { return subcategoria; }
+    public void setSubcategoria(String subcategoria) { this.subcategoria = subcategoria; }
+
     @Column(nullable = false, unique = true, length = 140)
     private String slug;
 

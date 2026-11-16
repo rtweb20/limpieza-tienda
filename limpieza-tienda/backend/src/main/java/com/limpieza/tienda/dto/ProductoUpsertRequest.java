@@ -16,6 +16,8 @@ public record ProductoUpsertRequest(
         @NotBlank(message = "Falta la URL de la imagen") String imagenUrl,
         @Size(max = 64, message = "El código de barras no puede superar 64 caracteres") String codigoBarras,
         @NotNull(message = "Falta la categoría") Long categoriaId,
+        @Size(max = 80) String marca,
+        @Size(max = 80) String subcategoria,
         Boolean destacado,
         Boolean activo,
         @NotEmpty(message = "El producto necesita al menos una variante")
