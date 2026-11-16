@@ -1413,7 +1413,7 @@ footer .admin-link:hover { border-color: rgba(255, 255, 255, .55); background: r
   display: block;
   margin: 0 2px 9px;
   color: var(--texto-suave);
-  font-size: 12.5px;
+  font-size: 14px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: .4px;
@@ -1421,10 +1421,10 @@ footer .admin-link:hover { border-color: rgba(255, 255, 255, .55); background: r
 
 .brands-row {
   display: flex;
-  gap: 12px;
+  gap: 16px;
   overflow-x: auto;
   scrollbar-width: none;
-  padding-bottom: 2px;
+  padding: 6px 2px 16px;
 }
 
 .brands-row::-webkit-scrollbar { display: none; }
@@ -1432,8 +1432,8 @@ footer .admin-link:hover { border-color: rgba(255, 255, 255, .55); background: r
 .brand-ad-slot {
   display: flex;
   flex: 0 0 auto;
-  width: 150px;
-  height: 72px;
+  width: 250px;
+  height: 140px;
   align-items: center;
   justify-content: center;
   gap: 7px;
@@ -1457,6 +1457,26 @@ footer .admin-link:hover { border-color: rgba(255, 255, 255, .55); background: r
   border-style: solid;
   border-color: var(--borde);
   background: #000;
+  border-radius: 16px;
+  box-shadow: 0 5px 14px rgba(27, 99, 132, .18);
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+
+@media (hover: hover) {
+  .brand-ad-slot.tiene-contenido:hover {
+    transform: translateY(-4px);
+    border-color: #38a9d3;
+    box-shadow: 0 9px 20px rgba(27, 99, 132, .26);
+  }
+}
+
+.brand-ad-slot[data-marca-catalogo]:focus-visible {
+  outline: 3px solid #38a9d3;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-ad-slot.tiene-contenido { transition: none; }
 }
 
 .brand-ad-slot.tiene-contenido img,
@@ -1467,15 +1487,15 @@ footer .admin-link:hover { border-color: rgba(255, 255, 255, .55); background: r
   object-fit: cover;
 }
 
-.brand-ad-slot .brand-ad-caption {
+.brand-ad-slot.tiene-contenido .brand-ad-caption {
   position: absolute;
   right: 0;
   bottom: 0;
   left: 0;
-  padding: 4px 7px 3px;
-  background: linear-gradient(0deg, rgba(0, 0, 0, .62), transparent);
+  padding: 24px 12px 10px;
+  background: linear-gradient(0deg, rgba(0, 0, 0, .8), transparent);
   color: #fff;
-  font-size: 10.5px;
+  font-size: 15px;
   font-weight: 700;
   text-align: left;
   text-shadow: 0 1px 2px rgba(0, 0, 0, .4);
@@ -1486,7 +1506,9 @@ footer .admin-link:hover { border-color: rgba(255, 255, 255, .55); background: r
 .brand-ad-slot[data-marca-catalogo] { cursor: pointer; }
 
 @media (max-width: 560px) {
-  .brand-ad-slot { width: 128px; height: 64px; font-size: 11px; }
+  .brand-ad-slot { width: 190px; height: 108px; font-size: 12px; }
+  .brands-row { gap: 12px; }
+  .brand-ad-slot.tiene-contenido .brand-ad-caption { font-size: 14px; }
 }
 
 /* ========================= NUEVO: AROMAS POR MARCA (público) ============== */
